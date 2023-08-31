@@ -32,8 +32,8 @@ export class SendForgotPasswordUseCase{
         }
         // pegar caminho do arquivo handlebars forgot-password.hbs
         let pathTemplate = env.NODE_ENV === "development" ? 
-        './build/usecases/views/emails/verify-email.hbs' :
-        './src/usecases/views/emails/verify-email.hbs'
+        './src/views/emails/verify-email.hbs':
+        './build/views/emails/verify-email.hbs' 
 
         // criar token com uuid
         const token = randomUUID()

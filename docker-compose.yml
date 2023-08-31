@@ -8,5 +8,5 @@ services:
     environment:
       - POSTGRESQL_USERNAME=kaiodev
       - POSTGRESQL_PASSWORD=1ebd9d49b83bd87fb8f9e069dd8bd47e
-      - POSTGRESQL_DATABASE=dbClinic
+      - POSTGRESQL_DATABASE=dbOlharLaser
 
