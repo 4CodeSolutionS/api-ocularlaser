@@ -31,7 +31,9 @@ export class SendForgotPasswordUseCase{
             throw new ResourceNotFoundError()
         }
         // pegar caminho do arquivo handlebars forgot-password.hbs
-         const pathTemplate = './src/views/emails/forgot-password.hbs'
+        let pathTemplate = env.NODE_ENV === "development" ? 
+        './build/usecases/views/emails/verify-email.hbs' :
+        './src/usecases/views/emails/verify-email.hbs'
 
         // criar token com uuid
         const token = randomUUID()
