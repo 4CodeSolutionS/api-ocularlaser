@@ -49,7 +49,9 @@ export class SendForgotPasswordUseCase{
         })
 
         // criar o link para redeinir senha
-        const link = `${env.APP_URL_LOCAL}/users/forgot-password?token=${token}`
+        const link = env.NODE_ENV === "development" ?
+        `${env.APP_URL_DEVLOPMENT}/users/forgot-password?token=${token}`:
+        `${env.APP_URL_PRODUCTION}/users/forgot-password?token=${token}`
 
         // enviar email com link de recuperação de senha
         await this.sendMailProvider.sendEmail(

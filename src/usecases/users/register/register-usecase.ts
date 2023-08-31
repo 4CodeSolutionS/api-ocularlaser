@@ -81,7 +81,9 @@ export class RegisterUseCase{
             token
         })
         // formatar link com token
-        const link = `${env.APP_URL_LOCAL}/users/verify-email?token=${token}`
+        let link = env.NODE_ENV === "development" ?
+        `${env.APP_URL_DEVLOPMENT}/users/verify-email?token=${token}`:
+        `${env.APP_URL_PRODUCTION}/users/verify-email?token=${token}`
 
         // enviar verificação de email
         await this.sendMailProvider.sendEmail(
