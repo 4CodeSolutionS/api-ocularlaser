@@ -14,7 +14,7 @@ describe('Register User (e2e)', ()=>{
     test('should be able to register a user with CPF', async()=>{
         const response = await request(fastifyApp.server).post('/api/users').send({
             name: 'Kaio Moreira',
-            email: 'user1@olhalser.test',
+            email: 'kaio-dev@outlook.com',
             password: '123456',
             gender: 'MASCULINO',
             phone: '11999999999',

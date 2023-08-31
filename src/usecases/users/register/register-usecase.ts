@@ -62,9 +62,12 @@ export class RegisterUseCase{
             phone,
         })
 
-        // pegar template de verificaçao de email
-        const pathTemplate = './src/views/emails/verify-email.hbs'
         
+         // pegar template de verificaçao de email
+        let pathTemplate = env.NODE_ENV === "development" ? 
+        './build/usecases/views/emails/verify-email.hbs' :
+        './src/usecases/views/emails/verify-email.hbs'
+
         // gerar token valido por 3h
         const token = randomUUID()
 
