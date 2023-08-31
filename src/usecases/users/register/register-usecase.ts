@@ -65,7 +65,7 @@ export class RegisterUseCase{
         
          // pegar template de verificaçao de email
         let pathTemplate = env.NODE_ENV === "development" ? 
-        './src/views/emails/verify-email.hbs':
+        './views/emails/verify-email.hbs':
         './build/views/emails/verify-email.hbs' 
 
         // gerar token valido por 3h
