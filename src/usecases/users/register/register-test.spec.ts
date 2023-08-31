@@ -31,7 +31,7 @@ describe("Register user (unit)", () => {
     test("Should be able to register a new account", async () => {
         const { user } = await stu.execute({ 
             cpf: "132.456.789-10",
-            email: 'email@test.com',
+            email: 'kaio-dev@outlook.com',
             gender: 'MASCULINO',
             name: 'Kaio Moreira',
             phone: '77-77777-7777',
