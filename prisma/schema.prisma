@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PACIENT
+  DOCTOR
+}
+
+model User {
+  id          String   @id @unique @default(uuid())
+  name        String
+  email       String   @unique
+  password    String
+  role        Role     @default(PACIENT)
+  gender      String
+  cpf         String   @unique
+  phone       String
+  emailActive Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  Token       Token[]
+
+  @@map("users")
+}
+
+model Token {
+  id         String   @id @unique @default(uuid())
+  token      String   @unique
+  expireDate DateTime
+  createdAt  DateTime @default(now())
+
+  user   User   @relation(fields: [idUser], references: [id])
+  idUser String
+
+  @@map("tokens")
+}

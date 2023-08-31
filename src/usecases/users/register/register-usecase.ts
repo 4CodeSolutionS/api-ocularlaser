@@ -1,0 +1,96 @@
+import { env } from "@/env";
+import { IUsersRepository } from "@/repositories/interface-users-repository";
+import { CPFAlreadyExistsError } from "@/usecases/errors/cpf-already-exists-error";
+import { EmailAlreadyExistsError } from "@/usecases/errors/email-already-exists-error";
+import { PassportAlreadyExistsError } from "@/usecases/errors/passport-already-exists-error";
+import { User } from "@prisma/client";
+import { hash } from 'bcrypt'
+import 'dotenv/config'
+import { randomUUID } from "crypto";
+import { IDateProvider } from "@/providers/DateProvider/interface-date-provider";
+import { ITokensRepository } from "@/repositories/interface-tokens-repository";
+import { IMailProvider } from "@/providers/MailProvider/interface-mail-provider";
+
+interface IRequestRegisterAccount {
+    cpf: string
+    email: string,
+    gender: string,
+    name: string,
+    password: string,
+    phone: string,
+}
+interface IResponseRegisterAccount {
+    user: User
+}
+
+export class RegisterUseCase{
+    constructor(
+        private usersRepository: IUsersRepository,
+        private dayjsDateProvider: IDateProvider,
+        private usersTokensRepository: ITokensRepository,
+        private sendMailProvider: IMailProvider
+    ) {}
+
+    async execute({
+        cpf,
+        email,
+        gender,
+        name,
+        password,
+        phone,
+    }:IRequestRegisterAccount):Promise<IResponseRegisterAccount>{
+        const findEmailAlreadyExists = await this.usersRepository.findByEmail(email)
+
+        if(findEmailAlreadyExists){
+            throw new EmailAlreadyExistsError()
+        }
+
+        const findCPFAlreadyExists = await this.usersRepository.findByCPF(cpf)
+
+        if(findCPFAlreadyExists){
+            throw new CPFAlreadyExistsError()
+        }
+       
+        const criptingPassword = await hash(password, 8)
+
+        const user = await this.usersRepository.create({
+            cpf,
+            email,
+            gender,
+            name,
+            password: criptingPassword,
+            phone,
+        })
+
+        // pegar template de verificaçao de email
+        const pathTemplate = './src/views/emails/verify-email.hbs'
+        
+        // gerar token valido por 3h
+        const token = randomUUID()
+
+        // gerar data em horas
+        const expireDateHours = this.dayjsDateProvider.addHours(3)
+
+        // salvar token no banco
+       await this.usersTokensRepository.create({
+            idUser: user.id,
+            expireDate: expireDateHours,
+            token
+        })
+        // formatar link com token
+        const link = `${env.APP_URL_LOCAL}/users/verify-email?token=${token}`
+
+        // enviar verificação de email
+        await this.sendMailProvider.sendEmail(
+            email, 
+            name,
+            "Confirmação de email", 
+            link, 
+            pathTemplate
+        )
+
+        return {
+            user
+        }
+    }
+}
