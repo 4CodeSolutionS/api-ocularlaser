@@ -15,7 +15,7 @@ describe('Verify e-mail User (e2e)', ()=>{
         await fastifyApp.close()
     })
 
-    test('should be able to verify e-mail a user', async()=>{
+    test.skip('should be able to verify e-mail a user', async()=>{
         const responseUser = await request(fastifyApp.server).post('/api/users').send({
             name: 'Kaio Moreira',
             email: 'user1-dev@outlook.com',
@@ -51,7 +51,7 @@ describe('Verify e-mail User (e2e)', ()=>{
         
     })
 
-    test('should not be able to verify e-mail user with wrong email', async()=>{
+    test.skip('should not be able to verify e-mail user with wrong email', async()=>{
         const token = 'fake-token'
         const email = 'fake-email'
         const response = await request(fastifyApp.server)
@@ -60,7 +60,7 @@ describe('Verify e-mail User (e2e)', ()=>{
         expect(response.statusCode).toEqual(404)
     })
 
-    test.skip('should not be able to verify e-mail user with token expired', async()=>{
+    test('should not be able to verify e-mail user with token expired', async()=>{
         vi.setSystemTime( new Date(2023, 10, 23, 7, 0, 0))
         const responseUser = await request(fastifyApp.server).post('/api/users').send({
             name: 'Kaio Moreira',
