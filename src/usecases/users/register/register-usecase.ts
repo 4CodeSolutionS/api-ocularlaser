@@ -70,7 +70,7 @@ export class RegisterUseCase{
 
         // gerar token valido por 3h
         const token = randomUUID()
-
+console.log(token)
         // gerar data em horas
         const expireDateHours = this.dayjsDateProvider.addHours(3)
 

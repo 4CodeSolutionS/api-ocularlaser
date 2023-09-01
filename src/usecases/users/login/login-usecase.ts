@@ -34,21 +34,17 @@ export class LoginUseCase{
         if(!findUserExists){
             throw new CredentialsInvalidError()
         }
-        console.log('log1', findUserExists)
         // comparar senha
         const passwordMatch = await compare(password, findUserExists.password)
 
         if(!passwordMatch){
             throw new CredentialsInvalidError()
         }
-        console.log('log2', findUserExists, passwordMatch)
-       
         // Criar access token
         const accessToken = jwt.sign({}, env.JWT_SECRET_ACCESS_TOKEN, {
             subject: findUserExists.id,
             expiresIn: env.JWT_EXPIRES_IN_ACCESS_TOKEN
         }) 
-        console.log('log3', findUserExists, accessToken)
        
         // Criar refresh token
         const refreshToken = jwt.sign({subject:findUserExists.id, email}, env.JWT_SECRET_REFRESH_TOKEN, {
