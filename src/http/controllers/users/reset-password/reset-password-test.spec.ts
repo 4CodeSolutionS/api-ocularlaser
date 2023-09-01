@@ -45,7 +45,7 @@ describe('Reset passowrd (e2e)', ()=>{
         const response = await request(fastifyApp.server)
         .patch(`/api/users/reset-password?token=${token}`)
         .send({
-            password: '1234567'
+            password: '1234567798'
         })
 
         expect(response.statusCode).toEqual(404)
