@@ -85,7 +85,7 @@ describe('Login User (e2e)', ()=>{
         .post('/api/users/login')
         .send({
             email: 'user1-dev@outlook.com',
-            password: '123456789',
+            password: '12345678999',
         })
 
         expect(response.statusCode).toEqual(401)
