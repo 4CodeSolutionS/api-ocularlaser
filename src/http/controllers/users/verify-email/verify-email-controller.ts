@@ -7,7 +7,7 @@ import { z } from 'zod'
 export async function VerifyEmail (request: FastifyRequest, reply:FastifyReply){
         try {
             const userSchema = z.object({
-              email: z.string(),
+              email: z.string().email(),
               token: z.string(),
             })
 
@@ -23,7 +23,7 @@ export async function VerifyEmail (request: FastifyRequest, reply:FastifyReply){
               email
             })
 
-            return reply.status(200).send({ message: 'Email verificado' })
+            return reply.status(200).send({ message: 'Verified email!' })
 
           } catch (error) {
             if(error instanceof ResourceNotFoundError){

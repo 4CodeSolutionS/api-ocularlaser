@@ -4,6 +4,7 @@ import { LoginUser } from './login/login-user-controller'
 import { VerifyEmail } from './verify-email/verify-email-controller'
 import { LogoutUser } from './logout/logout-user-controller'
 import { verifyTokenJWT } from '@/http/middlewares/verify-token-jwt'
+import { SendForgotPassword } from './send-forgot-password/send-forgot-password'
 export async function usersRoutes(fastifyApp: FastifyInstance) {
     // register user
     fastifyApp.post('/', RegisterUser)
@@ -16,4 +17,7 @@ export async function usersRoutes(fastifyApp: FastifyInstance) {
 
     // verify e-mail user
     fastifyApp.patch('/verify-email', VerifyEmail)
+
+    // send forgot password user
+    fastifyApp.post('/forgot-password', SendForgotPassword)
 }

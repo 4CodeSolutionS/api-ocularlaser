@@ -94,7 +94,6 @@ describe("Verify email user (unit)", () => {
         const userToken = await usersTokensRepositoryInMemory.findByUserId(user.id) as Token
 
         vi.setSystemTime( new Date(2023, 8, 23, 23, 0, 0))
-
         await expect(()=> stu.execute({ 
          token: userToken.token,
          email: 'user1-test@email.com',

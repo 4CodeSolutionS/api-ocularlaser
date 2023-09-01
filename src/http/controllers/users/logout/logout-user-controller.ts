@@ -19,7 +19,7 @@ export async function LogoutUser (request: FastifyRequest, reply:FastifyReply){
             refreshToken,
             idUser: request.user.id
         })
-        return reply.status(200).send({message: 'Logout realizado com sucesso!'})
+        return reply.status(200).send({message: 'Logout performed successfully!'})
 
       } catch (error) {
         if(error instanceof ResourceNotFoundError){
