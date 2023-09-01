@@ -1,4 +1,4 @@
-import { $Enums, Prisma, User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import { IUsersRepository } from "../interface-users-repository";
 import { prisma } from "@/lib/prisma";
 
@@ -82,18 +82,7 @@ export class PrismaUsersRepository implements IUsersRepository{
     async findByEmail(email: string){
         const user = await prisma.user.findUnique({
             where: {email},
-            select: {
-                id: true,
-                name: true,
-                cpf: true,
-                email: true,
-                emailActive: true,
-                phone: true,
-                gender: true,
-                role: true,
-                createdAt: true,
-            }
-        }) as unknown as User
+        }) 
 
         return user
     }

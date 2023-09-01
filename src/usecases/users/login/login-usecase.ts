@@ -34,7 +34,7 @@ export class LoginUseCase{
         if(!findUserExists){
             throw new CredentialsInvalidError()
         }
-
+        
         // comparar senha
         const passwordMatch = await compare(password, findUserExists.password)
 
@@ -63,11 +63,23 @@ export class LoginUseCase{
             expireDate: expireDateRefreshToken,
             token: refreshToken,
         })
+        
+        const user = {
+            id: findUserExists.id,
+            name: findUserExists.name,
+            email: findUserExists.email,
+            cpf: findUserExists.cpf,
+            phone: findUserExists.phone,
+            gender: findUserExists.gender,
+            role: findUserExists.role,
+            emailActive: findUserExists.emailActive,
+            createdAt: findUserExists.createdAt,
+        } as User
 
         return {
+            user,
             accessToken,
             refreshToken,
-            user: findUserExists
         }
     }
 }

@@ -28,7 +28,6 @@ export class VerifyEmailUseCase{
         }
 
         const findToken = await this.usersTokensRepository.findByToken(token)
-
         if(!findToken){
             throw new ResourceNotFoundError()
         }

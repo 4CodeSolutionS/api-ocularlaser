@@ -25,7 +25,7 @@ describe("Login user (unit)", () => {
 
         await usersRepositoryInMemory.create({
             cpf: "12345678910",
-            email: 'kaio-dev@outlook.com',
+            email: 'user1@email.com',
             gender: 'MASCULINO',
             name: 'John Doe',
             phone: '77-77777-7777',
@@ -35,7 +35,7 @@ describe("Login user (unit)", () => {
 
     test("Should be able to login a account", async () => {
        const {user, accessToken, refreshToken} = await stu.execute({
-        email: 'kaio-dev@outlook.com',
+        email: 'user1@email.com',
         password: '123456'
        })
 

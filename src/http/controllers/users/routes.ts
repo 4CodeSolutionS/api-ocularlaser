@@ -1,16 +1,19 @@
 import { FastifyInstance } from 'fastify'
 import { RegisterUser } from './register/register-user-controller'
+import { LoginUser } from './login/login-user-controller'
+import { VerifyEmail } from './verify-email/verify-email-controller'
+import { LogoutUser } from './logout/logout-user-controller'
+import { verifyTokenJWT } from '@/http/middlewares/verify-token-jwt'
 export async function usersRoutes(fastifyApp: FastifyInstance) {
     // register user
     fastifyApp.post('/', RegisterUser)
 
     // login user
-    // fastifyApp.post('/session', AuthenticateUserController)
+    fastifyApp.post('/login', LoginUser)
 
-    // --- Routes Authenticate --- //
-    // get profile
-    // fastifyApp.get('/me', {onRequest:[veridyJWT]}, GetProfileUserController)
+    // logout user
+    fastifyApp.post('/logout', {onRequest: [verifyTokenJWT]}, LogoutUser)
 
-    // refresh token
-    // fastifyApp.patch('/token/refresh', RefreshToken)
+    // verify e-mail user
+    fastifyApp.patch('/verify-email', VerifyEmail)
 }

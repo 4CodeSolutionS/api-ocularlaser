@@ -1,0 +1,44 @@
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import request from 'supertest'
+import { fastifyApp } from "@/app";
+
+describe('Logout User (e2e)', ()=>{
+    beforeAll(async()=>{
+        await fastifyApp.ready()
+    })
+
+    afterAll(async()=>{
+        await fastifyApp.close()
+    })
+
+    test('should be able to logout a user', async()=>{
+        await request(fastifyApp.server).post('/api/users').send({
+            name: 'Kaio Moreira',
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.222.565-65',
+        })
+
+        const responseLogin = await request(fastifyApp.server)
+        .post('/api/users/login')
+        .send({
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+        })
+
+        expect(responseLogin.statusCode).toEqual(200)
+
+        const responseLogout = await request(fastifyApp.server)
+        .post('/api/users/logout')
+        .set('Authorization', `Bearer ${responseLogin.body.accessToken}`)
+        .send({
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+        })
+
+        expect(responseLogout.statusCode).toEqual(200)
+    })
+
+})
