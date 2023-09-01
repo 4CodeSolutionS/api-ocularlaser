@@ -36,5 +36,5 @@ jobs:
           SENDGRID_API_KEY: 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
           APP_URL_DEVLOPMENT: http://localhost:3333/api
           APP_URL_PRODUCTION: https://api-olharlaser.onrender.com/api
-          NODE_ENV: production
+          NODE_ENV: development
           DATABASE_URL: postgresql://docker:docker@localhost:5432/dbOlharLaser?schema=public
