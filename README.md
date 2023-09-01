@@ -1,7 +1,3 @@
-<p align="center" style="background-color: black">
-  <a href="https://fastify.dev/" target="blank"><img src="https://fastify.dev/img/logos/fastify-white.png" width="400" alt="Fastify Logo" /></a>
-</p>
-
 <p align="center">
   <a href="https://fastify.dev/" target="blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0a/Fastify_logo.svg" width="400" alt="Fastify Logo" /></a>
 </p>
