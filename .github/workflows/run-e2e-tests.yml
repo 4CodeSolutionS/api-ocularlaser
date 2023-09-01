@@ -29,5 +29,12 @@ jobs:
 
       - run: npm run test:e2e
         env:
-          JWT_SECRET: testing
-          DATABASE_URL: "postgresql://docker:docker@localhost:5432/dbOlharLaser?schema=public"
+          JWT_SECRET_ACCESS_TOKEN: 9ab0f1edab31a2a241cf1e3225d14931
+          JWT_SECRET_REFRESH_TOKEN: 62a4861e75e1c95b39c0469e3d18e666"
+          JWT_EXPIRES_IN_REFRESH_TOKEN: 7d
+          JWT_EXPIRES_IN_ACCESS_TOKEN: 10m
+          SENDGRID_API_KEY: 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
+          APP_URL_DEVLOPMENT: http://localhost:3333/api
+          APP_URL_PRODUCTION: https://api-olharlaser.onrender.com/api
+          NODE_ENV: development
+          DATABASE_URL: postgresql://kaiodev:1ebd9d49b83bd87fb8f9e069dd8bd47e@localhost:5432/dbOlharLaser?schema=public
