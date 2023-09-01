@@ -54,12 +54,12 @@ export class SendForgotPasswordUseCase{
         `${env.APP_URL_PRODUCTION}/users/forgot-password?token=${token}`
 
         // enviar email com link de recuperação de senha
-        await this.sendMailProvider.sendEmail(
-            findUserByEmail.email, 
-            findUserByEmail.name, 
-            'Redefinição de Senha', 
-            link, 
-            pathTemplate 
-        )
+        // await this.sendMailProvider.sendEmail(
+        //     findUserByEmail.email, 
+        //     findUserByEmail.name, 
+        //     'Redefinição de Senha', 
+        //     link, 
+        //     pathTemplate 
+        // )
     }
 }
