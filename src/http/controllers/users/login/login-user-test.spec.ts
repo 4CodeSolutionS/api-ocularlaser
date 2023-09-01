@@ -51,6 +51,44 @@ describe('Login User (e2e)', ()=>{
         expect(response.statusCode).toEqual(401)
     })
 
-    
+    test('should be able to login a user with password wrong', async()=>{
+        await request(fastifyApp.server).post('/api/users').send({
+            name: 'Kaio Moreira',
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.222.565-65',
+        })
+
+        const response = await request(fastifyApp.server)
+        .post('/api/users/login')
+        .send({
+            email: 'user1-dev@outlook.com',
+            password: '123456789',
+        })
+
+        expect(response.statusCode).toEqual(401)
+    })
+
+    test('should be able to login a user with password wrong', async()=>{
+        await request(fastifyApp.server).post('/api/users').send({
+            name: 'Kaio Moreira',
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.222.565-65',
+        })
+
+        const response = await request(fastifyApp.server)
+        .post('/api/users/login')
+        .send({
+            email: 'user1-dev@outlook.com',
+            password: '123456789',
+        })
+
+        expect(response.statusCode).toEqual(401);
+    })
 
 })
