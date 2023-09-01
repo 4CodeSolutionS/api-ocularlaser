@@ -27,3 +27,4 @@ jobs:
           APP_URL_DEVLOPMENT: http://localhost:3333/api
           APP_URL_PRODUCTION: https://api-olharlaser.onrender.com/api
           NODE_ENV: development
+          DATABASE_URL: postgresql://kaiodev:1ebd9d49b83bd87fb8f9e069dd8bd47e@localhost:5432/dbOlharLaser?schema=public
