@@ -88,7 +88,7 @@ describe('Login User (e2e)', ()=>{
             password: '123456789',
         })
 
-        expect(response.statusCode).toEqual(401);
+        expect(response.statusCode).toEqual(401)
     })
 
 })
