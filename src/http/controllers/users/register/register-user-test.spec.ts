@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import request from 'supertest'
 import { fastifyApp } from "@/app";
 
-describe.skip('Register User (e2e)', ()=>{
+describe('Register User (e2e)', ()=>{
     beforeAll(async()=>{
         await fastifyApp.ready()
     })
@@ -11,7 +11,7 @@ describe.skip('Register User (e2e)', ()=>{
         await fastifyApp.close()
     })
 
-    test('should be able to register a user with CPF', async()=>{
+    test('should be able to register a user', async()=>{
         const response = await request(fastifyApp.server).post('/api/users').send({
             name: 'Kaio Moreira',
             email: 'user1-dev@outlook.com',
@@ -22,6 +22,50 @@ describe.skip('Register User (e2e)', ()=>{
         })
             
         expect(response.statusCode).toEqual(201)
+    })
+
+    test('should not be able to register a user with email already exists', async()=>{
+        await request(fastifyApp.server).post('/api/users').send({
+            name: 'Kaio Moreira',
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.789.565-65',
+        })
+
+        const response = await request(fastifyApp.server).post('/api/users').send({
+            name: 'Kaio Moreira',
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.789.565-65',
+        })
+            
+        expect(response.statusCode).toEqual(409)
+    })
+
+    test('should not be able to register a user with cpf already exists', async()=>{
+        await request(fastifyApp.server).post('/api/users').send({
+            name: 'Kaio Moreira',
+            email: 'user2-dev@outlook.com',
+            password: '123456',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.789.565-65',
+        })
+
+        const response = await request(fastifyApp.server).post('/api/users').send({
+            name: 'Kaio Moreira',
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.789.565-65',
+        })
+            
+        expect(response.statusCode).toEqual(409)
     })
 
 })

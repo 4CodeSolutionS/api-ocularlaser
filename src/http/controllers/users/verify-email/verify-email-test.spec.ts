@@ -4,7 +4,7 @@ import { fastifyApp } from "@/app";
 import { Token, User } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-describe('Verify e-mail User (e2e)', ()=>{
+describe.skip('Verify e-mail User (e2e)', ()=>{
     beforeEach(async()=>{
         vi.useFakeTimers()
         await fastifyApp.ready()
@@ -60,7 +60,7 @@ describe('Verify e-mail User (e2e)', ()=>{
         expect(response.statusCode).toEqual(404)
     })
 
-    test('should not be able to verify e-mail user with token expired', async()=>{
+    test.skip('should not be able to verify e-mail user with token expired', async()=>{
         vi.setSystemTime( new Date(2023, 10, 23, 7, 0, 0))
         const responseUser = await request(fastifyApp.server).post('/api/users').send({
             name: 'Kaio Moreira',

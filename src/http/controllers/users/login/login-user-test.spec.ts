@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import request from 'supertest'
 import { fastifyApp } from "@/app";
 
-describe.skip('Login User (e2e)', ()=>{
+describe('Login User (e2e)', ()=>{
     beforeAll(async()=>{
         await fastifyApp.ready()
     })
@@ -30,5 +30,27 @@ describe.skip('Login User (e2e)', ()=>{
 
         expect(response.statusCode).toEqual(200)
     })
+
+    test('should be able to login a user with email wrong', async()=>{
+        await request(fastifyApp.server).post('/api/users').send({
+            name: 'Kaio Moreira',
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.222.565-65',
+        })
+
+        const response = await request(fastifyApp.server)
+        .post('/api/users/login')
+        .send({
+            email: 'user2-dev@outlook.com',
+            password: '123456',
+        })
+
+        expect(response.statusCode).toEqual(401)
+    })
+
+    
 
 })
