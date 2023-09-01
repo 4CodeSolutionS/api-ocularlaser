@@ -34,7 +34,7 @@ export class LoginUseCase{
         if(!findUserExists){
             throw new CredentialsInvalidError()
         }
-        
+        console.log(findUserExists)
         // comparar senha
         const passwordMatch = await compare(password, findUserExists.password)
 
