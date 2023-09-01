@@ -2,9 +2,18 @@ import { Prisma, User, Role } from "@prisma/client";
 import { IUsersRepository } from "../interface-users-repository";
 import { randomUUID } from "crypto";
 
-export class InMemoryUsersRepository implements IUsersRepository{    
+export class InMemoryUsersRepository implements IUsersRepository{
     public users: User[] = []
     
+    async changePassword(id: string, password: string){
+        const userIndex = this.users.findIndex(user => user.id === id)
+
+        if(userIndex === -1){
+            return null
+        }
+        
+        this.users[userIndex].password = password as string
+    }    
     async create({
         id,
         cpf,

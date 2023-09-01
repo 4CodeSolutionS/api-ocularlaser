@@ -3,6 +3,16 @@ import { IUsersRepository } from "../interface-users-repository";
 import { prisma } from "@/lib/prisma";
 
 export class PrismaUsersRepository implements IUsersRepository{
+    async changePassword(id: string, password: string){
+        await prisma.user.update({
+            where:{
+                id
+            },
+            data:{
+                password
+            }
+        })
+    }
     async findByCPF(cpf: string){
         const user = await prisma.user.findUnique({
             where: {cpf},
@@ -73,6 +83,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                 gender: true,
                 role: true,
                 createdAt: true,
+                password: true,
             }
         }) as unknown as User
 

@@ -37,7 +37,7 @@ export class SendForgotPasswordUseCase{
 
         // criar token com uuid
         const token = randomUUID()
-
+console.log(token)
          // criar data de expiração
         const expireDate = this.dayjsDateProvider.addHours(3)
 
@@ -50,8 +50,8 @@ export class SendForgotPasswordUseCase{
 
         // criar o link para redeinir senha
         const link = env.NODE_ENV === "development" ?
-        `${env.APP_URL_DEVLOPMENT}/users/forgot-password?token=${token}`:
-        `${env.APP_URL_PRODUCTION}/users/forgot-password?token=${token}`
+        `${env.APP_URL_DEVLOPMENT}/users/reset-password?token=${token}`:
+        `${env.APP_URL_PRODUCTION}/users/reset-password?token=${token}`
 
         // enviar email com link de recuperação de senha
         // await this.sendMailProvider.sendEmail(
