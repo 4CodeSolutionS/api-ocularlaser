@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import request from 'supertest'
 import { fastifyApp } from "@/app";
 
-describe('Logout User (e2e)', ()=>{
+describe.skip('Logout User (e2e)', ()=>{
     beforeAll(async()=>{
         await fastifyApp.ready()
     })

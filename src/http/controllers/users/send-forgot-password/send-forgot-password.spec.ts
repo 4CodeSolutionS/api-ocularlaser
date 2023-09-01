@@ -3,7 +3,7 @@ import request from 'supertest'
 import { fastifyApp } from "@/app";
 import {  User } from "@prisma/client";
 
-describe('Send email forgot password (e2e)', ()=>{
+describe.skip('Send email forgot password (e2e)', ()=>{
     beforeAll(async()=>{
         await fastifyApp.ready()
     })

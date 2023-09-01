@@ -4,7 +4,7 @@ import { fastifyApp } from "@/app";
 import { Token, User } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-describe.skip('Verify e-mail User (e2e)', ()=>{
+describe('Verify e-mail User (e2e)', ()=>{
     beforeEach(async()=>{
         vi.useFakeTimers()
         await fastifyApp.ready()
