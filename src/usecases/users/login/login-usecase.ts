@@ -34,7 +34,6 @@ export class LoginUseCase{
         if(!findUserExists){
             throw new CredentialsInvalidError()
         }
-        console.log(findUserExists)
         // comparar senha
         const passwordMatch = await compare(password, findUserExists.password)
 
@@ -75,6 +74,7 @@ export class LoginUseCase{
             emailActive: findUserExists.emailActive,
             createdAt: findUserExists.createdAt,
         } as User
+        console.log(findUserExists)
 
         return {
             user,
