@@ -48,6 +48,7 @@ export class LoginUseCase{
             subject: findUserExists.id,
             expiresIn: env.JWT_EXPIRES_IN_ACCESS_TOKEN
         }) 
+        console.log('log3', findUserExists, accessToken, passwordMatch)
        
         // Criar refresh token
         const refreshToken = jwt.sign({subject:findUserExists.id, email}, env.JWT_SECRET_REFRESH_TOKEN, {
@@ -76,7 +77,6 @@ export class LoginUseCase{
             emailActive: findUserExists.emailActive,
             createdAt: findUserExists.createdAt,
         } as User
-        console.log('log3', findUserExists, accessToken, refreshToken)
         return {
             user,
             accessToken,
