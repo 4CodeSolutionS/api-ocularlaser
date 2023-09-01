@@ -37,7 +37,7 @@ describe('Reset passowrd (e2e)', ()=>{
             password: '1234567'
         })
 
-        expect(response.statusCode).toEqual(200)
+        expect(response.statusCode).toEqual(200);
     })
 
     test('should not be able to reset passowrd with token not valid', async()=>{
