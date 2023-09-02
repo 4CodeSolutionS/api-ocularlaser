@@ -2,17 +2,20 @@ import { prisma } from "@/lib/prisma";
 import { IResponseLoginAccount } from "@/usecases/users/login/login-usecase";
 import { Role } from "@prisma/client";
 import { hash } from "bcrypt";
+import { randomUUID } from "crypto";
 import { FastifyInstance } from "fastify";
 import request from "supertest";
 
 export async function createAndAuthenticateUser(
     fastifyApp: FastifyInstance, 
     role?: Role,  
+    id?: string,
     email?:string, 
     cpf?:string) {
     // criar usuario pelo prisma
     await prisma.user.create({
         data:{
+            id: id ? id : randomUUID(),
             name:'user1',
             email: email ? email : 'user@test.com',
             cpf: cpf ? cpf : "12345678910",
