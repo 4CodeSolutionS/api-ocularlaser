@@ -7,8 +7,8 @@ import { z } from 'zod'
 export async function VerifyEmail (request: FastifyRequest, reply:FastifyReply){
         try {
             const userSchema = z.object({
-              email: z.string().email(),
-              token: z.string(),
+              email: z.string().email().nonempty(),
+              token: z.string().nonempty(),
             })
 
             const {
