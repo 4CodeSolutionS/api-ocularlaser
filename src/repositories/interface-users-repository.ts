@@ -4,6 +4,7 @@ export interface IUsersRepository {
     create(data:Prisma.UserUncheckedCreateInput): Promise<User>
     list(): Promise<User[]>
     findById(id:string): Promise<User | null>
+    getUserSecurity(id:string): Promise<User | null>
     findByEmail(email:string): Promise<User | null>
     findByCPF(cpf:string): Promise<User | null>
 

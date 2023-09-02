@@ -6,6 +6,7 @@ import { LogoutUser } from './logout/logout-user-controller'
 import { verifyTokenJWT } from '@/http/middlewares/verify-token-jwt'
 import { SendForgotPassword } from './send-forgot-password/send-forgot-password'
 import { ResetPassword } from './reset-password/reset-password-controller'
+import { FindUser } from './find/find-user-controller'
 export async function usersRoutes(fastifyApp: FastifyInstance) {
     // register user
     fastifyApp.post('/', RegisterUser)
@@ -25,4 +26,6 @@ export async function usersRoutes(fastifyApp: FastifyInstance) {
     // reset password user
     fastifyApp.patch('/reset-password', ResetPassword)
 
+    // find user
+    fastifyApp.get('/:id', {onRequest: [verifyTokenJWT]}, FindUser)
 }

@@ -12,7 +12,7 @@ interface IRequestLoginAccount {
     email: string,
     password: string,
 }
-interface IResponseLoginAccount {
+export interface IResponseLoginAccount {
     accessToken: string
     refreshToken: string
     user: User
