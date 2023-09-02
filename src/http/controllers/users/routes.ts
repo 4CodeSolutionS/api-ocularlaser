@@ -7,6 +7,8 @@ import { verifyTokenJWT } from '@/http/middlewares/verify-token-jwt'
 import { SendForgotPassword } from './send-forgot-password/send-forgot-password'
 import { ResetPassword } from './reset-password/reset-password-controller'
 import { FindUser } from './find/find-user-controller'
+import { DeleteUser } from './delete/delete-user-controller'
+import { UpdateUser } from './update-full/update-user-controller'
 export async function usersRoutes(fastifyApp: FastifyInstance) {
     // register user
     fastifyApp.post('/', RegisterUser)
@@ -28,4 +30,10 @@ export async function usersRoutes(fastifyApp: FastifyInstance) {
 
     // find user
     fastifyApp.get('/:id', {onRequest: [verifyTokenJWT]}, FindUser)
+
+    // update user
+    fastifyApp.put('/', {onRequest: [verifyTokenJWT]}, UpdateUser)
+
+    // delete user
+    fastifyApp.delete('/:id', {onRequest: [verifyTokenJWT]}, DeleteUser)
 }

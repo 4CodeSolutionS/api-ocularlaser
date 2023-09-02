@@ -114,9 +114,7 @@ export class InMemoryUsersRepository implements IUsersRepository{
         email,
         gender,
         name,
-        password,
         phone,
-        role,
     }:Prisma.UserUncheckedUpdateInput){
         const userIndex = this.users.findIndex(user => user.id === id)
         
@@ -124,9 +122,7 @@ export class InMemoryUsersRepository implements IUsersRepository{
         this.users[userIndex].email = email as string
         this.users[userIndex].gender = gender as string
         this.users[userIndex].name = name as string
-        this.users[userIndex].password = password as string
         this.users[userIndex].phone = phone as string
-        this.users[userIndex].role = role as Role
 
         return this.users[userIndex]
     }

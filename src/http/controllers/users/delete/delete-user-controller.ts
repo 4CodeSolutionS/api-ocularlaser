@@ -1,9 +1,9 @@
 import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
-import { makeFindUser } from '@/usecases/factories/users/make-find-user-usecase'
+import { makeDeleteUser } from '@/usecases/factories/users/make-delete-user-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
-export async function FindUser (request: FastifyRequest, reply:FastifyReply){
+export async function DeleteUser (request: FastifyRequest, reply:FastifyReply){
         try {
             const userSchema = z.object({
                 id: z.string().uuid(),
@@ -13,14 +13,14 @@ export async function FindUser (request: FastifyRequest, reply:FastifyReply){
                 id
             } = userSchema.parse(request.params)
 
-            const findUserUseCase = await makeFindUser()
+            const deleteUserUseCase = await makeDeleteUser()
             
-            const {user} = await findUserUseCase.execute({
+            await deleteUserUseCase.execute({
                 id
             })
             
             
-            return reply.status(200).send(user)
+            return reply.status(200).send({message: 'User deleted successfully'})
             
           } catch (error) {
             if(error instanceof  ResourceNotFoundError){

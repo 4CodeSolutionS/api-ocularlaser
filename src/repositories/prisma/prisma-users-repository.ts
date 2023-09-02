@@ -36,18 +36,7 @@ export class PrismaUsersRepository implements IUsersRepository{
     async findByCPF(cpf: string){
         const user = await prisma.user.findUnique({
             where: {cpf},
-            select: {
-                id: true,
-                name: true,
-                cpf: true,
-                email: true,
-                emailActive: true,
-                phone: true,
-                gender: true,
-                role: true,
-                createdAt: true,
-            }
-        }) as unknown as User
+        })
 
         return user
     }
