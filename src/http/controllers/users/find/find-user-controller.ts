@@ -6,7 +6,7 @@ import { z } from 'zod'
 export async function FindUser (request: FastifyRequest, reply:FastifyReply){
         try {
             const userSchema = z.object({
-                id: z.string().uuid(),
+                id: z.string().uuid().nonempty(),
             })
 
             const { 

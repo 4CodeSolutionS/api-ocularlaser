@@ -7,7 +7,7 @@ import { z } from 'zod'
 export async function SendForgotPassword (request: FastifyRequest, reply:FastifyReply){
         try {
             const userSchema = z.object({
-              email: z.string().email(),
+              email: z.string().email().nonempty(),
             })
 
             const {

@@ -8,13 +8,13 @@ import { z } from 'zod'
 export async function RegisterUser (request: FastifyRequest, reply:FastifyReply){
         try {
             const userSchema = z.object({
-              name: z.string().min(4), 
-              email: z.string().email(), 
-              password: z.string().min(6),
-              phone: z.string(), 
+              name: z.string().min(4).nonempty(), 
+              email: z.string().email().nonempty(), 
+              password: z.string().min(6).nonempty(),
+              phone: z.string().nonempty(), 
               cpf: 
                 z.string()
-                .regex(new RegExp('[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}'), "CPF invalid"),
+                .regex(new RegExp('[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}'), "CPF invalid").nonempty(),
               gender: z.enum(['MASCULINO', 'FEMININO']), 
             })
 

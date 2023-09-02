@@ -10,13 +10,13 @@ import { z } from 'zod'
 export async function UpdateUser (request: FastifyRequest, reply:FastifyReply){
         try {
             const userSchemaBody = z.object({
-              id: z.string().uuid(),
-              name: z.string().min(4), 
-              email: z.string().email(), 
-              phone: z.string(), 
+              id: z.string().uuid().nonempty(),
+              name: z.string().min(4).nonempty(), 
+              email: z.string().email().nonempty(), 
+              phone: z.string().nonempty(), 
               cpf: 
                 z.string()
-                .regex(new RegExp('[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}'), "CPF invalid"),
+                .regex(new RegExp('[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}'), "CPF invalid").nonempty(),
               gender: z.enum(['MASCULINO', 'FEMININO']), 
             })
 
