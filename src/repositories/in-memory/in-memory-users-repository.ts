@@ -1,10 +1,31 @@
-import { Prisma, User, Role } from "@prisma/client";
+import { Prisma, User, Role, $Enums } from "@prisma/client";
 import { IUsersRepository } from "../interface-users-repository";
 import { randomUUID } from "crypto";
 
 export class InMemoryUsersRepository implements IUsersRepository{
     public users: User[] = []
     
+   async getUserSecurity(id: string){
+    const user = this.users.find(user => user.id === id)
+
+    if(!user){
+        return null
+    }
+    const userSecurity:User = {
+        id: user.id,
+        email: user.email,
+        cpf: user.cpf,
+        name: user.name,
+        phone: user.phone,
+        gender: user.gender,
+        role: user.role,
+        emailActive: user.emailActive,
+        createdAt: user.createdAt,
+    } as User
+
+    return userSecurity;
+    }
+
     async changePassword(id: string, password: string){
         const userIndex = this.users.findIndex(user => user.id === id)
 

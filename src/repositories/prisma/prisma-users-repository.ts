@@ -1,8 +1,27 @@
-import { Prisma, User } from "@prisma/client";
+import { $Enums, Prisma, User } from "@prisma/client";
 import { IUsersRepository } from "../interface-users-repository";
 import { prisma } from "@/lib/prisma";
 
 export class PrismaUsersRepository implements IUsersRepository{
+    async getUserSecurity(id: string){
+        const arrUser = await prisma.$queryRaw`
+        SELECT 
+            id, 
+            name, 
+            cpf, 
+            gender, 
+            email, 
+            role, 
+            "emailActive", 
+            "createdAt" 
+        FROM users 
+        WHERE id = ${id}` as unknown as User
+
+        const [user] = arrUser as unknown as User[]
+        
+        return user;
+    }
+
     async changePassword(id: string, password: string){
         await prisma.user.update({
             where:{
@@ -13,6 +32,7 @@ export class PrismaUsersRepository implements IUsersRepository{
             }
         })
     }
+
     async findByCPF(cpf: string){
         const user = await prisma.user.findUnique({
             where: {cpf},
