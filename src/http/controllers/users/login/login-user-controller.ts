@@ -6,7 +6,7 @@ import { z } from 'zod'
 export async function LoginUser (request: FastifyRequest, reply:FastifyReply){
     try {
         const userSchema = z.object({
-          email: z.string().email().nonempty(),
+          email: z.string().email(),
           password: z.string().min(6).nonempty(),
         })
 
