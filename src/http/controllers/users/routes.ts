@@ -24,4 +24,5 @@ export async function usersRoutes(fastifyApp: FastifyInstance) {
 
     // reset password user
     fastifyApp.patch('/reset-password', ResetPassword)
+
 }
