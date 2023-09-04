@@ -18,7 +18,7 @@
     "pretest:e2e": "run-s test:create-prisma-environment test:install-prisma-environment",
     "test:e2e": "vitest run --dir src/http --allowOnly",
     "test:e2e:watch": "vitest --dir src/http",
-    "test:unit:watch": "vitest --watch",
+    "test:unit:watch": "vitest --watch --dir src/usecases",
     "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
     "send:email": "tsx ./src/scripts/send-email-fake.ts"

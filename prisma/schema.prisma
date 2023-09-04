@@ -43,3 +43,17 @@ model Token {
 
   @@map("tokens")
 }
+
+model Address {
+  id           String  @id @unique @default(uuid())
+  street       String
+  num          Decimal
+  negihborhood String
+  city         String
+  state        String
+  zip          String
+  complement   String
+  reference    String
+
+  @@map("addresses")
+}
