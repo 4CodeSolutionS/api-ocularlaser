@@ -2,7 +2,6 @@ import { CPFAlreadyExistsError } from '@/usecases/errors/cpf-already-exists-erro
 import { PassportOrCPFRequiredError } from '@/usecases/errors/cpf-or-passport-required-error'
 import { EmailAlreadyExistsError } from '@/usecases/errors/email-already-exists-error'
 import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
-import { makeRegisterUser } from '@/usecases/factories/users/make-register-user-usecase'
 import { makeUpdateUser } from '@/usecases/factories/users/make-update-user-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
