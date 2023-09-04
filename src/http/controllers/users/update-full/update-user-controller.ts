@@ -16,7 +16,11 @@ export async function UpdateUser (request: FastifyRequest, reply:FastifyReply){
               phone: z.string().nonempty(), 
               cpf: 
                 z.string()
-                .regex(new RegExp('[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}'), "CPF invalid").nonempty(),
+                .refine((cpf) =>{
+                  const cpfRegex = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/
+                  return cpfRegex.test(cpf)
+                 
+                }),
               gender: z.enum(['MASCULINO', 'FEMININO']), 
             })
 
