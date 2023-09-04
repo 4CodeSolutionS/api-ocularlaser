@@ -26,6 +26,8 @@ export async function SendForgotPassword (request: FastifyRequest, reply:Fastify
             if(error instanceof ResourceNotFoundError){
               return reply.status(404).send({ message: error.message})
             }
+
+            throw error
           }
 }
 

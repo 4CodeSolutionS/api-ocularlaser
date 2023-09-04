@@ -25,6 +25,7 @@ export async function LogoutUser (request: FastifyRequest, reply:FastifyReply){
         if(error instanceof ResourceNotFoundError){
           return reply.status(401).send({ message: error.message})
         }
+        throw error
       }
 }
 

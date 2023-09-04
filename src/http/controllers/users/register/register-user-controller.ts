@@ -1,5 +1,4 @@
 import { CPFAlreadyExistsError } from '@/usecases/errors/cpf-already-exists-error'
-import { PassportOrCPFRequiredError } from '@/usecases/errors/cpf-or-passport-required-error'
 import { EmailAlreadyExistsError } from '@/usecases/errors/email-already-exists-error'
 import { makeRegisterUser } from '@/usecases/factories/users/make-register-user-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
@@ -8,13 +7,17 @@ import { z } from 'zod'
 export async function RegisterUser (request: FastifyRequest, reply:FastifyReply){
         try {
             const userSchema = z.object({
+              cpf: 
+                z.string()
+                .refine((cpf) =>{
+                  const cpfRegex = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/
+                  return cpfRegex.test(cpf)
+                 
+                }),
               name: z.string().min(4).nonempty(), 
               email: z.string().email().nonempty(), 
               password: z.string().min(6).nonempty(),
               phone: z.string().nonempty(), 
-              cpf: 
-                z.string()
-                .regex(new RegExp('[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}'), "CPF invalid").nonempty(),
               gender: z.enum(['MASCULINO', 'FEMININO']), 
             })
 

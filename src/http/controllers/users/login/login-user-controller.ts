@@ -24,9 +24,11 @@ export async function LoginUser (request: FastifyRequest, reply:FastifyReply){
         return reply.status(200).send(userInfo)
 
       } catch (error) {
+        console.log(error)
         if(error instanceof CredentialsInvalidError){
           return reply.status(401).send({ message: error.message})
         }
+        throw error
       }
 }
 
