@@ -5,7 +5,7 @@ import { Token } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 
-describe.skip('Reset passowrd (e2e)', ()=>{
+describe('Reset passowrd (e2e)', ()=>{
     beforeEach(async()=>{
         await fastifyApp.ready()
     })

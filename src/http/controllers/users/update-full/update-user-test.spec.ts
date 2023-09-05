@@ -3,7 +3,7 @@ import request from 'supertest'
 import { fastifyApp } from "@/app";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 
-describe.skip('Update User (e2e)', ()=>{
+describe('Update User (e2e)', ()=>{
     beforeAll(async()=>{
         await fastifyApp.ready()
     })
