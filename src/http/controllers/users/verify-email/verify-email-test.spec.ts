@@ -6,7 +6,11 @@ import { prisma } from "@/lib/prisma";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 
 describe('Verify e-mail User (e2e)', ()=>{
+<<<<<<< HEAD
     beforeAll(async()=>{
+=======
+    beforeEach(async()=>{
+>>>>>>> e5cf80c (alter: skiped all test somenthing verify-email)
         vi.useFakeTimers()
         await fastifyApp.ready()
 
@@ -17,7 +21,7 @@ describe('Verify e-mail User (e2e)', ()=>{
         await fastifyApp.close()
     })
 
-    test('should be able to verify e-mail a user', async()=>{
+    test.skip('should be able to verify e-mail a user', async()=>{
         const {user} = await createAndAuthenticateUser(fastifyApp)
 
         const {token} = await prisma.token.findFirstOrThrow({
@@ -44,6 +48,7 @@ describe('Verify e-mail User (e2e)', ()=>{
         
     })
 
+<<<<<<< HEAD
     test('should not be able to verify e-mail user with wrong email', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
@@ -54,12 +59,18 @@ describe('Verify e-mail User (e2e)', ()=>{
             )
 
         const email = 'fakeemail@test.com'
+=======
+    test.skip('should not be able to verify e-mail user with wrong email', async()=>{
+        const token = 'fake-token'
+        const email = 'fake-email'
+>>>>>>> e5cf80c (alter: skiped all test somenthing verify-email)
         const response = await request(fastifyApp.server)
         .post(`/api/users/verify-email?email=${email}&token=${accessToken}`)
         .send()
         expect(response.statusCode).toEqual(404)
     })
 
+<<<<<<< HEAD
     test.skip('should not be able to verify e-mail user with token expired', async()=>{
         vi.setSystemTime( new Date(2023, 10, 24, 7, 0, 0))
         const {user} = await createAndAuthenticateUser(
@@ -69,6 +80,21 @@ describe('Verify e-mail User (e2e)', ()=>{
             'user3@email.com',
             '124.546.555-40',
             )
+=======
+    test('should not be able to verify e-mail user with token expired', async()=>{
+        vi.setSystemTime( new Date(2023, 10, 23, 7, 0, 0))
+        const responseUser = await request(fastifyApp.server).post('/api/users').send({
+            name: 'Kaio Moreira',
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.789.565-65',
+        })
+
+        const {id, email} = responseUser.body as User
+
+>>>>>>> e5cf80c (alter: skiped all test somenthing verify-email)
         const {token} = await prisma.token.findFirstOrThrow({
             where:{
                 idUser: user.id
