@@ -4,6 +4,7 @@ import "dotenv/config"
 import { usersRoutes } from "./http/controllers/users/routes";
 import { ZodError } from "zod";
 import { env } from "./env";
+import { addressRoutes } from "./http/controllers/address/route";
 
 export const fastifyApp = fastify()
 
@@ -15,6 +16,11 @@ fastifyApp.register(fastifyCors, {
 fastifyApp.register(usersRoutes,{
     prefix: 'api/users'
 })
+
+fastifyApp.register(addressRoutes,{
+    prefix: 'api/addresses'
+})
+
 
   
 fastifyApp.setErrorHandler((error:FastifyError, _request:FastifyRequest, reply: FastifyReply)=>{

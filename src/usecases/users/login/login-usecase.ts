@@ -3,7 +3,7 @@ import { IDateProvider } from "@/providers/DateProvider/interface-date-provider"
 import { ITokensRepository } from "@/repositories/interface-tokens-repository";
 import { IUsersRepository } from "@/repositories/interface-users-repository";
 import { CredentialsInvalidError } from "@/usecases/errors/credentials-invalid-error";
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import { compare } from "bcrypt";
 import 'dotenv/config'
 import jwt from 'jsonwebtoken'
@@ -30,7 +30,7 @@ export class LoginUseCase{
         password
     }:IRequestLoginAccount):Promise<IResponseLoginAccount>{
         const findUserExists = await this.usersRepository.findByEmail(email)
-
+console.log(findUserExists)
         if(!findUserExists){
             throw new CredentialsInvalidError()
         }
@@ -41,7 +41,7 @@ export class LoginUseCase{
             throw new CredentialsInvalidError()
         }
         // Criar access token
-        const accessToken = jwt.sign({}, env.JWT_SECRET_ACCESS_TOKEN, {
+        const accessToken = jwt.sign({role: findUserExists.role as Role}, env.JWT_SECRET_ACCESS_TOKEN, {
             subject: findUserExists.id,
             expiresIn: env.JWT_EXPIRES_IN_ACCESS_TOKEN
         }) 

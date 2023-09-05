@@ -19,6 +19,10 @@ export class InMemoryUsersRepository implements IUsersRepository{
         phone: user.phone,
         gender: user.gender,
         role: user.role,
+<<<<<<< HEAD
+=======
+        idClinic: user.idClinic,
+>>>>>>> development
         emailActive: user.emailActive,
         createdAt: user.createdAt,
     } as User
@@ -35,8 +39,10 @@ export class InMemoryUsersRepository implements IUsersRepository{
         
         this.users[userIndex].password = password as string
     }    
+
     async create({
         id,
+        idClinic,
         cpf,
         email,
         gender,
@@ -48,6 +54,7 @@ export class InMemoryUsersRepository implements IUsersRepository{
     }: Prisma.UserUncheckedCreateInput) {
         const user = {
             id: id ? id : randomUUID(),
+            idClinic: idClinic ? idClinic : null,
             email,
             gender,
             name,
@@ -78,8 +85,8 @@ export class InMemoryUsersRepository implements IUsersRepository{
         return user;
     }
 
-    async findByEmail(email: string){
-        const user = this.users.find(user => user.email === email)
+    async findByCPF(cpf: string){
+        const user = this.users.find(user => user.cpf === cpf)
 
         if(!user){
             return null
@@ -88,8 +95,8 @@ export class InMemoryUsersRepository implements IUsersRepository{
         return user;
     }
 
-    async findByCPF(cpf: string){
-        const user = this.users.find(user => user.cpf === cpf)
+    async findByEmail(email: string){
+        const user = this.users.find(user => user.email === email)
 
         if(!user){
             return null

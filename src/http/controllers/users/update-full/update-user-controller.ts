@@ -2,6 +2,10 @@ import { CPFAlreadyExistsError } from '@/usecases/errors/cpf-already-exists-erro
 import { PassportOrCPFRequiredError } from '@/usecases/errors/cpf-or-passport-required-error'
 import { EmailAlreadyExistsError } from '@/usecases/errors/email-already-exists-error'
 import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
+<<<<<<< HEAD
+=======
+import { makeRegisterUser } from '@/usecases/factories/users/make-register-user-usecase'
+>>>>>>> development
 import { makeUpdateUser } from '@/usecases/factories/users/make-update-user-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -15,11 +19,15 @@ export async function UpdateUser (request: FastifyRequest, reply:FastifyReply){
               phone: z.string().nonempty(), 
               cpf: 
                 z.string()
+<<<<<<< HEAD
                 .refine((cpf) =>{
                   const cpfRegex = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/
                   return cpfRegex.test(cpf)
                  
                 }),
+=======
+                .regex(new RegExp('[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}'), "CPF invalid").nonempty(),
+>>>>>>> development
               gender: z.enum(['MASCULINO', 'FEMININO']), 
             })
 

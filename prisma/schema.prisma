@@ -28,6 +28,8 @@ model User {
   emailActive Boolean  @default(false)
   createdAt   DateTime @default(now())
   Token       Token[]
+  Clinic      Clinic?  @relation(fields: [idClinic], references: [id])
+  idClinic    String?
 
   @@map("users")
 }
@@ -42,4 +44,31 @@ model Token {
   idUser String
 
   @@map("tokens")
+}
+
+model Address {
+  id           String   @id @unique @default(uuid())
+  street       String
+  num          Decimal
+  neighborhood String
+  city         String
+  state        String
+  zip          String
+  complement   String
+  reference    String
+  Clinic       Clinic[]
+
+  @@map("addresses")
+}
+
+model Clinic {
+  id   String @id @unique @default(uuid())
+  name String @unique
+
+  address   Address @relation(fields: [idAddress], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  idAddress String
+
+  users User[]
+
+  @@map("clinics")
 }
