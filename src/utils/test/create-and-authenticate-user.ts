@@ -12,13 +12,12 @@ export async function createAndAuthenticateUser(
     id?: string,
     email?:string, 
     cpf?:string) {
-    // criar usuario pelo prisma
     await prisma.user.create({
         data:{
             id: id ? id : randomUUID(),
             name:'user1',
             email: email ? email : 'user@test.com',
-            cpf: cpf ? cpf : "12345678910",
+            cpf: cpf ? cpf : "123.456.789-10",
             gender: 'MASCULINO',
             phone: '77-77777-7777',
             password: await hash('123456', 8),
@@ -34,7 +33,6 @@ export async function createAndAuthenticateUser(
             email: email ? email : 'user@test.com',
             password: '123456',
         }) 
-    
     const { accessToken, refreshToken, user} = response.body as IResponseLoginAccount
     
     // retornar acessToken, refreshToken e usuario

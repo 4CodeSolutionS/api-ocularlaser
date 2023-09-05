@@ -10,27 +10,27 @@ export class InMemoryAddressesRepository implements IAddressesRepository{
         street,
         city,
         complement,
-        negihborhood,
+        neighborhood,
         num,
         reference,
         state,
         zip
     }: Prisma.AddressUncheckedCreateInput){
-        const addess = {
+        const address = {
             id: id ? id : randomUUID(),
             street,
             city,
             complement,
-            negihborhood,
+            neighborhood,
             num: new Prisma.Decimal(num as number),
             reference,
             state,
             zip
         }
 
-        this.addresses.push(addess);
+        this.addresses.push(address);
 
-        return addess 
+        return address 
 
     }
 
@@ -49,7 +49,7 @@ export class InMemoryAddressesRepository implements IAddressesRepository{
         street,
         city,
         complement,
-        negihborhood,
+        neighborhood,
         num,
         reference,
         state,
@@ -59,7 +59,7 @@ export class InMemoryAddressesRepository implements IAddressesRepository{
 
         this.addresses[address].city = city as string
         this.addresses[address].complement = complement as string
-        this.addresses[address].negihborhood = negihborhood as string
+        this.addresses[address].neighborhood = neighborhood as string
         this.addresses[address].num = new Prisma.Decimal(num as number)
         this.addresses[address].reference = reference as string
         this.addresses[address].state = state as string

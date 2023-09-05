@@ -6,7 +6,7 @@ interface IRequestDeleteUser {
    id: string
 }
 
-export class FindUserUseCase{
+export class DeleteUserUseCase{
     constructor(
         private usersRepository: IUsersRepository,
     ) {}

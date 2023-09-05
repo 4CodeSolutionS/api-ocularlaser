@@ -7,7 +7,7 @@ import { IAddressesRepository } from "@/repositories/interface-addresses-reposit
 interface IRequestCreateAddress {
     city: string
     complement: string
-    negihborhood: string
+    neighborhood: string
     num: number
     reference: string
     state: string
@@ -26,7 +26,7 @@ export class CreateAddressUseCase{
     async execute({
         city,
         complement,
-        negihborhood,
+        neighborhood,
         num,
         reference,
         state,
@@ -37,7 +37,7 @@ export class CreateAddressUseCase{
         const address = await this.addressesRepository.create({
             city,
             complement,
-            negihborhood,
+            neighborhood,
             num,
             reference,
             state,

@@ -46,7 +46,7 @@ describe("Refresh token (unit)", () => {
     });
 
     afterEach(()=>{
-        vi.useFakeTimers()
+        vi.useRealTimers()
     })
 
     test("Should be able to create a new refresh token", async () => {
@@ -68,14 +68,14 @@ describe("Refresh token (unit)", () => {
     });
 
     test("Should not be able to refresh token expired", async () => {
-        vi.setSystemTime( new Date(2023, 8, 23, 19, 0, 0))
+        vi.setSystemTime( new Date(2023, 8, 20, 0, 0))
         const {user} = await loginUseCase.execute({
             email: 'user1-test@email.com',
             password: '123456'
         })
         const userToken = await usersTokensRepositoryInMemory.findByUserId(user.id) as Token
 
-        vi.setSystemTime( new Date(2023, 9, 23, 23, 0, 0))
+        vi.setSystemTime( new Date(2024, 8, 30, 1, 0))
 
         await expect(()=> stu.execute({ 
          token: userToken.token,

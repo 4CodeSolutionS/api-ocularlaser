@@ -18,7 +18,7 @@ describe("Find user (unit)", () => {
             street: 'street-faker',
             city: 'city-faker',
             complement: 'complement-faker',
-            negihborhood: 'negihborhood-faker',
+            neighborhood: 'negihborhood-faker',
             num: 1,
             reference: 'reference-faker',
             state: 'state-faker',

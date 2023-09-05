@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryAddressesRepository } from "@/repositories/in-memory/in-memory-addresses-repository";
-import { FindAddressUseCase } from "./delete-address-usecase";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { DeleteAddressUseCase } from "./delete-address-usecase";
 
 let addressInMemoryRepository: InMemoryAddressesRepository;
-let stu: FindAddressUseCase;
+let stu: DeleteAddressUseCase;
 
 describe("Delete address (unit)", () => {
     beforeEach(async () => {
         addressInMemoryRepository = new InMemoryAddressesRepository()
-        stu = new FindAddressUseCase(
+        stu = new DeleteAddressUseCase(
             addressInMemoryRepository, 
         )
 
@@ -18,7 +18,7 @@ describe("Delete address (unit)", () => {
             street: 'street-faker',
             city: 'city-faker',
             complement: 'complement-faker',
-            negihborhood: 'negihborhood-faker',
+            neighborhood: 'negihborhood-faker',
             num: 1,
             reference: 'reference-faker',
             state: 'state-faker',
@@ -32,7 +32,6 @@ describe("Delete address (unit)", () => {
        })
 
         const findAddress = await addressInMemoryRepository.findById('7881f50f-46dc-4b7d-b5d6-84bc924023e4')
-
         expect(findAddress).toEqual(null)
     });
 

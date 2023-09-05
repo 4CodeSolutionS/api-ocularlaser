@@ -1,0 +1,11 @@
+import { Role } from "@prisma/client"
+import { FastifyReply, FastifyRequest } from "fastify"
+
+export function verifyUserRole(verifyToRole: 'ADMIN' | 'PACIENT' | 'DOCTOR' ){
+    return async (request: FastifyRequest, reply: FastifyReply) => {
+        const {role} = request.user
+        if(role !== verifyToRole){
+            return reply.status(401).send({message: "Unauthorized."})
+        }
+    }        
+}

@@ -34,12 +34,14 @@ describe("Verify email user (unit)", () => {
             usersTokensRepositoryInMemory,
             dayjsDateProvider
         )
+        
+       vi.useFakeTimers()
 
-        vi.useFakeTimers()
     });
 
     afterEach(()=>{
-        vi.useFakeTimers()
+        vi.useRealTimers()
+
     })
 
     test("Should be able to verify a new account", async () => {
@@ -82,7 +84,7 @@ describe("Verify email user (unit)", () => {
     });
 
     test("Should not be able to verify a account with token expired", async () => {
-        vi.setSystemTime( new Date(2023, 8, 23, 19, 0, 0))
+        vi.setSystemTime( new Date(2023, 8, 23, 7, 0, 0))
         const {user} = await registerUseCase.execute({
             cpf: "1234567891110",
             email: 'user1-test@email.com',
@@ -93,8 +95,9 @@ describe("Verify email user (unit)", () => {
         })
         const userToken = await usersTokensRepositoryInMemory.findByUserId(user.id) as Token
 
-        vi.setSystemTime( new Date(2023, 8, 23, 23, 0, 0))
-        await expect(()=> stu.execute({ 
+        vi.setSystemTime( new Date(2023, 8, 23, 10, 1, 0))
+        await expect(()=> 
+        stu.execute({ 
          token: userToken.token,
          email: 'user1-test@email.com',
      }),
