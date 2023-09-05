@@ -1,11 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-users-repository";
-<<<<<<< HEAD
-import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
-import { InMemoryTokensRepository } from "@/repositories/in-memory/in-memory-tokens-repository";
-import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
-=======
->>>>>>> development
 import { hash } from "bcrypt";
 import { UpdateUserUseCase } from "./update-user-usecase";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
@@ -76,7 +70,6 @@ describe("Update user (unit)", () => {
         })).rejects.toBeInstanceOf(ResourceNotFoundError)
     });
 
-<<<<<<< HEAD
     test("Should not be able to update a user account with CPF already exists", async () => {
         await expect(() => stu.execute({ 
             id: 'id-user-1',
@@ -89,8 +82,6 @@ describe("Update user (unit)", () => {
             ).rejects.toBeInstanceOf(CPFAlreadyExistsError)
     });
 
-=======
->>>>>>> development
     test("Should not be able to update a user account with Email already exists", async () => {
         await expect(() => stu.execute({ 
             id: 'id-user-2',

@@ -19,10 +19,6 @@ export class InMemoryUsersRepository implements IUsersRepository{
         phone: user.phone,
         gender: user.gender,
         role: user.role,
-<<<<<<< HEAD
-=======
-        idClinic: user.idClinic,
->>>>>>> development
         emailActive: user.emailActive,
         createdAt: user.createdAt,
     } as User
