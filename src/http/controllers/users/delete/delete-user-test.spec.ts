@@ -18,10 +18,6 @@ describe('Delete User (e2e)', ()=>{
         .delete(`/api/users/${user.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send()
-<<<<<<< HEAD
-=======
-
->>>>>>> development
         expect(response.statusCode).toEqual(200)
     })
 
