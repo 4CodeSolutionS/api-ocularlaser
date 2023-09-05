@@ -7,10 +7,17 @@ import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-
 
 describe('Verify e-mail User (e2e)', ()=>{
 <<<<<<< HEAD
+<<<<<<< HEAD
     beforeAll(async()=>{
 =======
     beforeEach(async()=>{
 >>>>>>> e5cf80c (alter: skiped all test somenthing verify-email)
+=======
+    beforeEach(async()=>{
+=======
+    beforeAll(async()=>{
+>>>>>>> 34e89a8 (create: test for validation create clinic and fix: cases with vi.seTime adding afterEach)
+>>>>>>> 74a8a51 (fix: conflix for branch)
         vi.useFakeTimers()
         await fastifyApp.ready()
 
@@ -49,6 +56,7 @@ describe('Verify e-mail User (e2e)', ()=>{
     })
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     test('should not be able to verify e-mail user with wrong email', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
@@ -64,12 +72,30 @@ describe('Verify e-mail User (e2e)', ()=>{
         const token = 'fake-token'
         const email = 'fake-email'
 >>>>>>> e5cf80c (alter: skiped all test somenthing verify-email)
+=======
+    test.skip('should not be able to verify e-mail user with wrong email', async()=>{
+        const token = 'fake-token'
+        const email = 'fake-email'
+=======
+    test('should not be able to verify e-mail user with wrong email', async()=>{
+        const {accessToken, user} = await createAndAuthenticateUser(
+            fastifyApp,
+            "PACIENT",
+            "d86db2b4-88da-4778-82ce-6e42c2ae6530",
+            'user2@email.com',
+            '124.546.159-40',
+            )
+
+        const email = 'fakeemail@test.com'
+>>>>>>> 34e89a8 (create: test for validation create clinic and fix: cases with vi.seTime adding afterEach)
+>>>>>>> 74a8a51 (fix: conflix for branch)
         const response = await request(fastifyApp.server)
         .post(`/api/users/verify-email?email=${email}&token=${accessToken}`)
         .send()
         expect(response.statusCode).toEqual(404)
     })
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     test.skip('should not be able to verify e-mail user with token expired', async()=>{
         vi.setSystemTime( new Date(2023, 10, 24, 7, 0, 0))
@@ -81,6 +107,8 @@ describe('Verify e-mail User (e2e)', ()=>{
             '124.546.555-40',
             )
 =======
+=======
+>>>>>>> 74a8a51 (fix: conflix for branch)
     test('should not be able to verify e-mail user with token expired', async()=>{
         vi.setSystemTime( new Date(2023, 10, 23, 7, 0, 0))
         const responseUser = await request(fastifyApp.server).post('/api/users').send({
@@ -94,7 +122,21 @@ describe('Verify e-mail User (e2e)', ()=>{
 
         const {id, email} = responseUser.body as User
 
+<<<<<<< HEAD
 >>>>>>> e5cf80c (alter: skiped all test somenthing verify-email)
+=======
+=======
+    test.skip('should not be able to verify e-mail user with token expired', async()=>{
+        vi.setSystemTime( new Date(2023, 10, 24, 7, 0, 0))
+        const {user} = await createAndAuthenticateUser(
+            fastifyApp,
+            "PACIENT",
+            "9b20f428-4ad6-40be-8c85-ee1b8d0edbb4",
+            'user3@email.com',
+            '124.546.555-40',
+            )
+>>>>>>> 34e89a8 (create: test for validation create clinic and fix: cases with vi.seTime adding afterEach)
+>>>>>>> 74a8a51 (fix: conflix for branch)
         const {token} = await prisma.token.findFirstOrThrow({
             where:{
                 idUser: user.id
