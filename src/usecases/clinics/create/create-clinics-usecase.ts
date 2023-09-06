@@ -15,7 +15,7 @@ interface IResponseCreateClinic {
 
 export class CreateClinicUseCase{
     constructor(
-        private clinics: IClinicsRepository,
+        private clinicsRepository: IClinicsRepository,
     ) {}
 
     async execute({
@@ -23,7 +23,7 @@ export class CreateClinicUseCase{
         name
     }:IRequestCreateClinic):Promise<IResponseCreateClinic>{
         // buscar se existe uma clinica com o mesmo nome
-        const clinicAlreadyExists = await this.clinics.findByName(name)
+        const clinicAlreadyExists = await this.clinicsRepository.findByName(name)
 
         // validar se existe uma clinica com o mesmo nome
         if(clinicAlreadyExists){
@@ -31,7 +31,7 @@ export class CreateClinicUseCase{
         }
 
         //criar a clinica
-        const clinic = await this.clinics.create({
+        const clinic = await this.clinicsRepository.create({
             idAddress,
             name
         })

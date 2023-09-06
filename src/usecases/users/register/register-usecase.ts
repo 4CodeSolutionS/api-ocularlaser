@@ -2,7 +2,6 @@ import { env } from "@/env";
 import { IUsersRepository } from "@/repositories/interface-users-repository";
 import { CPFAlreadyExistsError } from "@/usecases/errors/cpf-already-exists-error";
 import { EmailAlreadyExistsError } from "@/usecases/errors/email-already-exists-error";
-import { PassportAlreadyExistsError } from "@/usecases/errors/passport-already-exists-error";
 import { User } from "@prisma/client";
 import { hash } from 'bcrypt'
 import 'dotenv/config'
