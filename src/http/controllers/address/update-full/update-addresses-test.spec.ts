@@ -54,7 +54,7 @@ describe('Update Address (e2e)', ()=>{
         expect(response.statusCode).toEqual(200)
     })
 
-    test.skip('should not be able to update a address with id invalid', async()=>{
+    test('should not be able to update a address with id invalid', async()=>{
         const {accessToken} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',

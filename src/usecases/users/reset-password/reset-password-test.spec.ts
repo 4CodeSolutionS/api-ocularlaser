@@ -8,6 +8,7 @@ import { ResetPasswordUseCase } from "./reset-password-usecase";
 import { Token, User } from "@prisma/client";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { AccessTimeOutError } from "@/usecases/errors/access-time-out-error";
+import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let usersTokensRepositoryInMemory: InMemoryTokensRepository;
@@ -70,6 +71,15 @@ describe("Reset password (unit)", () => {
         
         expect(updateUserPassword.password !== oldPassword).toBeTruthy()
     });
+
+    test("Should not be able to reset passwod account with token invalid", async () => {
+        await expect(()=> stu.execute({
+            token: 'fake token',
+            password: '101010'
+        })).rejects.toBeInstanceOf(ResourceNotFoundError)
+
+    });
+
 
     test("Should not be able to verify a account with token expired", async () => {
         vi.setSystemTime(new Date(2023, 8, 23, 7, 0, 0))

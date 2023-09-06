@@ -5,6 +5,7 @@ import { usersRoutes } from "./http/controllers/users/routes";
 import { ZodError } from "zod";
 import { env } from "./env";
 import { addressRoutes } from "./http/controllers/address/route";
+import { clinicsRoutes } from "./http/controllers/clinics/route";
 
 export const fastifyApp = fastify()
 
@@ -19,6 +20,10 @@ fastifyApp.register(usersRoutes,{
 
 fastifyApp.register(addressRoutes,{
     prefix: 'api/addresses'
+})
+
+fastifyApp.register(clinicsRoutes,{
+    prefix: 'api/clinics'
 })
 
 

@@ -1,8 +1,7 @@
 import { Clinic } from "@prisma/client";
 import 'dotenv/config'
-import { IAddressesRepository } from "@/repositories/interface-addresses-repository";
 import { IClinicsRepository } from "@/repositories/interface-clinics-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { ClinicAlreadyExistsError } from "@/usecases/errors/clinic-already-exists-error";
 
 interface IRequestCreateClinic {
     idAddress: string
@@ -27,7 +26,7 @@ export class CreateClinicUseCase{
 
         // validar se existe uma clinica com o mesmo nome
         if(clinicAlreadyExists){
-            throw new ResourceNotFoundError()
+            throw new ClinicAlreadyExistsError()
         }
 
         //criar a clinica

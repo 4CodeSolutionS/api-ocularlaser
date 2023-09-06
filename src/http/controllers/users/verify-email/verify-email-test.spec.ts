@@ -62,35 +62,39 @@ describe('Verify e-mail User (e2e)', ()=>{
 
     test('should not be able to verify e-mail user with token expired', async()=>{
         vi.setSystemTime( new Date(2023, 10, 24, 7, 0, 0))
-        const {user} = await createAndAuthenticateUser(
-            fastifyApp,
-            "PACIENT",
-            "9b20f428-4ad6-40be-8c85-ee1b8d0edbb4",
-            'user3@email.com',
-            '124.546.555-40',
-            )
+        const responseCreateUser = await request(fastifyApp.server).post('/api/users').send({
+            name: 'Kaio Moreira',
+            email: 'user1-dev@outlook.com',
+            password: '123456',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.789.565-65',
+        })
+
+        const {id, email} = responseCreateUser.body as User
+
         const {token} = await prisma.token.findFirstOrThrow({
             where:{
-                idUser: user.id
+                idUser: id
             }
         }) as unknown as Token
 
         vi.setSystemTime( new Date(2023, 10, 24, 10, 0, 1))
         const response = await request(fastifyApp.server)
-        .patch(`/api/users/verify-email?email=${user.email}&token=${token}`)
+        .patch(`/api/users/verify-email?email=${email}&token=${token}`)
         .send()
 
         const findUser = await prisma.user.findUniqueOrThrow({
             where:{
-                id: user.id
+                id: id
             }
         })
         expect(response.statusCode).toEqual(401)
-        // expect(findUser).toEqual(
-        //     expect.objectContaining({
-        //         emailActive: false
-        //     })
-        // )
+        expect(findUser).toEqual(
+            expect.objectContaining({
+                emailActive: false
+            })
+        )
     })
 
 })
