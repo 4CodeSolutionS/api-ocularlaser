@@ -8,7 +8,7 @@ import { UpdateAddress } from "./update-full/update-addresses-controller";
 
 export async function addressRoutes(fastifyApp: FastifyInstance) {
     fastifyApp.addHook('onRequest', verifyTokenJWT)
-    fastifyApp.addHook('onRequest', verifyUserRole("ADMIN"))
+    // fastifyApp.addHook('onRequest', verifyUserRole("ADMIN"))
     
     //create address
     fastifyApp.post('/', CreateAddress)  

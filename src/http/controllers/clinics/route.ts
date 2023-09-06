@@ -9,7 +9,7 @@ import { UpdateClinic } from "./update-full/update-clinics-controller"
 
 export async function clinicsRoutes(fastifyApp: FastifyInstance) {
     fastifyApp.addHook('onRequest', verifyTokenJWT)
-    fastifyApp.addHook('onRequest', verifyUserRole("ADMIN"))
+    // fastifyApp.addHook('onRequest', verifyUserRole("ADMIN"))
     
     // create clinic
     fastifyApp.post('/', CreateClinic) 
