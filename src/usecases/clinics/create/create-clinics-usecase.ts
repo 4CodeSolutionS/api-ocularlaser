@@ -1,10 +1,10 @@
-import { Clinic } from "@prisma/client";
+import { Address, Clinic } from "@prisma/client";
 import 'dotenv/config'
 import { IClinicsRepository } from "@/repositories/interface-clinics-repository";
 import { ClinicAlreadyExistsError } from "@/usecases/errors/clinic-already-exists-error";
 
 interface IRequestCreateClinic {
-    idAddress: string
+    address: Address
     name: string
 }
 
@@ -18,7 +18,16 @@ export class CreateClinicUseCase{
     ) {}
 
     async execute({
-        idAddress,
+        address:{
+            city,
+            complement,
+            neighborhood,
+            num,
+            reference,
+            state,
+            street,
+            zip
+        },
         name
     }:IRequestCreateClinic):Promise<IResponseCreateClinic>{
         // buscar se existe uma clinica com o mesmo nome
@@ -31,7 +40,18 @@ export class CreateClinicUseCase{
 
         //criar a clinica
         const clinic = await this.clinicsRepository.create({
-            idAddress,
+            Address:{
+                create:{
+                    city,
+                    complement,
+                    neighborhood,
+                    num,
+                    reference,
+                    state,
+                    street,
+                    zip
+                },
+            },
             name
         })
 

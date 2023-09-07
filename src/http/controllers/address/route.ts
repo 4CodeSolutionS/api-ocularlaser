@@ -1,5 +1,4 @@
 import { FastifyInstance } from "fastify";
-import { CreateAddress } from "./create/create-addresses-controller";
 import { verifyTokenJWT } from "@/http/middlewares/verify-token-jwt";
 import { verifyUserRole } from "@/http/middlewares/veiryf-user-role";
 import { DeleteAddress } from "./delete/delete-addresses-controller";
@@ -11,7 +10,7 @@ export async function addressRoutes(fastifyApp: FastifyInstance) {
     // fastifyApp.addHook('onRequest', verifyUserRole("ADMIN"))
     
     //create address
-    fastifyApp.post('/', CreateAddress)  
+    // fastifyApp.post('/', CreateAddress)  
     
     //find address
     fastifyApp.get('/:id', FindAddress)

@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryAddressesRepository } from "@/repositories/in-memory/in-memory-addresses-repository";
 import { CreateClinicUseCase } from "./create-clinics-usecase";
 import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-clinics-repository";
+import { Prisma } from "@prisma/client";
+import { ClinicAlreadyExistsError } from "@/usecases/errors/clinic-already-exists-error";
 
 let addressInMemoryRepository: InMemoryAddressesRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
@@ -15,23 +17,22 @@ describe("Create clinic (unit)", () => {
             clinicRepositoryInMemory, 
         )
 
-        await addressInMemoryRepository.create({
-            id: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
-            street: 'Rua 1',
-            complement: 'Casa',
-            neighborhood: 'Bairro 1',
-            num: 1,
-            reference: 'Perto do mercado',
-            state: 'SP',
-            zip: '12345678',
-            city: 'São Paulo'
-        })
-
     });
 
     test("Should be able to create a clinic", async () => {
        const {clinic} = await stu.execute({
-            idAddress: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
+            address: {
+                id: '',
+                idClinic: null,
+                street: 'Rua 1',
+                complement: 'Casa',
+                neighborhood: 'Bairro 1',
+                num: new Prisma.Decimal(123),
+                reference: 'Perto do mercado',
+                state: 'SP',
+                zip: '12345678',
+                city: 'São Paulo'
+            },
             name: 'Clinica Kaiser'
        })
 
@@ -41,4 +42,40 @@ describe("Create clinic (unit)", () => {
         })
        )
     });
+
+    test("Should not be able to create a clinic with name already exists", async () => {
+        const {clinic} = await stu.execute({
+             address: {
+                 id: '',
+                 idClinic: null,
+                 street: 'Rua 1',
+                 complement: 'Casa',
+                 neighborhood: 'Bairro 1',
+                 num: new Prisma.Decimal(123),
+                 reference: 'Perto do mercado',
+                 state: 'SP',
+                 zip: '12345678',
+                 city: 'São Paulo'
+             },
+             name: 'Clinica Kaiser'
+        })
+ 
+        await expect(()=> stu.execute({
+            address: {
+                id: '',
+                idClinic: null,
+                street: 'Rua 1',
+                complement: 'Casa',
+                neighborhood: 'Bairro 1',
+                num: new Prisma.Decimal(123),
+                reference: 'Perto do mercado',
+                state: 'SP',
+                zip: '12345678',
+                city: 'São Paulo'
+            },
+            name: 'Clinica Kaiser'
+       })).rejects.toBeInstanceOf(ClinicAlreadyExistsError)
+     });
+
+
 })
