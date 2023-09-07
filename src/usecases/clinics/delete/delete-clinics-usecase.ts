@@ -2,6 +2,7 @@ import { Clinic } from "@prisma/client";
 import 'dotenv/config'
 import { IClinicsRepository } from "@/repositories/interface-clinics-repository";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { IAddressesRepository } from "@/repositories/interface-addresses-repository";
 
 interface IRequestDeleteClinic {
     id:string
@@ -25,5 +26,6 @@ export class DeleteClinicUseCase{
 
         //deletar uma clinica  
         await this.clinicsRepository.deleteById(id)
+
     }
 }

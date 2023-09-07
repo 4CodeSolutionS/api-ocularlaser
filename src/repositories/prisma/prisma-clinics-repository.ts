@@ -60,6 +60,8 @@ export class PrismaClinicsRepository implements IClinicsRepository{
     }
     
     async deleteById(id: string) {
-        await prisma.clinic.delete({where:{id}})
+        await prisma.clinic.delete({
+            where:{id},
+        })
     }
 }
