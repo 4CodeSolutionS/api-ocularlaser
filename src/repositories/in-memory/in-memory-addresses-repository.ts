@@ -7,6 +7,7 @@ export class InMemoryAddressesRepository implements IAddressesRepository{
 
     async create({
         id,
+        idClinic,
         street,
         city,
         complement,
@@ -18,6 +19,7 @@ export class InMemoryAddressesRepository implements IAddressesRepository{
     }: Prisma.AddressUncheckedCreateInput){
         const address = {
             id: id ? id : randomUUID(),
+            idClinic: idClinic ? idClinic : null,
             street,
             city,
             complement,
@@ -34,8 +36,8 @@ export class InMemoryAddressesRepository implements IAddressesRepository{
 
     }
 
-    async findById(id: string){
-        const address = this.addresses.find(address => address.id === id);
+    async findByClinicId(idClinic: string){
+        const address = this.addresses.find(address => address.idClinic === idClinic);
 
         if(!address){
             return null
@@ -44,8 +46,9 @@ export class InMemoryAddressesRepository implements IAddressesRepository{
         return address;
     }
 
-    async update({
+    async updateByClinicId({
         id,
+        idClinic,
         street,
         city,
         complement,
@@ -55,7 +58,7 @@ export class InMemoryAddressesRepository implements IAddressesRepository{
         state,
         zip   
     }: Prisma.AddressUncheckedUpdateInput){
-        const address = this.addresses.findIndex(address => address.id === id);
+        const address = this.addresses.findIndex(address => address.idClinic === idClinic);
 
         this.addresses[address].city = city as string
         this.addresses[address].complement = complement as string

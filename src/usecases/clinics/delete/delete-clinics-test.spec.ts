@@ -17,31 +17,30 @@ describe("Delete clinic (unit)", () => {
             clinicRepositoryInMemory, 
         )
 
-        await addressInMemoryRepository.create({
-            id: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
-            street: 'Rua 1',
-            complement: 'Casa',
-            neighborhood: 'Bairro 1',
-            num: 1,
-            reference: 'Perto do mercado',
-            state: 'SP',
-            zip: '12345678',
-            city: 'São Paulo'
-        })
-
         await clinicRepositoryInMemory.create({
-            id: '16e1d956-71fd-4dac-8b3b-d4147bff4909',
-            idAddress: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
-            name: 'Clinica Kaiser'
+            id: '152deda6-b234-4632-9200-50522635994c',
+                name: 'Clinica Zen',
+                Address:{
+                    create:{
+                        street: 'Rua 1',
+                        complement: 'Casa',
+                        neighborhood: 'Bairro 1',
+                        num: 1,
+                        reference: 'Perto do mercado',
+                        state: 'SP',
+                        zip: '12345678',
+                        city: 'São Paulo'
+                    }
+                },
         })
     });
 
     test("Should be able to delete a clinic", async () => {
        await stu.execute({
-            id: '16e1d956-71fd-4dac-8b3b-d4147bff4909'
+            id: '152deda6-b234-4632-9200-50522635994c'
        })
 
-      const findClinicExists = await clinicRepositoryInMemory.findById('16e1d956-71fd-4dac-8b3b-d4147bff4909') as Clinic
+      const findClinicExists = await clinicRepositoryInMemory.findById('152deda6-b234-4632-9200-50522635994c') as Clinic
 
         expect(findClinicExists).toEqual(null)
     });

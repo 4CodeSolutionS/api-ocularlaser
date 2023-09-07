@@ -3,21 +3,21 @@ import { makeFindAddress } from '@/usecases/factories/address/make-find-addresse
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
-export async function FindAddress (request: FastifyRequest, reply:FastifyReply){
+export async function FindAddress(request: FastifyRequest, reply:FastifyReply){
         try {
             const addressSchema = z.object({
-                id: z.string().uuid(),
+                idClinic: z.string().uuid(),
             })
 
             const { 
-                id
+                idClinic
                 
             } = addressSchema.parse(request.params)
 
             const findAddressUseCase = await makeFindAddress()
             
             const {address} = await findAddressUseCase.execute({
-                id
+                idClinic
             })
             
             return reply.status(200).send(address)

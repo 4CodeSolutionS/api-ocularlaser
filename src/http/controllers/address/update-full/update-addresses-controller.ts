@@ -6,7 +6,7 @@ import { z } from 'zod'
 export async function UpdateAddress (request: FastifyRequest, reply:FastifyReply){
         try {
             const addressSchema = z.object({
-                id: z.string().uuid().nonempty(),
+                idClinic: z.string().uuid().nonempty(),
                 street: z.string().nonempty(),
                 num: z.number().nonnegative(),
                 complement: z.string().nonempty(),
@@ -18,7 +18,7 @@ export async function UpdateAddress (request: FastifyRequest, reply:FastifyReply
             })
 
             const { 
-                id,
+                idClinic,
                 city,
                 complement,
                 num,
@@ -33,7 +33,7 @@ export async function UpdateAddress (request: FastifyRequest, reply:FastifyReply
             const updateAddressUseCase = await makeUpdateAddress()
             
             const {address} = await updateAddressUseCase.execute({
-                id,
+                idClinic,
                 city,
                 complement,
                 num,

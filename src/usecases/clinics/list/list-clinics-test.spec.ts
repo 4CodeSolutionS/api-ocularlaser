@@ -15,37 +15,38 @@ describe("List clinic (unit)", () => {
             clinicRepositoryInMemory, 
         )
 
-        await addressInMemoryRepository.create({
-            id: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
-            street: 'Rua 1',
-            complement: 'Casa',
-            neighborhood: 'Bairro 1',
-            num: 1,
-            reference: 'Perto do mercado',
-            state: 'SP',
-            zip: '12345678',
-            city: 'São Paulo'
-        })
-        await addressInMemoryRepository.create({
-            id: '16e1d956-71fd-4dac-8b3b-d4147bff4909',
-            street: 'Rua 2',
-            complement: 'Casa',
-            neighborhood: 'Bairro 2',
-            num: 1,
-            reference: 'Perto do mercado',
-            state: 'SP',
-            zip: '168786',
-            city: 'São Paulo'
-        })
         await clinicRepositoryInMemory.create({
-            id: '4961d280-dfa3-4754-975c-e9f387cb2394',
-            idAddress: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
-            name: 'Clinica Kaiser'
+            id: '152deda6-b234-4632-9200-50522635994c',
+                name: 'Clinica Zen',
+                Address:{
+                    create:{
+                        street: 'Rua 1',
+                        complement: 'Casa',
+                        neighborhood: 'Bairro 1',
+                        num: 1,
+                        reference: 'Perto do mercado',
+                        state: 'SP',
+                        zip: '12345678',
+                        city: 'São Paulo'
+                    }
+                },
         })
+
         await clinicRepositoryInMemory.create({
-            id: 'f4d3e418-4b4b-4a3a-a125-4429d0781b76',
-            idAddress: '16e1d956-71fd-4dac-8b3b-d4147bff4909',
-            name: 'Clinica Forma e Saude'
+            id: 'd118f664-7b7e-4d84-84b6-0d54fd729536',
+                name: 'Clinica Kaiser',
+                Address:{
+                    create:{
+                        street: 'Rua 1',
+                        complement: 'Casa',
+                        neighborhood: 'Bairro 1',
+                        num: 1,
+                        reference: 'Perto do mercado',
+                        state: 'SP',
+                        zip: '12345678',
+                        city: 'São Paulo'
+                    }
+                },
         })
 
     });
@@ -56,10 +57,10 @@ describe("List clinic (unit)", () => {
        expect(clinics).toHaveLength(2)
        expect(clinics).toEqual([
         expect.objectContaining({
-            name: 'Clinica Kaiser',
+            name: 'Clinica Zen',
         }),
         expect.objectContaining({
-            name: 'Clinica Forma e Saude',
+            name: 'Clinica Kaiser',
         }),
        ])
     });

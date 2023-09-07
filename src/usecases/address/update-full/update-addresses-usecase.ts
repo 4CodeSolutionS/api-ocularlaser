@@ -4,7 +4,7 @@ import { IAddressesRepository } from "@/repositories/interface-addresses-reposit
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 
 interface IRequestUpdateAddress {
-    id: string
+    idClinic: string
     city: string
     complement: string 
     neighborhood: string
@@ -24,7 +24,7 @@ export class UpdateAddressUseCase{
     ) {}
 
     async execute({
-        id,
+        idClinic,
         city,
         complement,
         neighborhood,
@@ -35,7 +35,7 @@ export class UpdateAddressUseCase{
         zip
     }:IRequestUpdateAddress):Promise<IResponseUpdateAddress>{
         // encontrar address pelo id
-        const findAddressExist = await this.addressesRepository.findById(id)
+        const findAddressExist = await this.addressesRepository.findByClinicId(idClinic)
 
         // validar se address existe
         if(!findAddressExist){
@@ -43,8 +43,8 @@ export class UpdateAddressUseCase{
         }
 
         // atualizar address
-        const address = await this.addressesRepository.update({
-            id,
+        const address = await this.addressesRepository.updateByClinicId({
+            idClinic,
             city,
             complement,
             neighborhood,

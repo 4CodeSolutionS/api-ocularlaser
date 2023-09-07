@@ -2,8 +2,8 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import request from 'supertest'
 import { fastifyApp } from "@/app";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
-import { User } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { Clinic } from "@prisma/client";
 
 describe('Update Address (e2e)', ()=>{
     beforeAll(async()=>{
@@ -20,8 +20,11 @@ describe('Update Address (e2e)', ()=>{
             'ADMIN',
         )
 
-        await prisma.address.create({
-            data: {
+        const responseCreateClinic = await request(fastifyApp.server)
+        .post(`/api/clinics`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+            address: {
                 id: '777eea13-3d79-4a39-a4a7-904e08affab7',
                 street: 'Rua Teste',
                 num: 123,
@@ -31,15 +34,17 @@ describe('Update Address (e2e)', ()=>{
                 zip: '12345678',
                 neighborhood: 'Bairro Teste',
                 reference: 'Referencia Teste',
-            }
-       })
-       const id = '777eea13-3d79-4a39-a4a7-904e08affab7'
+                },
+            name: 'Clinica Kaiser'
+        })
+
+       const {id} = responseCreateClinic.body as Clinic
  
         const response = await request(fastifyApp.server)
         .put(`/api/addresses`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-            id,
+            idClinic: id,
             street: 'Rua Testez',
             num: 1233,
             complement: 'Complemento Testez',
@@ -67,7 +72,7 @@ describe('Update Address (e2e)', ()=>{
         .put(`/api/addresses`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-            id,
+            idClinic: id,
             street: 'Rua Teste',
             num: 123,
             complement: 'Complemento Teste',

@@ -15,6 +15,7 @@ describe("Update address (unit)", () => {
 
         await addressInMemoryRepository.create({
             id: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
+            idClinic: '152deda6-b234-4632-9200-50522635994c',
             street: 'street-faker',
             city: 'city-faker',
             complement: 'complement-faker',
@@ -28,7 +29,7 @@ describe("Update address (unit)", () => {
 
     test("Should be able to update a address", async () => {
        const {address} = await stu.execute({
-            id:'7881f50f-46dc-4b7d-b5d6-84bc924023e4', 
+            idClinic: '152deda6-b234-4632-9200-50522635994c',
             street: 'street-faker1',
             city: 'city-faker',
             complement: 'complement-faker',
@@ -48,7 +49,7 @@ describe("Update address (unit)", () => {
 
     test("Should not be able to find a address with id invalid", async () => {
         await expect(()=> stu.execute({
-            id: '7881f50f-46dc-4b7d-b5d6-84bc924023e3',
+            idClinic: '7881f50f-46dc-4b7d-b5d6-84bc924023e3',
             street: 'street-faker1',
             city: 'city-faker',
             complement: 'complement-faker',

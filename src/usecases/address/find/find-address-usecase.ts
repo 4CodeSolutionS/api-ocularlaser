@@ -4,7 +4,7 @@ import { IAddressesRepository } from "@/repositories/interface-addresses-reposit
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 
 interface IRequestFindAddress {
-    id: string
+    idClinic: string
 }
 
 interface IResponseFindAddress {
@@ -17,10 +17,10 @@ export class FindAddressUseCase{
     ) {}
 
     async execute({
-        id
+        idClinic
     }:IRequestFindAddress):Promise<IResponseFindAddress>{
         // encontrar address pelo id
-        const findAddressExist = await this.addressesRepository.findById(id)
+        const findAddressExist = await this.addressesRepository.findByClinicId(idClinic)
 
         // validar se address existe
         if(!findAddressExist){

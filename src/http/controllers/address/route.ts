@@ -12,7 +12,7 @@ export async function addressRoutes(fastifyApp: FastifyInstance) {
     // fastifyApp.post('/', CreateAddress)  
     
     //find address
-    fastifyApp.get('/:id', FindAddress)
+    fastifyApp.get('/:idClinic', FindAddress)
 
     //update address
     fastifyApp.put('/', UpdateAddress)
