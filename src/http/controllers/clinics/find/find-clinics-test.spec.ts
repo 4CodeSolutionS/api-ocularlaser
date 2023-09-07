@@ -3,6 +3,7 @@ import request from 'supertest'
 import { fastifyApp } from "@/app";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 import { Address, Clinic } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 describe('Find Clinic (e2e)', ()=>{
     beforeAll(async()=>{
@@ -19,22 +20,20 @@ describe('Find Clinic (e2e)', ()=>{
             'ADMIN',
         )
 
-        const responseCreateAddress = await request(fastifyApp.server)
-        .post(`/api/addresses`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            street: 'Rua Teste',
-            num: 123,
-            complement: 'Complemento Teste',
-            city: 'São Paulo',
-            state: 'SP',
-            zip: '12345678',
-            neighborhood: 'Bairro Teste',
-            reference: 'Referencia Teste',
-        })
-
-        const {id} = responseCreateAddress.body as Address
-        expect(responseCreateAddress.statusCode).toEqual(201)
+        await prisma.address.create({
+            data: {
+                id: '777eea13-3d79-4a39-a4a7-904e08affab7',
+                street: 'Rua Teste',
+                num: 123,
+                complement: 'Complemento Teste',
+                city: 'São Paulo',
+                state: 'SP',
+                zip: '12345678',
+                neighborhood: 'Bairro Teste',
+                reference: 'Referencia Teste',
+            }
+       })
+       const id = '777eea13-3d79-4a39-a4a7-904e08affab7'
 
         const responseCreateClinic = await request(fastifyApp.server)
         .post(`/api/clinics`)

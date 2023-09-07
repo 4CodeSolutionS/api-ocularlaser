@@ -19,76 +19,45 @@ describe('List Clinic (e2e)', ()=>{
             fastifyApp,
             'ADMIN',
         )
-        const responseCreateAddressFirst = await request(fastifyApp.server)
-        .post(`/api/addresses`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            street: 'Rua Teste',
-            num: 123,
-            complement: 'Complemento Teste',
-            city: 'São Paulo',
-            state: 'SP',
-            zip: '12345678',
-            neighborhood: 'Bairro Teste',
-            reference: 'Referencia Teste',
-        })
-
-        const {id} = responseCreateAddressFirst.body as Address
-        expect(responseCreateAddressFirst.statusCode).toEqual(201)
-
-        const responseCreateAddressSecond = await request(fastifyApp.server)
-        .post(`/api/addresses`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            street: 'Rua Teste',
-            num: 123,
-            complement: 'Complemento Teste',
-            city: 'São Paulo',
-            state: 'SP',
-            zip: '12345678',
-            neighborhood: 'Bairro Teste',
-            reference: 'Referencia Teste',
-        })
-
-        const {id: idAddressSecond} = responseCreateAddressSecond.body as Address
-        expect(responseCreateAddressSecond.statusCode).toEqual(201)
-
-        await request(fastifyApp.server)
-        .post(`/api/clinics`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            address: {
-                id,
-                street: 'Rua Teste',
-                num: 123,
-                complement: 'Complemento Teste',
-                city: 'São Paulo',
-                state: 'SP',
-                zip: '12345678',
-                neighborhood: 'Bairro Teste',
-                reference: 'Referencia Teste',
+        await prisma.clinic.create({
+            data:{
+                id: '777eea13-3d79-4a39-a4a7-904e08affab7',
+                Address:{
+                    create:{
+                        street: 'Rua 1',
+                        complement: 'Casa',
+                        neighborhood: 'Bairro 1',
+                        num: 1,
+                        reference: 'Perto do mercado',
+                        state: 'SP',
+                        zip: '12345678',
+                        city: 'São Paulo'
+                    }
+                    
                 },
-            name: 'Clinica Teste 1'
+                name: 'Clinica Kaiser'
+            }
         })
 
-        await request(fastifyApp.server)
-        .post(`/api/clinics`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            address: {
-                id: idAddressSecond,
-                street: 'Rua Teste',
-                num: 123,
-                complement: 'Complemento Teste',
-                city: 'São Paulo',
-                state: 'SP',
-                zip: '12345678',
-                neighborhood: 'Bairro Teste',
-                reference: 'Referencia Teste',
+        await prisma.clinic.create({
+            data:{
+                id: 'a245f700-7c8a-43ca-8eae-49fc1e3cdb2b',
+                Address:{
+                    create:{
+                        street: 'Rua 1',
+                        complement: 'Casa',
+                        neighborhood: 'Bairro 1',
+                        num: 1,
+                        reference: 'Perto do mercado',
+                        state: 'SP',
+                        zip: '12345678',
+                        city: 'São Paulo'
+                    }
+                    
                 },
-            name: 'Clinica Teste 2'
+                name: 'Clinica Zen'
+            }
         })
-
         const responseListClinics = await request(fastifyApp.server)
         .get(`/api/clinics`)
         .set('Authorization', `Bearer ${accessToken}`)

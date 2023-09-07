@@ -19,22 +19,20 @@ describe('Create Clinic (e2e)', ()=>{
             fastifyApp,
             'ADMIN',
         )
-        const responseCreateAddress = await request(fastifyApp.server)
-        .post(`/api/addresses`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            street: 'Rua Teste',
-            num: 123,
-            complement: 'Complemento Teste',
-            city: 'São Paulo',
-            state: 'SP',
-            zip: '12345678',
-            neighborhood: 'Bairro Teste',
-            reference: 'Referencia Teste',
-        })
-
-        const {id} = responseCreateAddress.body as Address
-        expect(responseCreateAddress.statusCode).toEqual(201)
+        await prisma.address.create({
+            data: {
+                id: '777eea13-3d79-4a39-a4a7-904e08affab7',
+                street: 'Rua Teste',
+                num: 123,
+                complement: 'Complemento Teste',
+                city: 'São Paulo',
+                state: 'SP',
+                zip: '12345678',
+                neighborhood: 'Bairro Teste',
+                reference: 'Referencia Teste',
+            }
+       })
+       const id = '777eea13-3d79-4a39-a4a7-904e08affab7'
 
         const responseCreateClinic = await request(fastifyApp.server)
         .post(`/api/clinics`)
@@ -66,51 +64,52 @@ describe('Create Clinic (e2e)', ()=>{
             '159.357.582-50'
         )
 
-        await prisma.address.create({
+        await prisma.clinic.create({
             data:{
-                id: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
-                street: 'Rua 1',
-                complement: 'Casa',
-                neighborhood: 'Bairro 1',
-                num: 1,
-                reference: 'Perto do mercado',
-                state: 'SP',
-                zip: '12345678',
-                city: 'São Paulo'
+                id: '16e1d956-71fd-4dac-8b3b-d4147bff4909',
+                Address:{
+                    create:{
+                        street: 'Rua 1',
+                        complement: 'Casa',
+                        neighborhood: 'Bairro 1',
+                        num: 1,
+                        reference: 'Perto do mercado',
+                        state: 'SP',
+                        zip: '12345678',
+                        city: 'São Paulo'
+                    }
+                    
+                },
+                name: 'Clinica Kaiser'
             }
         })
 
         await prisma.clinic.create({
             data:{
-                id: '16e1d956-71fd-4dac-8b3b-d4147bff4909',
-                idAddress: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
-                name: 'Clinica Kaiser'
+                id: '777eea13-3d79-4a39-a4a7-904e08affab7',
+                Address:{
+                    create:{
+                        street: 'Rua 1',
+                        complement: 'Casa',
+                        neighborhood: 'Bairro 1',
+                        num: 1,
+                        reference: 'Perto do mercado',
+                        state: 'SP',
+                        zip: '12345678',
+                        city: 'São Paulo'
+                    }
+                    
+                },
+                name: 'Clinica Zen'
             }
         })
-
-        const responseCreateAddress = await request(fastifyApp.server)
-        .post(`/api/addresses`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            street: 'Rua Teste',
-            num: 123,
-            complement: 'Complemento Teste',
-            city: 'São Paulo',
-            state: 'SP',
-            zip: '12345678',
-            neighborhood: 'Bairro Teste',
-            reference: 'Referencia Teste',
-        })
-
-        const {id} = responseCreateAddress.body as Address
-        expect(responseCreateAddress.statusCode).toEqual(201)
 
         const responseCreateClinic = await request(fastifyApp.server)
         .post(`/api/clinics`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
             address: {
-                id,
+                id: '777eea13-3d79-4a39-a4a7-904e08affab7',
                 street: 'Rua Teste',
                 num: 123,
                 complement: 'Complemento Teste',

@@ -3,6 +3,7 @@ import request from 'supertest'
 import { fastifyApp } from "@/app";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 import { User } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 describe('Find Address (e2e)', ()=>{
     beforeAll(async()=>{
@@ -19,30 +20,26 @@ describe('Find Address (e2e)', ()=>{
             'ADMIN',
         )
         
-        const responseCreateAddress = await request(fastifyApp.server)
-        .post(`/api/addresses`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            street: 'Rua Teste',
-            num: 123,
-            complement: 'Complemento Teste',
-            city: 'São Paulo',
-            state: 'SP',
-            zip: '12345678',
-            neighborhood: 'Bairro Teste',
-            reference: 'Referencia Teste',
-        })
+       await prisma.address.create({
+            data: {
+                id: '777eea13-3d79-4a39-a4a7-904e08affab7',
+                street: 'Rua Teste',
+                num: 123,
+                complement: 'Complemento Teste',
+                city: 'São Paulo',
+                state: 'SP',
+                zip: '12345678',
+                neighborhood: 'Bairro Teste',
+                reference: 'Referencia Teste',
+            }
+       })
+       const id = '777eea13-3d79-4a39-a4a7-904e08affab7'
 
-       const {id} = responseCreateAddress.body as User
- 
-        expect(responseCreateAddress.statusCode).toEqual(201)
-
-        const responseDeleteAddress = await request(fastifyApp.server)
+        const responseFindAddress = await request(fastifyApp.server)
         .get(`/api/addresses/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send()
-
-        expect(responseDeleteAddress.statusCode).toEqual(200)
+        expect(responseFindAddress.statusCode).toEqual(200)
     })
 
     test('should not be able to find a address with id invalid', async()=>{
@@ -57,11 +54,11 @@ describe('Find Address (e2e)', ()=>{
  
         const id = 'fd0c3fc4-c6de-45ac-82df-660d7310d6a0'
 
-        const responseDeleteAddress = await request(fastifyApp.server)
-        .delete(`/api/addresses/${id}`)
+        const responseFindAddress = await request(fastifyApp.server)
+        .get(`/api/addresses/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send()
 
-        expect(responseDeleteAddress.statusCode).toEqual(404)
+        expect(responseFindAddress.statusCode).toEqual(404)
     })
 })

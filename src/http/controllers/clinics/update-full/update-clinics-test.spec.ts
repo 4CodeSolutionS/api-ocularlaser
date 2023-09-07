@@ -19,48 +19,31 @@ describe('Update Clinic (e2e)', ()=>{
             fastifyApp,
             'ADMIN',
         )
-        const responseCreateAddress = await request(fastifyApp.server)
-        .post(`/api/addresses`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            street: 'Rua Teste',
-            num: 123,
-            complement: 'Complemento Teste',
-            city: 'São Paulo',
-            state: 'SP',
-            zip: '12345678',
-            neighborhood: 'Bairro Teste',
-            reference: 'Referencia Teste',
-        })
-
-        const {id} = responseCreateAddress.body as Address
-        expect(responseCreateAddress.statusCode).toEqual(201)
-
-        const responseCreateClinic = await request(fastifyApp.server)
-        .post(`/api/clinics`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            address: {
-                id,
-                street: 'Rua Teste',
-                num: 123,
-                complement: 'Complemento Teste',
-                city: 'São Paulo',
-                state: 'SP',
-                zip: '12345678',
-                neighborhood: 'Bairro Teste',
-                reference: 'Referencia Teste',
+        await prisma.clinic.create({
+            data:{
+                id: 'a245f700-7c8a-43ca-8eae-49fc1e3cdb2b',
+                Address:{
+                    create:{
+                        street: 'Rua 1',
+                        complement: 'Casa',
+                        neighborhood: 'Bairro 1',
+                        num: 1,
+                        reference: 'Perto do mercado',
+                        state: 'SP',
+                        zip: '12345678',
+                        city: 'São Paulo'
+                    }
+                    
                 },
-            name: 'Clinica Teste'
+                name: 'Clinica Zen'
+            }
         })
-
-        const {id: idClinic} = responseCreateClinic.body as Clinic
 
         const responseUpdateClinic = await request(fastifyApp.server)
         .put(`/api/clinics`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-            id: idClinic,
+            id: 'a245f700-7c8a-43ca-8eae-49fc1e3cdb2b',
             name: 'Clinica Teste 10'
         })
 
@@ -97,69 +80,51 @@ describe('Update Clinic (e2e)', ()=>{
             '147.157.123-51'
         )
 
-        await prisma.address.create({
+        await prisma.clinic.create({
             data:{
-                id: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
-                street: 'Rua 1',
-                complement: 'Casa',
-                neighborhood: 'Bairro 1',
-                num: 1,
-                reference: 'Perto do mercado',
-                state: 'SP',
-                zip: '12345678',
-                city: 'São Paulo'
+                id: '777eea13-3d79-4a39-a4a7-904e08affab7',
+                Address:{
+                    create:{
+                        street: 'Rua 1',
+                        complement: 'Casa',
+                        neighborhood: 'Bairro 1',
+                        num: 1,
+                        reference: 'Perto do mercado',
+                        state: 'SP',
+                        zip: '12345678',
+                        city: 'São Paulo'
+                    }
+                    
+                },
+                name: 'Clinica Kaiser'
             }
         })
 
         await prisma.clinic.create({
             data:{
-                id: '16e1d956-71fd-4dac-8b3b-d4147bff4909',
-                idAddress: '7881f50f-46dc-4b7d-b5d6-84bc924023e4',
-                name: 'Clinica Kaiser'
+                id: '152deda6-b234-4632-9200-50522635994c',
+                Address:{
+                    create:{
+                        street: 'Rua 1',
+                        complement: 'Casa',
+                        neighborhood: 'Bairro 1',
+                        num: 1,
+                        reference: 'Perto do mercado',
+                        state: 'SP',
+                        zip: '12345678',
+                        city: 'São Paulo'
+                    }
+                    
+                },
+                name: 'Clinica Zen'
             }
         })
-        const responseCreateAddress = await request(fastifyApp.server)
-        .post(`/api/addresses`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            street: 'Rua Teste',
-            num: 123,
-            complement: 'Complemento Teste',
-            city: 'São Paulo',
-            state: 'SP',
-            zip: '12345678',
-            neighborhood: 'Bairro Teste',
-            reference: 'Referencia Teste',
-        })
-
-        const {id} = responseCreateAddress.body as Address
-        expect(responseCreateAddress.statusCode).toEqual(201)
-
-        const responseCreateClinic = await request(fastifyApp.server)
-        .post(`/api/clinics`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            address: {
-                id,
-                street: 'Rua Teste',
-                num: 123,
-                complement: 'Complemento Teste',
-                city: 'São Paulo',
-                state: 'SP',
-                zip: '12345678',
-                neighborhood: 'Bairro Teste',
-                reference: 'Referencia Teste',
-                },
-            name: 'Clinica Teste'
-        })
-
-        const {id: idClinic} = responseCreateClinic.body as Clinic
 
         const responseUpdateClinic = await request(fastifyApp.server)
         .put(`/api/clinics`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-            id: idClinic,
+            id: '152deda6-b234-4632-9200-50522635994c',
             name: 'Clinica Kaiser'
         })
 

@@ -1,7 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { verifyTokenJWT } from "@/http/middlewares/verify-token-jwt";
 import { verifyUserRole } from "@/http/middlewares/veiryf-user-role";
-import { DeleteAddress } from "./delete/delete-addresses-controller";
 import { FindAddress } from "./find/find-addresses-controller";
 import { UpdateAddress } from "./update-full/update-addresses-controller";
 
@@ -18,6 +17,4 @@ export async function addressRoutes(fastifyApp: FastifyInstance) {
     //update address
     fastifyApp.put('/', UpdateAddress)
 
-    //delete address
-    fastifyApp.delete('/:id', DeleteAddress)
 }

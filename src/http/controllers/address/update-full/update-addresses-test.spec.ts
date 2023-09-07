@@ -3,6 +3,7 @@ import request from 'supertest'
 import { fastifyApp } from "@/app";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 import { User } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 describe('Update Address (e2e)', ()=>{
     beforeAll(async()=>{
@@ -19,24 +20,21 @@ describe('Update Address (e2e)', ()=>{
             'ADMIN',
         )
 
-        const responseCreateAddress = await request(fastifyApp.server)
-        .post(`/api/addresses`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-            street: 'Rua Teste',
-            num: 123,
-            complement: 'Complemento Teste',
-            city: 'São Paulo',
-            state: 'SP',
-            zip: '12345678',
-            neighborhood: 'Bairro Teste',
-            reference: 'Referencia Teste',
-        })
-
-       const {id} = responseCreateAddress.body as User
+        await prisma.address.create({
+            data: {
+                id: '777eea13-3d79-4a39-a4a7-904e08affab7',
+                street: 'Rua Teste',
+                num: 123,
+                complement: 'Complemento Teste',
+                city: 'São Paulo',
+                state: 'SP',
+                zip: '12345678',
+                neighborhood: 'Bairro Teste',
+                reference: 'Referencia Teste',
+            }
+       })
+       const id = '777eea13-3d79-4a39-a4a7-904e08affab7'
  
-        expect(responseCreateAddress.statusCode).toEqual(201)
-        
         const response = await request(fastifyApp.server)
         .put(`/api/addresses`)
         .set('Authorization', `Bearer ${accessToken}`)
