@@ -72,3 +72,18 @@ model Clinic {
 
   @@map("clinics")
 }
+
+enum Category {
+  QUERY
+  EXAM
+  SURGERY
+}
+
+model Service {
+  id       String   @id @unique @default(uuid())
+  name     String   @unique
+  price    Decimal
+  category Category
+
+  @@map("services")
+}
