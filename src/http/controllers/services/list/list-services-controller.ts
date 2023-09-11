@@ -1,4 +1,4 @@
-import { makeListServices } from '@/usecases/factories/users/services/make-list-services-usecases'
+import { makeListServices } from '@/usecases/factories/services/make-list-services-usecases'
 import { FastifyReply, FastifyRequest } from 'fastify'
 
 export async function ListService (request: FastifyRequest, reply:FastifyReply){
