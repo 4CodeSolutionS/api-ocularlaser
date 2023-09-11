@@ -7,8 +7,8 @@ import { FindService } from "./find/find-services-controller";
 import { ListService } from "./list/list-services-controller";
 
 export async function servicesRoutes(fastifyApp: FastifyInstance){
-     fastifyApp.addHook('onRequest', verifyTokenJWT)
-     fastifyApp.addHook('onRequest', verifyUserRole("ADMIN"))
+    // fastifyApp.addHook('onRequest', verifyTokenJWT)
+    // fastifyApp.addHook('onRequest', verifyUserRole("ADMIN"))
 
     // criar serviço
     fastifyApp.post('/', CreateService)
