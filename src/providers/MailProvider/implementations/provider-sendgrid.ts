@@ -2,9 +2,11 @@ import sgMail from '@sendgrid/mail';
 import { env } from "@/env";
 import 'dotenv/config'
 import fs from 'node:fs'
+import { readFile } from 'fs/promises'
 import handlebars from "handlebars";
 import { IMailProvider} from '../interface-mail-provider';
 import { Message } from '../in-memory/in-memory-mail-provider';
+import { IServiceExecuted } from '@/usecases/servicesExecuted/create/create-services-executeds-usecases';
 
 export class MailProvider implements IMailProvider{
     constructor(){
@@ -18,15 +20,16 @@ export class MailProvider implements IMailProvider{
         email: string, 
         name:string, 
         subject:string, 
-        link:string, 
-        pathTemplate:string) {
+        link:string | null, 
+        pathTemplate:string,
+        serviceExecuted: IServiceExecuted | null) {
         try {
             // ler arquivo handlebars
             const readTemplate = fs.readFileSync(pathTemplate).toString("utf-8");
             // compilar o arquivo handlebars
             const compileTemplate = handlebars.compile(readTemplate);
             // passar variables for template
-            const htmlTemplate = compileTemplate({name, link, email});
+            const htmlTemplate = compileTemplate({name, link, email, serviceExecuted});
 
             const msg = {
                 to: `${email}`, // Para 
@@ -36,7 +39,6 @@ export class MailProvider implements IMailProvider{
               };
             
            await sgMail.send(msg);
-           console.log('Email enviado com sucesso')
         } catch (error) {
             console.log(error);
         }

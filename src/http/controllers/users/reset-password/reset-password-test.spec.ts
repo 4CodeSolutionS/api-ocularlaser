@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import request from 'supertest'
 import { fastifyApp } from "@/app";
-import { Token, User } from "@prisma/client";
+import { Token } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 import { hash } from "bcrypt";

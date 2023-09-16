@@ -84,13 +84,14 @@ export class RegisterUseCase{
         `${env.APP_URL_PRODUCTION}/users/verify-email?token=${token}`
 
         // enviar verificação de email
-        // await this.sendMailProvider.sendEmail(
-        //     email, 
-        //     name,
-        //     "Confirmação de email", 
-        //     link, 
-        //     pathTemplate
-        // )
+        await this.sendMailProvider.sendEmail(
+            email, 
+            name,
+            "Confirmação de email", 
+            link, 
+            pathTemplate,
+            null
+        )
 
         return {
             user

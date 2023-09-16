@@ -21,7 +21,7 @@
     "test:unit:watch": "vitest --watch --dir src/usecases",
     "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
-    "send:email": "tsx ./src/scripts/send-email-fake.ts"
+    "send:email": "tsx ./src/scripts/test-send-email-fake.ts"
   },
   "devDependencies": {
     "@fastify/cookie": "9.0.4",
@@ -39,6 +39,7 @@
     "@vitest/ui": "0.33.0",
     "eslint": "8.47.0",
     "npm-run-all": "4.1.5",
+    "prisma": "5.3.0",
     "supertest": "6.3.3",
     "tsup": "7.2.0",
     "tsx": "3.12.7",
@@ -46,16 +47,20 @@
     "vitest-tsconfig-paths": "3.4.1"
   },
   "dependencies": {
+    "@google-cloud/storage": "7.1.0",
     "@sendgrid/mail": "7.7.0",
+    "@types/multer": "1.4.7",
     "bcrypt": "5.1.1",
     "dayjs": "1.11.9",
     "dotenv": "16.3.1",
     "fastify": "4.21.0",
+    "fastify-multer": "2.0.3",
+    "firebase-admin": "11.10.1",
     "handlebars": "4.7.8",
     "jsonwebtoken": "9.0.1",
+    "multer": "1.4.5-lts.1",
     "nodemailer": "6.6.3",
     "pg": "8.11.3",
-    "prisma": "5.2.0",
     "vitest": "0.33.0",
     "zod": "3.21.4"
   },

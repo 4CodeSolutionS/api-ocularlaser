@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import request from 'supertest'
 import { fastifyApp } from "@/app";
 import { Token, User } from "@prisma/client";

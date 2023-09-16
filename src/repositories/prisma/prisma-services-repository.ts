@@ -1,5 +1,4 @@
-import { Prisma, $Enums } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 import { IServiceRepository } from "../interface-services-respository";
 import { prisma } from "@/lib/prisma";
 
