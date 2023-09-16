@@ -110,7 +110,7 @@ describe('Upload exams (e2e)', ()=>{
             }),
             expect.objectContaining({
                 urlExam: expect.any(String),
-            })
+            }),
         ])
     })
 
