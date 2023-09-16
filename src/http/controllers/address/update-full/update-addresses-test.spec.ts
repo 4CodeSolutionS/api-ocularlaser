@@ -2,7 +2,6 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import request from 'supertest'
 import { fastifyApp } from "@/app";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
-import { prisma } from "@/lib/prisma";
 import { Clinic } from "@prisma/client";
 
 describe('Update Address (e2e)', ()=>{

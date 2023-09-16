@@ -1,19 +1,24 @@
 import fastify, { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import fastifyCors from '@fastify/cors'
 import "dotenv/config"
+import multer from "fastify-multer";
 import { usersRoutes } from "./http/controllers/users/routes";
 import { ZodError } from "zod";
 import { env } from "./env";
 import { addressRoutes } from "./http/controllers/address/route";
 import { clinicsRoutes } from "./http/controllers/clinics/route";
 import { servicesRoutes } from "./http/controllers/services/routes";
+import { servicesExecutedsRoutes } from "./http/controllers/servicesExecuted/routes";
+import { examsRoutes } from "./http/controllers/exams/routes";
 
 export const fastifyApp = fastify()
 
 fastifyApp.register(fastifyCors, {
     origin: true,
     credentials: true,
-  })
+})
+
+fastifyApp.register(multer.contentParser)
 
 fastifyApp.register(usersRoutes,{
     prefix: 'api/users'
@@ -29,6 +34,14 @@ fastifyApp.register(clinicsRoutes,{
 
 fastifyApp.register(servicesRoutes,{
     prefix: 'api/services'
+})
+
+fastifyApp.register(servicesExecutedsRoutes,{
+    prefix: 'api/services-executeds'
+})
+
+fastifyApp.register(examsRoutes,{
+    prefix: 'api/exams'
 })
 
 

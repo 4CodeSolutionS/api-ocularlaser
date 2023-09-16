@@ -17,19 +17,20 @@ enum Role {
 }
 
 model User {
-  id          String   @id @unique @default(uuid())
-  name        String
-  email       String   @unique
-  password    String
-  role        Role     @default(PACIENT)
-  gender      String
-  cpf         String   @unique
-  phone       String
-  emailActive Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  Token       Token[]
-  Clinic      Clinic?  @relation(fields: [idClinic], references: [id])
-  idClinic    String?
+  id              String            @id @unique @default(uuid())
+  name            String
+  email           String            @unique
+  password        String
+  role            Role              @default(PACIENT)
+  gender          String
+  cpf             String            @unique
+  phone           String
+  emailActive     Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  Token           Token[]
+  Clinic          Clinic?           @relation(fields: [idClinic], references: [id])
+  idClinic        String?
+  ServiceExecuted ServiceExecuted[]
 
   @@map("users")
 }
@@ -67,8 +68,9 @@ model Clinic {
   id   String @id @unique @default(uuid())
   name String @unique
 
-  users   User[]
-  Address Address?
+  users           User[]
+  Address         Address?
+  ServiceExecuted ServiceExecuted[]
 
   @@map("clinics")
 }
@@ -80,10 +82,37 @@ enum Category {
 }
 
 model Service {
-  id       String   @id @unique @default(uuid())
-  name     String   @unique
-  price    Decimal
-  category Category
+  id              String            @id @unique @default(uuid())
+  name            String            @unique
+  price           Decimal
+  category        Category
+  ServiceExecuted ServiceExecuted[]
 
   @@map("services")
+}
+
+model ServiceExecuted {
+  id          String   @id @unique @default(uuid())
+  user        User     @relation(fields: [idUser], references: [id])
+  idUser      String
+  service     Service  @relation(fields: [idService], references: [id])
+  idService   String
+  clinic      Clinic   @relation(fields: [idClinic], references: [id])
+  idClinic    String
+  price       Decimal
+  dataPayment DateTime
+  date        DateTime
+  approved    Boolean  @default(false)
+  exams       Exam[]
+
+  @@map("services_executed")
+}
+
+model Exam {
+  id                String          @id @unique @default(uuid())
+  serviceExecuted   ServiceExecuted @relation(fields: [idServiceExecuted], references: [id])
+  idServiceExecuted String
+  urlExam           String
+
+  @@map("exams")
 }

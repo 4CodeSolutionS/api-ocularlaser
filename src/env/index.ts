@@ -13,6 +13,10 @@ const envSchema = z.object({
     SENDGRID_API_KEY: z.string().nonempty(),
     APP_URL_DEVLOPMENT: z.string().nonempty(),
     APP_URL_PRODUCTION: z.string().nonempty(),
+    FIREBASE_PROJECT_ID: z.string().nonempty(),
+    FIREBASE_CLIENT_EMAIL: z.string().email().nonempty(),
+    FIREBASE_PRIVATE_KEY: z.string().nonempty(),
+    FIREBASE_BUCKET: z.string().nonempty(),
 })
 
 const _env = envSchema.safeParse(process.env)

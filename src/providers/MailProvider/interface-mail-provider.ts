@@ -1,3 +1,4 @@
+import { IServiceExecuted } from "@/usecases/servicesExecuted/create/create-services-executeds-usecases";
 import { Message } from "./in-memory/in-memory-mail-provider";
 
 export interface IMailProvider {
@@ -5,8 +6,9 @@ export interface IMailProvider {
         email: string, 
         name:string, 
         subject:string, 
-        link:string, 
-        pathTemplate:string
+        link:string | null, 
+        pathTemplate:string,
+        serviceExecuted: IServiceExecuted | null
     ): Promise<void>
 
     findMessageSent(email: string): Promise<Message>

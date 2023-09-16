@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-services-repository";
-import { Service } from "@prisma/client";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { FindServiceUseCase } from "./find-services-usecase";
 

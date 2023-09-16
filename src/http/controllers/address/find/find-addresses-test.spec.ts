@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import request from 'supertest'
 import { fastifyApp } from "@/app";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
-import { Clinic, User } from "@prisma/client";
+import { Clinic } from "@prisma/client";
 
 describe('Find Address (e2e)', ()=>{
     beforeAll(async()=>{
