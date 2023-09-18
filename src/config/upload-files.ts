@@ -1,3 +1,4 @@
+import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import multer from "fastify-multer";
 import { randomUUID } from "node:crypto";
 import { readdirSync } from "node:fs";
@@ -8,13 +9,12 @@ const getDirectories = (source: string): string[] =>
   readdirSync(source, { withFileTypes: true })
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name);
-
 // Variável tmpFolder recebe o caminho da pasta tmp
 const tmpFolder = './src/tmp';
 
-// Cria array de diretorios tipo string vazia com
-const tempDirectories: string[] = getDirectories(tmpFolder);
 
+// Cria array de diretorios tipo string vazia com tmpFolder
+const tempDirectories: string[] = getDirectories(tmpFolder);
 // Filtra o diretorio recebido retornando em um Objeto.assign
 export const tmpDirectoriesUploadConfig = tempDirectories
   .map((directory) => {

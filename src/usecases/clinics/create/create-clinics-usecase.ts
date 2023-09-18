@@ -40,7 +40,7 @@ export class CreateClinicUseCase{
 
         //criar a clinica
         const clinic = await this.clinicsRepository.create({
-            Address:{
+            address:{
                 create:{
                     city,
                     complement,

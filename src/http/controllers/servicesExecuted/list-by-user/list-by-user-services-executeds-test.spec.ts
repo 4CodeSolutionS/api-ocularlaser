@@ -91,7 +91,7 @@ describe('List Service Executed by User (e2e)', ()=>{
         .send()
 
         expect(responseListByUserServiceExecuted.statusCode).toEqual(200)
-        expect(responseListByUserServiceExecuted.body.servicesExecuteds).toHaveLength(20)
+        expect(responseListByUserServiceExecuted.body).toHaveLength(20)
     })
 
     test('should not be able to list a service executed by user with invalid idUser', async()=>{

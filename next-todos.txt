@@ -1,0 +1,10 @@
+* [x] Verificar pq ta Address maisculo no retorno da clinica
+* [x] Criar teste e2e para invalidar o envio de imagens vazias
+* [x] Criar teste e2e para invalidar o envio de imagens sem um service executado criado
+* [x] Converter o retorno o price do service executado para number nas listagens
+* [x] Arrumar o verify-role para que o acesso seja permitido quando for apenas ADMIN e quando for
+ADMIN ou PACIENT.
+* [x] Criar role SUPER
+* [x] Criar table KEYS com id, idUser, key, createdAt.
+* [x] Criar rota para apenas user SUPER gerar KEYS
+* [x] Criar rota para que usuarios comum possa ganhar acesso de admin atravér da KEYS únicas

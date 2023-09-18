@@ -34,7 +34,7 @@ describe("List service executed by clinic (unit)", () => {
         const clinic = await clinicRepositoryInMemory.create({
                 id: "9c3dff89-03bc-4477-aa5d-67021af86354",
                 name: "Clinic Test",
-                Address:{
+                address:{
                     create:{
                         city: "City Test",
                         neighborhood: "Neighborhood Test",
@@ -77,7 +77,7 @@ describe("List service executed by clinic (unit)", () => {
             })
         }
 
-            const {servicesExecuteds} = await stu.execute({
+            const servicesExecuteds = await stu.execute({
                 page: 2,
                 idClinic: clinic.id
             })

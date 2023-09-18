@@ -3,6 +3,30 @@ import { IUsersRepository } from "../interface-users-repository";
 import { prisma } from "@/lib/prisma";
 
 export class PrismaUsersRepository implements IUsersRepository{
+    async turnAdmin(id: string){
+        const user = await prisma.user.update({
+            where:{
+                id
+            },
+            data:{
+                role: 'ADMIN' as $Enums.Role
+            },
+            select: {
+                id: true,
+                name: true,
+                cpf: true,
+                email: true,
+                emailActive: true,
+                phone: true,
+                role: true,
+                gender: true,
+                createdAt: true,
+            }
+        }) as unknown as User
+
+        return user
+    }
+    
     async getUserSecurity(id: string){
         const arrUser = await prisma.$queryRaw`
         SELECT 

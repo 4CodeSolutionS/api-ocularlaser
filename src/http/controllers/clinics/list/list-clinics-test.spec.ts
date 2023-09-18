@@ -21,7 +21,7 @@ describe('List Clinic (e2e)', ()=>{
         await prisma.clinic.create({
             data:{
                 id: '777eea13-3d79-4a39-a4a7-904e08affab7',
-                Address:{
+                address:{
                     create:{
                         street: 'Rua 1',
                         complement: 'Casa',
@@ -41,7 +41,7 @@ describe('List Clinic (e2e)', ()=>{
         await prisma.clinic.create({
             data:{
                 id: 'a245f700-7c8a-43ca-8eae-49fc1e3cdb2b',
-                Address:{
+                address:{
                     create:{
                         street: 'Rua 1',
                         complement: 'Casa',

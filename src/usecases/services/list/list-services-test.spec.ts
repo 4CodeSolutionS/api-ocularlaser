@@ -29,7 +29,7 @@ describe("Find service (unit)", () => {
     });
 
     test("Should be able to list all service", async () => {
-       const {services} = await stu.execute()
+       const services = await stu.execute()
 
         expect(services.length).toBe(2)
         expect(services).toEqual([

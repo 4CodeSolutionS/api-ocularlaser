@@ -4,6 +4,7 @@ import { fastifyApp } from "@/app";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 import { Clinic, Service, ServiceExecuted } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "node:crypto";
 
 describe('Upload exams (e2e)', ()=>{
     beforeAll(async()=>{
@@ -112,6 +113,121 @@ describe('Upload exams (e2e)', ()=>{
                 urlExam: expect.any(String),
             }),
         ])
+    })
+
+    test('should not be able to upload exams with invalid idServiceExecuted', async()=>{
+        const {accessToken, user} = await createAndAuthenticateUser(
+            fastifyApp,
+            'ADMIN',
+            '67efda0f-d995-47e2-867f-5f9c9e88345a',
+            'pacient@email.com',
+            '123-456-789-10'
+        )
+
+        const fakeIdServiceExecuted = randomUUID()
+
+        const responseFindClinic = await request(fastifyApp.server)
+        .post(`/api/exams/${fakeIdServiceExecuted}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .set('Content-Type', 'multipart/form-data')
+        .attach('exams', './src/tmp/exams/ocular.png')
+        .attach('exams', './src/tmp/exams/icon-javascript.png')
+
+        expect(responseFindClinic.statusCode).toEqual(404)
+    })
+
+    test('should not be able to upload exams with name file empty', async()=>{
+        //criar service executed
+        const {accessToken: accessTokenAdmin, user: userAdmin} = await createAndAuthenticateUser(
+            fastifyApp,
+            'ADMIN',
+            'e04b54f4-f23e-4627-a0ab-ad3d60084eba',
+            'user3@admin.com',
+            '123-159-789-77'
+        )
+
+        // criar address
+        await prisma.address.create({
+            data: {
+                id: 'c35da0a0-9dc8-4cdd-bfe4-0285feaab3c4',
+                street: 'Rua Teste 1',
+                num: 123,
+                complement: 'Complemento Teste',
+                city: 'São Paulo',
+                state: 'SP',
+                zip: '12345678',
+                neighborhood: 'Bairro Teste',
+                reference: 'Referencia Teste',
+            }
+       })
+       const idAddress = 'c35da0a0-9dc8-4cdd-bfe4-0285feaab3c4'
+
+        const responseCreateClinic = await request(fastifyApp.server)
+        .post(`/api/clinics`)
+        .set('Authorization', `Bearer ${accessTokenAdmin}`)
+        .send({
+            address: {
+                id:idAddress,
+                street: 'Rua Teste 1',
+                num: 123,
+                complement: 'Complemento Teste',
+                city: 'São Paulo',
+                state: 'SP',
+                zip: '12345678',
+                neighborhood: 'Bairro Teste',
+                reference: 'Referencia Teste',
+                },
+                name: 'Clinica Teste 2'
+        })
+
+        const {id: idClinic} = responseCreateClinic.body as Clinic
+
+        // criar service
+        const responseCreateService = await request(fastifyApp.server)
+        .post(`/api/services`)
+        .set('Authorization', `Bearer ${accessTokenAdmin}`)
+        .send({
+            name: 'Consulta teste 2',
+            price: 100,
+            category: 'QUERY' 
+        })
+        const {id: idService} = responseCreateService.body as Service
+
+        // criar service executed
+        const responseCreateServiceExecuted = await request(fastifyApp.server)
+        .post(`/api/services-executeds`)
+        .set('Authorization', `Bearer ${accessTokenAdmin}`)
+        .send({
+            user:{
+                id: userAdmin.id
+            },
+            clinic: {
+                id: idClinic
+            },
+            service: {
+                id: idService
+            },
+            date: '2023-09-16T10:50:00.000Z',
+            datePayment: '2023-09-16T10:50:00.000Z',
+        })
+
+        const {id} = responseCreateServiceExecuted.body as ServiceExecuted
+
+        const {accessToken, user} = await createAndAuthenticateUser(
+            fastifyApp,
+            'PACIENT',
+            '2ef4588b-0a27-4d09-8d5d-8ea39a017c33',
+            'pacient2@email.com',
+            '123-456-789-33'
+        )
+
+        const responseCreateExams = await request(fastifyApp.server)
+        .post(`/api/exams/${id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .set('Content-Type', 'multipart/form-data')
+        .attach('', '')
+
+        expect(responseCreateExams.statusCode).toEqual(400)
     })
 
 })

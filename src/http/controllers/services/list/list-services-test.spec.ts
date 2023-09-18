@@ -36,6 +36,6 @@ describe('List Service (e2e)', ()=>{
 
 
         expect(responseListService.statusCode).toEqual(200)
-        expect(responseListService.body.services.length).toEqual(10)
+        expect(responseListService.body.length).toEqual(10)
     })
 })

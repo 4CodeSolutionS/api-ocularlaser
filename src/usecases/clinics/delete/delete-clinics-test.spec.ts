@@ -20,7 +20,7 @@ describe("Delete clinic (unit)", () => {
         await clinicRepositoryInMemory.create({
             id: '152deda6-b234-4632-9200-50522635994c',
                 name: 'Clinica Zen',
-                Address:{
+                address:{
                     create:{
                         street: 'Rua 1',
                         complement: 'Casa',

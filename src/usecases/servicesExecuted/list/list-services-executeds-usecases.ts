@@ -1,14 +1,9 @@
 import { IServiceExecutedRepository } from "@/repositories/interface-services-executeds-repository";
-import { ServiceExecuted } from "@prisma/client";
+import { IServiceExecutedFormmated, ListServiceExecutedMapper } from "../mappers/list-service-executed-mapper";
 
 interface IRequestListServicesExecutedUseCases{
     page?: number;
 }
-
-interface IResponseListServicesExecutedUseCases{
-    servicesExecuteds: ServiceExecuted[]
-}
-
 
 export class ListServicesExecutedUseCases {
   constructor(
@@ -17,9 +12,11 @@ export class ListServicesExecutedUseCases {
 
   async execute({
     page
-  }:IRequestListServicesExecutedUseCases): Promise<IResponseListServicesExecutedUseCases> {
+  }:IRequestListServicesExecutedUseCases): Promise<IServiceExecutedFormmated[]> {
     const servicesExecuteds = await this.servicesExecutedRepository.list(page);
 
-    return { servicesExecuteds };
+    const servicesExecutedsFormatted = await ListServiceExecutedMapper(servicesExecuteds)
+
+    return servicesExecutedsFormatted
   }
 }

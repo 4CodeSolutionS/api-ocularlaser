@@ -1,17 +1,12 @@
 import { IClinicsRepository } from "@/repositories/interface-clinics-repository";
 import { IServiceExecutedRepository } from "@/repositories/interface-services-executeds-repository";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
-import { ServiceExecuted } from "@prisma/client";
+import { IServiceExecutedFormmated, ListServiceExecutedMapper } from "../mappers/list-service-executed-mapper";
 
 interface IRequestListServicesExecutedUseCases{
     idClinic: string;
     page?: number;
 }
-
-interface IResponseListServicesExecutedUseCases{
-    servicesExecuteds: ServiceExecuted[]
-}
-
 
 export class ListServicesExecutedByClinicUseCases {
   constructor(
@@ -22,7 +17,7 @@ export class ListServicesExecutedByClinicUseCases {
   async execute({
     idClinic,
     page
-  }:IRequestListServicesExecutedUseCases): Promise<IResponseListServicesExecutedUseCases> {
+  }:IRequestListServicesExecutedUseCases): Promise<IServiceExecutedFormmated[]> {
     // buscar clinica pelo id
     const findClinicExists = await this.clinicsRepository.findById(idClinic)
 
@@ -33,6 +28,8 @@ export class ListServicesExecutedByClinicUseCases {
 
     const servicesExecuteds = await this.servicesExecutedRepository.listByClinicId(idClinic, page);
 
-    return { servicesExecuteds };
+    const servicesExecutedsFormatted = await ListServiceExecutedMapper(servicesExecuteds)
+
+    return servicesExecutedsFormatted
   }
 }

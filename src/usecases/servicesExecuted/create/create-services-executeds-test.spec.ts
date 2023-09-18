@@ -35,7 +35,7 @@ describe("Create service executed (unit)", () => {
        const clinic = await clinicRepositoryInMemory.create({
             id: "9c3dff89-03bc-4477-aa5d-67021af86354",
             name: "Clinic Test",
-            Address:{
+            address:{
                 create:{
                     city: "City Test",
                     neighborhood: "Neighborhood Test",

@@ -91,7 +91,7 @@ describe('List Service Executed (e2e)', ()=>{
         .send()
 
         expect(responseApproveServiceExecuted.statusCode).toEqual(200)
-        expect(responseApproveServiceExecuted.body.servicesExecuteds).toHaveLength(20)
+        expect(responseApproveServiceExecuted.body).toHaveLength(20)
         
     })
 })

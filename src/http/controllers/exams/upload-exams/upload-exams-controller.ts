@@ -10,10 +10,16 @@ export async function UploadExams (request: FastifyRequest, reply:FastifyReply){
                 filename: z.string(),
               })
             )
-            const fileNames = uploadExameFiles.parse(request.files)
+            const safefileNames = uploadExameFiles.safeParse(request.files)
+
+            if(!safefileNames.success){
+              return reply.status(404).send({error: 'File not found'})
+            }
+
+            const fileNames = safefileNames.data
 
             const uploadExamsParams = z.object({
-              id: z.string(),
+              id: z.string().uuid(),
             })
 
             const {id} = uploadExamsParams.parse(request.params)

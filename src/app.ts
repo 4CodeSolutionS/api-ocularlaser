@@ -10,6 +10,7 @@ import { clinicsRoutes } from "./http/controllers/clinics/route";
 import { servicesRoutes } from "./http/controllers/services/routes";
 import { servicesExecutedsRoutes } from "./http/controllers/servicesExecuted/routes";
 import { examsRoutes } from "./http/controllers/exams/routes";
+import { keysRoutes } from "./http/controllers/keys/route";
 
 export const fastifyApp = fastify()
 
@@ -43,12 +44,17 @@ fastifyApp.register(servicesExecutedsRoutes,{
 fastifyApp.register(examsRoutes,{
     prefix: 'api/exams'
 })
+fastifyApp.register(keysRoutes,{
+    prefix: 'api/keys'
+})
 
-
-  
 fastifyApp.setErrorHandler((error:FastifyError, _request:FastifyRequest, reply: FastifyReply)=>{
   if(error instanceof ZodError){
       return reply.status(400).send({message: 'Validation error', issues: error.format()})
+  }
+
+  if(error.message.includes('Multipart: Boundary not found')){
+        return reply.status(400).send({message: 'The file name cannot be empty'})
   }
 
   if(env.NODE_ENV !== 'production'){

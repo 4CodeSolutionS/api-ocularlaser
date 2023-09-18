@@ -18,7 +18,7 @@ describe("List clinic (unit)", () => {
         await clinicRepositoryInMemory.create({
             id: '152deda6-b234-4632-9200-50522635994c',
                 name: 'Clinica Zen',
-                Address:{
+                address:{
                     create:{
                         street: 'Rua 1',
                         complement: 'Casa',
@@ -35,7 +35,7 @@ describe("List clinic (unit)", () => {
         await clinicRepositoryInMemory.create({
             id: 'd118f664-7b7e-4d84-84b6-0d54fd729536',
                 name: 'Clinica Kaiser',
-                Address:{
+                address:{
                     create:{
                         street: 'Rua 1',
                         complement: 'Casa',

@@ -4,6 +4,18 @@ import { randomUUID } from "crypto";
 
 export class InMemoryUsersRepository implements IUsersRepository{
     public users: User[] = []
+
+    async turnAdmin(id: string){
+        const userIndex = this.users.findIndex(user => user.id === id)
+
+        if(userIndex === -1){
+            return null
+        }
+
+        this.users[userIndex].role = 'ADMIN' as Role
+
+        return this.users[userIndex]
+    }
     
    async getUserSecurity(id: string){
     const user = this.users.find(user => user.id === id)

@@ -2,6 +2,7 @@ import { IServiceExecutedRepository } from "@/repositories/interface-services-ex
 import { IUsersRepository } from "@/repositories/interface-users-repository";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { ServiceExecuted } from "@prisma/client";
+import { IServiceExecutedFormmated, ListServiceExecutedMapper } from "../mappers/list-service-executed-mapper";
 
 interface IRequestListServicesExecutedUseCases{
     idUser: string;
@@ -22,7 +23,7 @@ export class ListServicesExecutedByUserUseCases {
   async execute({
     idUser,
     page
-  }:IRequestListServicesExecutedUseCases): Promise<IResponseListServicesExecutedUseCases> {
+  }:IRequestListServicesExecutedUseCases): Promise<IServiceExecutedFormmated[]> {
     // encontrar usuario pelo id
     const findUserExist = await this.usersRepository.getUserSecurity(idUser)
 
@@ -32,6 +33,8 @@ export class ListServicesExecutedByUserUseCases {
 }
     const servicesExecuteds = await this.servicesExecutedRepository.listByUserId(idUser, page);
 
-    return { servicesExecuteds };
+    const servicesExecutedsFormatted = await ListServiceExecutedMapper(servicesExecuteds)
+
+    return servicesExecutedsFormatted
   }
 }

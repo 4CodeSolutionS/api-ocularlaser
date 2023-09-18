@@ -9,7 +9,7 @@ export class PrismaClinicsRepository implements IClinicsRepository{
             select:{
                 id: true,
                 name: true,
-                Address: true,
+                address: true,
             }
         }) as unknown as Clinic
 
@@ -21,7 +21,7 @@ export class PrismaClinicsRepository implements IClinicsRepository{
             select:{
                 id: true,
                 name: true,
-                Address: true,
+                address: true,
             }
         }) as unknown as Clinic[]
     }
@@ -32,7 +32,7 @@ export class PrismaClinicsRepository implements IClinicsRepository{
             select:{
                 id: true,
                 name: true,
-                Address: true,
+                address: true,
             }
         }) as unknown as Clinic
 
@@ -52,7 +52,7 @@ export class PrismaClinicsRepository implements IClinicsRepository{
             select:{
                 id: true,
                 name: true,
-                Address: true,
+                address: true,
             }
         }) as unknown as Clinic
 

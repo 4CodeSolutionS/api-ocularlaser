@@ -47,6 +47,7 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
     async list(page = 1){
         const servicesExecuted = await prisma.serviceExecuted.findMany({
             select:{
+                id: true,
                 service: true,
                 user: {
                     select:{
@@ -83,6 +84,7 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                 idClinic
             },
             select:{
+                id: true,
                 service: true,
                 user: {
                     select:{
@@ -119,6 +121,7 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                 idUser
             },
             select:{
+                id: true,
                 service: true,
                 user: {
                     select:{
@@ -155,6 +158,7 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                 idService
             },
             select:{
+                id: true,
                 service: true,
                 user: {
                     select:{
