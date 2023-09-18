@@ -23,7 +23,7 @@
     "test:ui": "vitest --ui",
     "test:only": "vitest related --watch",
     "send:email": "tsx ./src/scripts/test-send-email-fake.ts",
-    "seed:user": "tsx ./prisma/seed/seed-super.ts"
+    "seed:user": "node ./build/seed/seed-super.js"
   },
   "devDependencies": {
     "@fastify/cookie": "9.0.4",
