@@ -108,4 +108,47 @@ describe('Acess Admin User (e2e)', ()=>{
 
         expect(responseAccessAdmin.statusCode).toEqual(404)
     })
+
+    test('should not be able to access admin a user with key already active', async()=>{
+        const {accessToken, user:{id}} = await createAndAuthenticateUser(
+            fastifyApp, 
+            'SUPER',
+            randomUUID(),
+            'super4@email.com',
+            '123-456-789-99'
+            )
+
+        const {user} = await createAndAuthenticateUser(
+            fastifyApp, 
+            'PACIENT', 
+            randomUUID(),
+            'pacient4@email.com',
+            '123-456-789-88'
+            )
+
+        const responseCreateKey = await request(fastifyApp.server)
+        .post(`/api/keys`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send()
+
+        const {key} = responseCreateKey.body as Key
+
+        await request(fastifyApp.server)
+        .patch(`/api/users/access-admin`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+            idUser: user.id,
+            key
+        })
+
+        const responseAccessAdmin = await request(fastifyApp.server)
+        .patch(`/api/users/access-admin`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+            idUser: user.id,
+            key
+        })
+
+        expect(responseAccessAdmin.statusCode).toEqual(401)
+    })
 })

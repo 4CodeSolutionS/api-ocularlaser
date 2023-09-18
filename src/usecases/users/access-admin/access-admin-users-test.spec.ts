@@ -5,6 +5,7 @@ import { AccessAdminUsersUseCase } from "./access-admin-users-usecases";
 import { InMemoryKeysRepository } from "@/repositories/in-memory/in-memory-keys-repository";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { randomUUID } from "crypto";
+import { KeyAlreadyActive } from "@/usecases/errors/key-already-active";
 
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let keysRepositoryInMemory: InMemoryKeysRepository
@@ -30,7 +31,9 @@ describe("Get Access Admin for user (unit)", () => {
         }); 
         await keysRepositoryInMemory.create({
             id: 'a87f108e-f876-4ff0-93d9-7ad9c85202b6',
-            key:'YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2'
+            key:'YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2',
+            active: false,
+            createdAt: new Date(),
         })
 
     });
@@ -61,6 +64,18 @@ describe("Get Access Admin for user (unit)", () => {
             idUser: fakeId,
             key:'YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2'
         })).rejects.toBeInstanceOf(ResourceNotFoundError)
+    });
+
+    test("Should not be able to change access admin user with key already active", async () => {
+        await stu.execute({
+            idUser: '0c2db0f2-04b4-4ff3-9a4f-013b9a740f3a',
+            key:'YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2'
+        });
+ 
+        await expect(() => stu.execute({
+            idUser: '0c2db0f2-04b4-4ff3-9a4f-013b9a740f3a',
+            key:'YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2YTg3ZjEwOGUtZjg3Ni00ZmYwLTkzZDktN2FkOWM4NTIwMmI2'
+        })).rejects.toBeInstanceOf(KeyAlreadyActive)
     });
 
 })
