@@ -3,5 +3,5 @@ import { ReceiveEventsPayments } from "./webhooks/receive-events-payments-contro
 
 export async function paymentsRoutes(fastifyApp: FastifyInstance){
     // receive events payments
-    fastifyApp.post('/', ReceiveEventsPayments)   
+    fastifyApp.post('/webhooks', ReceiveEventsPayments)   
 }
