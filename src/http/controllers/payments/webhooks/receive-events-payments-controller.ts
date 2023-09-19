@@ -7,7 +7,7 @@ export async function ReceiveEventsPayments(request: FastifyRequest, reply:Fasti
             const addressSchema = z.object({
                 event: z.string().nonempty(),
                 payment: z.object({
-                    id: z.string().uuid(),
+                    id: z.string().nonempty(),
                     status: z.string().nonempty(),
                 })
             })
