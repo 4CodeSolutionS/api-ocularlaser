@@ -11,6 +11,7 @@ import { servicesRoutes } from "./http/controllers/services/routes";
 import { servicesExecutedsRoutes } from "./http/controllers/servicesExecuted/routes";
 import { examsRoutes } from "./http/controllers/exams/routes";
 import { keysRoutes } from "./http/controllers/keys/route";
+import { paymentsRoutes } from "./http/controllers/payments/routes";
 
 export const fastifyApp = fastify()
 
@@ -46,6 +47,10 @@ fastifyApp.register(examsRoutes,{
 })
 fastifyApp.register(keysRoutes,{
     prefix: 'api/keys'
+})
+
+fastifyApp.register(paymentsRoutes,{
+    prefix: 'api/payments'
 })
 
 fastifyApp.setErrorHandler((error:FastifyError, _request:FastifyRequest, reply: FastifyReply)=>{
