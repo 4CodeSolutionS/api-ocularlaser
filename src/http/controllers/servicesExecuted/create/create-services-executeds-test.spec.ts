@@ -81,8 +81,6 @@ describe('Create Service Executed (e2e)', ()=>{
             service: {
                 id: idService
             },
-            date: '2023-09-16T10:50:00.000Z',
-            datePayment: '2023-09-16T10:50:00.000Z',
         })
         expect(responseCreateServiceExecuted.statusCode).toEqual(201)
     })

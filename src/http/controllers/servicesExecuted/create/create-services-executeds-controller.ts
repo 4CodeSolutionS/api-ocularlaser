@@ -5,8 +5,6 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
 export async function CreateServiceExecuted (request: FastifyRequest, reply:FastifyReply){
-    console.log('AQUI')
-
         try {
             const serviceSchemaParam = z.object({
                 user: z.object({
