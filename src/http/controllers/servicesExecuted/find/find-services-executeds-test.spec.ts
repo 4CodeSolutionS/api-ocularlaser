@@ -78,8 +78,6 @@ describe('Find Service Executed (e2e)', ()=>{
             service: {
                 id: idService
             },
-            date: '2023-09-16T10:50:00.000Z',
-            datePayment: '2023-09-16T10:50:00.000Z',
         })
         const {id} = responseCreateServiceExecuted.body as ServiceExecuted
         const responseApproveServiceExecuted = await request(fastifyApp.server)
