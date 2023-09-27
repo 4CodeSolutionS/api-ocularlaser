@@ -31,7 +31,7 @@ describe('Register User (e2e)', ()=>{
             password: '123456',
             gender: 'MASCULINO',
             phone: '11999999999',
-            cpf: '123.789.565-65',
+            cpf: '123.789.565-65'
         })
 
         const response = await request(fastifyApp.server).post('/api/users').send({
