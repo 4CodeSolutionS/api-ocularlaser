@@ -18,7 +18,7 @@ let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let examsRepositoryInMemory: InMemoryExamsRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
-let storageProviderInMemory: FirebaseStorageProvider;
+let storageProviderInMemory: InMemoryStorageProvider;
 let createServiceExecutedUseCase: CreateServiceExecutedUseCase;
 let stu: CreateExamsUseCase;
 
@@ -29,8 +29,12 @@ describe("Create exams (unit)", () => {
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         usersRepositoryInMemory = new InMemoryUsersRepository()
         examsRepositoryInMemory = new InMemoryExamsRepository();
-        serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository();
-        storageProviderInMemory = new FirebaseStorageProvider();
+        serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
+            usersRepositoryInMemory,
+            serviceRepositoryInMemory,
+            clinicRepositoryInMemory
+        )
+        storageProviderInMemory = new InMemoryStorageProvider();
         createServiceExecutedUseCase = new CreateServiceExecutedUseCase(
             serviceExecutedRepositoryInMemory,
             mailProviderInMemory,

@@ -8,3 +8,6 @@ ADMIN ou PACIENT.
 * [x] Criar table KEYS com id, idUser, key, createdAt.
 * [x] Criar rota para apenas user SUPER gerar KEYS
 * [x] Criar rota para que usuarios comum possa ganhar acesso de admin atravér da KEYS únicas
+* [ ] Corrigir retornos das entidade que com a primeira letra maiscula do relacionamento ex: Clinic, ServiceExecuted, Token
+* [ ] Corrigir tests unit e e2e depois das mudanças em usuário
+* [x] Corrigir case com uso do storage do firebase

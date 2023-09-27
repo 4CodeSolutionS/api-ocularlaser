@@ -1,5 +1,4 @@
-import { Prisma, $Enums, Service, Category } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Prisma, Service, Category } from "@prisma/client";
 import { IServiceRepository } from "../interface-services-respository";
 import { randomUUID } from "crypto";
 

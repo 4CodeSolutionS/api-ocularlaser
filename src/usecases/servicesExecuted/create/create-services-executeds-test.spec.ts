@@ -20,7 +20,11 @@ describe("Create service executed (unit)", () => {
         usersRepositoryInMemory = new InMemoryUsersRepository()
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
-        serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository()
+        serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
+            usersRepositoryInMemory,
+            serviceRepositoryInMemory,
+            clinicRepositoryInMemory
+        )
         stu = new CreateServiceExecutedUseCase(
             serviceExecutedRepositoryInMemory,
             mailProviderInMemory,
@@ -32,7 +36,7 @@ describe("Create service executed (unit)", () => {
     });
 
     test("Should be able to create a service executed", async () => {
-       const clinic = await clinicRepositoryInMemory.create({
+        const clinic = await clinicRepositoryInMemory.create({
             id: "9c3dff89-03bc-4477-aa5d-67021af86354",
             name: "Clinic Test",
             address:{
@@ -47,38 +51,36 @@ describe("Create service executed (unit)", () => {
                     reference: "Reference Test"
                 }
             }
-       })
+        })
 
-         const user = await usersRepositoryInMemory.create({
-            id: "98ed1021-c869-4b76-838e-c9beb900792c",
-            cpf: "123456789",
-            email: "user1@test.com",
-            name: "User Test",
-            gender: "MASCULINO",
-            phone: "123456789",
-            password: await hash("123456", 8),
-         })
+        const user = await usersRepositoryInMemory.create({
+        id: "98ed1021-c869-4b76-838e-c9beb900792c",
+        cpf: "123456789",
+        email: "user1@test.com",
+        name: "User Test",
+        gender: "MASCULINO",
+        phone: "123456789",
+        password: await hash("123456", 8),
+        })
 
-            const service = await serviceRepositoryInMemory.create({
-                id: "e1595d4f-a68e-49a5-aeae-02267fb4270c",
-                name: "Service Test",
-                category: "EXAM",
-                price: 500,
+        const service = await serviceRepositoryInMemory.create({
+            id: "e1595d4f-a68e-49a5-aeae-02267fb4270c",
+            name: "Service Test",
+            category: "EXAM",
+            price: 500,
+        })
+
+        const serviceExecuted = await stu.execute({
+            idUser: user.id,
+            idClinic: clinic.id,
+            idService: service.id,
+        })
+
+        expect(serviceExecuted).toEqual(
+            expect.objectContaining({
+                id: expect.any(String),
             })
-
-            const serviceExecuted = await stu.execute({
-                idUser: user.id,
-                idClinic: clinic.id,
-                idService: service.id,
-                date: new Date(),
-                dataPayment: new Date(),
-            })
-
-            expect(serviceExecuted).toEqual(
-                expect.objectContaining({
-                    id: expect.any(String),
-                })
-            )
+        )
     });
 
 })

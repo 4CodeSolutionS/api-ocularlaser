@@ -4,7 +4,25 @@ import { randomUUID } from "crypto";
 
 export class InMemoryUsersRepository implements IUsersRepository{
     public users: User[] = []
+    
+    async findByIdCostumerPayment(id: string){
+        const user = this.users.find(user => user.idCostumerPayment === id)
 
+        if(!user){
+            return null
+        }
+
+        return user;
+    }
+
+    async updateIdCostumerPayment(idUser: string, idCostumerPayment: string){
+        const userIndex = this.users.findIndex(user => user.id === idUser)
+
+        this.users[userIndex].idCostumerPayment = idCostumerPayment as string
+
+        return this.users[userIndex]
+    }
+    
     async turnAdmin(id: string){
         const userIndex = this.users.findIndex(user => user.id === id)
 
@@ -25,6 +43,7 @@ export class InMemoryUsersRepository implements IUsersRepository{
     }
     const userSecurity:User = {
         id: user.id,
+        idCostumerPayment: user.idCostumerPayment,
         email: user.email,
         cpf: user.cpf,
         name: user.name,
@@ -32,9 +51,9 @@ export class InMemoryUsersRepository implements IUsersRepository{
         gender: user.gender,
         role: user.role,
         emailActive: user.emailActive,
+
         createdAt: user.createdAt,
     } as User
-
     return userSecurity;
     }
 
@@ -51,6 +70,7 @@ export class InMemoryUsersRepository implements IUsersRepository{
     async create({
         id,
         idClinic,
+        idCostumerPayment,
         cpf,
         email,
         gender,
@@ -63,6 +83,7 @@ export class InMemoryUsersRepository implements IUsersRepository{
         const user = {
             id: id ? id : randomUUID(),
             idClinic: idClinic ? idClinic : null,
+            idCostumerPayment: idCostumerPayment ? idCostumerPayment : null,
             email,
             gender,
             name,

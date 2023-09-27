@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-services-repository";
-import { ServiceAlreadyExistsError } from "@/usecases/errors/service-already-exists-error";
 import { DeleteServiceUseCase } from "./delete-services-usecase";
 import { Service } from "@prisma/client";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";

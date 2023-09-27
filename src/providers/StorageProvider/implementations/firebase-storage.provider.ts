@@ -2,6 +2,7 @@ import { IStorageProvider } from '../storage-provider.interface';
 import 'dotenv/config';
 import {firebaseApp} from '@/config/firebase-connection';
 import { Bucket } from '@google-cloud/storage';
+import { env } from '@/env';
 
 export class FirebaseStorageProvider implements IStorageProvider {
     private readonly storage: Bucket;
@@ -10,10 +11,10 @@ export class FirebaseStorageProvider implements IStorageProvider {
         this.storage = firebaseApp as unknown as Bucket;
     }
 
-    async uploadFile(fileName: string){
+    async uploadFile(fileName: string, pathFolder: string, folderStorage: string){
         try {
-            const destination = `${process.env.FIREBASE_BUCKET_DESTINATION}/${fileName}`;
-            const filePath = `${process.env.FOLDER_TMP_EXAMS}${fileName}`;
+            const destination = `${folderStorage}/${fileName}`;
+            const filePath = `${pathFolder}/${fileName}`;
             const uploadImage = await this.storage.upload(filePath, {
                 destination,
             });

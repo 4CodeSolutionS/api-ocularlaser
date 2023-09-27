@@ -7,12 +7,12 @@ export class InMemoryClinicRepository implements IClinicsRepository{
 
     async create({
         id,
-        idAddress,
+        address,
         name,
     }: Prisma.ClinicUncheckedCreateInput){
         const clinic = {
             id: id ? id : randomUUID(),
-            idAddress,
+            address,
             name,
         }
 

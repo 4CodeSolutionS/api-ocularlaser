@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-users-repository";
-import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { FindUserUseCase } from "./find-user-usecase";
 import { hash } from "bcrypt";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";

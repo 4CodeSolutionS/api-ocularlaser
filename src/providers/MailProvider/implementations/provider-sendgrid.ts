@@ -37,9 +37,9 @@ export class MailProvider implements IMailProvider{
                 subject: subject, // Assunto
                 html: htmlTemplate,
               };
-            
            await sgMail.send(msg);
         } catch (error) {
+            console.log('Error to send email')
             console.log(error);
         }
     }

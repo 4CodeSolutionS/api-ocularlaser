@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-services-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { ListServiceUseCase } from "./list-services-usecase";
 
 let serviceRepositoryInMemory: InMemoryServicesRepository;

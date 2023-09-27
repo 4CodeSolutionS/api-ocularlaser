@@ -3,6 +3,7 @@ import { IDateProvider } from "@/providers/DateProvider/interface-date-provider"
 import { ITokensRepository } from "@/repositories/interface-tokens-repository";
 import { IUsersRepository } from "@/repositories/interface-users-repository";
 import { CredentialsInvalidError } from "@/usecases/errors/credentials-invalid-error";
+import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { Role, User } from "@prisma/client";
 import { compare } from "bcrypt";
 import 'dotenv/config'
@@ -61,17 +62,12 @@ export class LoginUseCase{
             token: refreshToken,
         })
         
-        const user = {
-            id: findUserExists.id,
-            name: findUserExists.name,
-            email: findUserExists.email,
-            cpf: findUserExists.cpf,
-            phone: findUserExists.phone,
-            gender: findUserExists.gender,
-            role: findUserExists.role,
-            emailActive: findUserExists.emailActive,
-            createdAt: findUserExists.createdAt,
-        } as User
+        const user = await this.usersRepository.getUserSecurity(findUserExists.id)
+        
+        if(!user){
+            throw new ResourceNotFoundError()
+        }
+
         return {
             user,
             accessToken,

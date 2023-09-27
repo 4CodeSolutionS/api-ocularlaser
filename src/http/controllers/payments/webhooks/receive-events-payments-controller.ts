@@ -1,4 +1,4 @@
-import { makeReceiveEventsPaymentsWebHook } from '@/usecases/factories/payments/make-verify-events-payments-usecase'
+import { makeReceiveEventsPaymentsWebHook } from '@/usecases/factories/payments/make-confirmn-payments-received-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
@@ -20,10 +20,10 @@ export async function ReceiveEventsPayments(request: FastifyRequest, reply:Fasti
 
             const receiveEventsPayments = await makeReceiveEventsPaymentsWebHook()
             
-            await receiveEventsPayments.execute({
-                event,
-                payment
-            })
+            // await receiveEventsPayments.execute({
+            //     event,
+            //     payment
+            // })
             
             return reply.status(200).send()
             

@@ -18,6 +18,9 @@ const envSchema = z.object({
     FIREBASE_PRIVATE_KEY: z.string().nonempty(),
     FIREBASE_BUCKET: z.string().nonempty(),
     CHARACTERS: z.string().nonempty(),
+    ASAAS_API_URL: z.string().nonempty(),
+    ASAAS_API_KEY: z.string().nonempty(),
+    FOLDER_TMP: z.string().nonempty(),
 })
 
 const _env = envSchema.safeParse(process.env)

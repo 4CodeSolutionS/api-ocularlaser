@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "payments" ALTER COLUMN "datePayment" SET DEFAULT CURRENT_TIMESTAMP;

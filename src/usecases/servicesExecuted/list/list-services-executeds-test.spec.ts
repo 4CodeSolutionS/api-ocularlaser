@@ -20,7 +20,11 @@ describe("List service executed (unit)", () => {
         usersRepositoryInMemory = new InMemoryUsersRepository()
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
-        serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository()
+        serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
+            usersRepositoryInMemory,
+            serviceRepositoryInMemory,
+            clinicRepositoryInMemory
+        )
         stu = new ListServicesExecutedUseCases(serviceExecutedRepositoryInMemory)
 
     });
@@ -66,8 +70,6 @@ describe("List service executed (unit)", () => {
                 idUser: user.id,
                 idClinic: clinic.id,
                 idService: service.id,
-                date: new Date(),
-                dataPayment: new Date(),
                 price: 500,
             })
         }

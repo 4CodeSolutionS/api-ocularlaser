@@ -3,6 +3,7 @@ import { IExamsRepository } from "@/repositories/interface-exams-repository";
 import { IServiceExecutedRepository } from "@/repositories/interface-services-executeds-repository";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { FirebaseStorageProvider } from "@/providers/StorageProvider/implementations/firebase-storage.provider";
+import { IStorageProvider } from '@/providers/StorageProvider/storage-provider.interface';
 
 interface IRequestUploadExams {
     idServiceExecuted: string
@@ -19,7 +20,7 @@ export class CreateExamsUseCase{
     constructor(
         private examRepository: IExamsRepository,
         private serviceExecutedRepository: IServiceExecutedRepository,
-        private storageProvider: FirebaseStorageProvider
+        private storageProvider: IStorageProvider
     ) {}
 
     async execute({
@@ -40,10 +41,11 @@ export class CreateExamsUseCase{
             throw new ResourceNotFoundError()
         }
 
+        const pathFolder = './src/tmp/exams'
         // for para percorrer o array de nomes de arquivos
         for(let listFile of fileNameExame){
             // fazer upload do exame dentro firebase através do nome do arquivo
-            let urlExam = await this.storageProvider.uploadFile(listFile.filename) as string
+            let urlExam = await this.storageProvider.uploadFile(listFile.filename, pathFolder, 'exams' ) as string
             // criar no banco de dados as urls dos exames
             await this.examRepository.createExams({
                 idServiceExecuted,

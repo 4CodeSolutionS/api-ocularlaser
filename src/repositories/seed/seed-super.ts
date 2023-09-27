@@ -11,7 +11,7 @@ async function seedSuper(){
     })
 
     if(findUserSuper){
-        throw new EmailAlreadyExistsError()
+        throw new Error('User Super already exists!')
     }
 
     const admin = await prisma.user.create({

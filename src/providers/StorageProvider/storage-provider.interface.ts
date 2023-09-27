@@ -1,3 +1,3 @@
 export interface IStorageProvider {
-    uploadFile(fileName: string): Promise<string | undefined>;
+    uploadFile(fileName: string, pathFolder: string, folderStorage: 'qrcodes' | 'exams'): Promise<string | undefined>;
 }

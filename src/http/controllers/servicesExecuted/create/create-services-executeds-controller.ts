@@ -5,6 +5,8 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
 export async function CreateServiceExecuted (request: FastifyRequest, reply:FastifyReply){
+    console.log('AQUI')
+
         try {
             const serviceSchemaParam = z.object({
                 user: z.object({
@@ -16,23 +18,17 @@ export async function CreateServiceExecuted (request: FastifyRequest, reply:Fast
                 service: z.object({
                     id: z.string().uuid(),
                 }),
-                date: z.string().datetime(),
-                datePayment: z.string().datetime(),
             })
 
             const { 
                 clinic,
                 user,
                 service,
-                date,
-                datePayment,
             } = serviceSchemaParam.parse(request.body)
 
             const createServiceExecuted = await makeCreateServiceExecuted()
 
             const serviceExecuted = await createServiceExecuted.execute({
-                dataPayment: new Date(datePayment),
-                date: new Date(date),
                 idClinic: clinic.id,
                 idService: service.id,
                 idUser: user.id,

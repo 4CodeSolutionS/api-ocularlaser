@@ -34,9 +34,8 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                     }
                 },
                 clinic: true,
+                payment: true,
                 exams: true,
-                dataPayment: true,
-                date: true,
                 price: true,
                 approved: true,
             }
@@ -61,13 +60,12 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                     }
                 },
                 clinic: true,
+                payment: true,
                 exams: {
                     select:{
                         urlExam: true
                     }
                 },
-                dataPayment: true,
-                date: true,
                 price: true,
                 approved: true,
             },
@@ -98,13 +96,12 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                     }
                 },
                 clinic: true,
+                payment: true,
                 exams: {
                     select:{
                         urlExam: true
                     }
                 },
-                dataPayment: true,
-                date: true,
                 price: true,
                 approved: true,
             },
@@ -135,13 +132,12 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                     }
                 },
                 clinic: true,
+                payment: true,
                 exams: {
                     select:{
                         urlExam: true
                     }
                 },
-                dataPayment: true,
-                date: true,
                 price: true,
                 approved: true,
             },
@@ -172,13 +168,12 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                     }
                 },
                 clinic: true,
+                payment: true,
                 exams: {
                     select:{
                         urlExam: true
                     }
                 },
-                dataPayment: true,
-                date: true,
                 price: true,
                 approved: true,
             },
@@ -208,13 +203,12 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                     }
                 },
                 clinic: true,
+                payment: true,
                 exams: {
                     select:{
                         urlExam: true
                     }
                 },
-                dataPayment: true,
-                date: true,
                 price: true,
                 approved: true,
             }

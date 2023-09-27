@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { InMemoryAddressesRepository } from "@/repositories/in-memory/in-memory-addresses-repository";
 import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-services-repository";
 import { CreateServiceUseCase } from "./create-services-usecase";
 import { ServiceAlreadyExistsError } from "@/usecases/errors/service-already-exists-error";

@@ -1,8 +1,21 @@
 import { Prisma, ServiceExecuted } from "@prisma/client";
 import { IServiceExecutedRepository } from "../interface-services-executeds-repository";
 import { randomUUID } from "crypto";
+import { InMemoryUsersRepository } from "./in-memory-users-repository";
+import { InMemoryServicesRepository } from "./in-memory-services-repository";
+import { InMemoryClinicRepository } from "./in-memory-clinics-repository";
+import { IServiceExecutedFormmated } from "@/usecases/servicesExecuted/mappers/list-service-executed-mapper";
 
 export class InMemoryServiceExecutedRepository implements IServiceExecutedRepository{
+    private servicesExecuted: ServiceExecuted[] = []
+
+    constructor(
+        private usersRepository: InMemoryUsersRepository,
+        private servicesRepository: InMemoryServicesRepository,
+        private clinicsRepository: InMemoryClinicRepository,
+
+    ){
+    }
     async getterPriceAsNumber(id: string){
         const serviceExecuted = this.servicesExecuted.find(serviceExecuted => serviceExecuted.id === id)
 
@@ -12,15 +25,12 @@ export class InMemoryServiceExecutedRepository implements IServiceExecutedReposi
 
         return Number(serviceExecuted.price)
     }
-    private servicesExecuted: ServiceExecuted[] = []
     
     async create({
         id,
         idService,
         idUser,
         idClinic,
-        date,
-        dataPayment,
         price,
         approved,
     }: Prisma.ServiceExecutedUncheckedCreateInput){
@@ -29,8 +39,6 @@ export class InMemoryServiceExecutedRepository implements IServiceExecutedReposi
             idService,
             idUser,
             idClinic,
-            date: new Date(date),
-            dataPayment: new Date(dataPayment),
             price: new Prisma.Decimal(price as number),
             approved: approved ? approved : false,
         }
@@ -70,12 +78,21 @@ export class InMemoryServiceExecutedRepository implements IServiceExecutedReposi
 
     async findById(id: string){
         const serviceExecuted = this.servicesExecuted.find(serviceExecuted => serviceExecuted.id === id)
-
         if(!serviceExecuted){
             return null
         }
+        const user = await this.usersRepository.findById(serviceExecuted.idUser)
 
-        return serviceExecuted
+        const service = await this.servicesRepository.findById(serviceExecuted.idService)
+
+        const clinic = await this.clinicsRepository.findById(serviceExecuted.idClinic)
+
+        return {
+            ...serviceExecuted,
+            user,
+            service,
+            clinic,
+        }
     }
 
     async deleteById(id: string){
