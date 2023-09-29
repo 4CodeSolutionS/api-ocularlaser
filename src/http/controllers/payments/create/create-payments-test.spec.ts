@@ -240,11 +240,11 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idUser: user.id,
             idServiceExecuted,
             billingType: 'PIX',
             remoteIp: "116.213.42.532"            
         })
+        console.log(responseCreatePayment.body)
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
@@ -307,7 +307,6 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idUser: user.id,
             idServiceExecuted,
             billingType: 'FETLOCK',
             remoteIp: "116.213.42.532"            
@@ -374,7 +373,6 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idUser: user.id,
             idServiceExecuted,
             billingType: 'FETLOCK',
             remoteIp: "116.213.42.532"            
@@ -441,7 +439,6 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idUser: user.id,
             idServiceExecuted,
             billingType: 'CREDIT_CARD',
             creditCard: {

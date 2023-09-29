@@ -4,7 +4,7 @@ import { IPaymentsRepository } from '@/repositories/interface-payments-repositor
 import { IServiceExecutedRepository } from '@/repositories/interface-services-executeds-repository'
 import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { IServiceExecutedFormmated } from '@/usecases/servicesExecuted/mappers/list-service-executed-mapper'
-import { PaymentMethod} from '@prisma/client'
+import { PaymentMethod, Prisma} from '@prisma/client'
 import 'dotenv/config'
 
 export interface IRequestReceiveEvent {
@@ -37,6 +37,7 @@ export class EventsWebHookPaymentsUseCases{
     }:IRequestReceiveEvent):Promise<any>{
         //[x] verifica se o evento é de pagamento é "PAYMENT_RECEIVED"
         if(event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_REPROVED'){ 
+            console.log('event not found')
             return false
         }
         //[x] criar variavel installments para receber o valor e o numero de parcelo
@@ -49,6 +50,7 @@ export class EventsWebHookPaymentsUseCases{
 
             //[x] validar se o installments existe
             if(!findInstallments){
+                console.log('installments not found')
                 throw new ResourceNotFoundError()
             }
 
@@ -63,6 +65,7 @@ export class EventsWebHookPaymentsUseCases{
         const findServiceExecuted = await this.serviceExecutedRepository.findById(String(payment.externalReference)) as unknown as IServiceExecutedFormmated
         //[x] validar se o service executed existe
         if(!findServiceExecuted){
+            console.log('service executed not found')
             return false
         }
 
@@ -83,7 +86,7 @@ export class EventsWebHookPaymentsUseCases{
                 paymentStatus: 'REPROVED',
                 invoiceUrl: payment.invoiceUrl,
                 value: findServiceExecuted.price,
-                netValue: payment.netValue,
+                netValue: new Prisma.Decimal(payment.netValue),
                 datePayment: payment.paymentDate ? new Date(payment.paymentDate) : undefined
             })
             //[x] criar variavel com caminho do templeate de email de pagamento reprovado
@@ -111,10 +114,9 @@ export class EventsWebHookPaymentsUseCases{
             paymentStatus: 'APPROVED',
             invoiceUrl: payment.invoiceUrl,
             value: findServiceExecuted.price,
-            netValue: payment.netValue,
+            netValue: new Prisma.Decimal(payment.netValue),
             datePayment: payment.paymentDate ? new Date(payment.paymentDate) : undefined
         })
-        
         //[x] criar variavel com caminho do template de email
         const templatePathPacient = './views/emails/payment-confirmed.hbs'
         const templatePathAdmin = './views/emails/admin.hbs'
