@@ -6,7 +6,7 @@ export interface IChargeData{
     dueDate: string,
     installmentCount?: number,
     installmentValue?: number,
-    installments?: string,
+    installment?: string,
     description?: string,
     externalReference: string,
     creditCard?: {
@@ -49,14 +49,10 @@ export interface ICustomerData{
     phone?: string
 }
 
-export interface IQrcode {
-    addressKey: string
-    format: "IMAGE"
 
-}
 
 export interface IAsaasProvider{
     createPayment(data:IChargeData): Promise<any | undefined>
-    createCustomer(data:ICustomerData): Promise<any | undefined>
+    createCustomer(data:ICustomerData): Promise<ICustomerData | undefined>
     findUniqueInstallments(idInstallment: string): Promise<any | null>
 }

@@ -3,19 +3,19 @@ import { AsaasProvider } from "@/providers/PaymentProvider/implementations/provi
 import { PrismaPaymentRepository } from "@/repositories/prisma/prisma-payments-repository"
 import { PrismaServicesExecutedsRepository } from "@/repositories/prisma/prisma-services-executeds-repository"
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository"
-import { ConfirmPaymentReceivedUseCase } from "@/usecases/payments/confirm-payment/confirmn-payment-usecases"
+import { EventsWebHookPaymentsUseCases } from "@/usecases/payments/events-webhook/events-webhook-payments-usecases"
 
-export async function makeReceiveEventsPaymentsWebHook(): Promise<ConfirmPaymentReceivedUseCase> {
+export async function makeReceiveEventsPaymentsWebHook(): Promise<EventsWebHookPaymentsUseCases> {
     const paymentsRepository = new PrismaPaymentRepository()
     const serviceExecutedRepository = new PrismaServicesExecutedsRepository()
     const asaasProvider = new AsaasProvider()
     const mailProvider = new MailProvider()
-    const confirmPaymentReceivedUseCase = new ConfirmPaymentReceivedUseCase(
+    const eventsmPaymentWebhookUseCase = new EventsWebHookPaymentsUseCases(
         paymentsRepository,
         serviceExecutedRepository,
         asaasProvider,
         mailProvider
         )
 
-    return confirmPaymentReceivedUseCase
+    return eventsmPaymentWebhookUseCase
 }

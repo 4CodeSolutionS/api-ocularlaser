@@ -190,10 +190,12 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                 id
             },
             select:{
+                id: true,
                 service: true,
                 user: {
                     select:{
                         id: true,
+                        idCostumerPayment: true,
                         name: true,
                         email: true,
                         phone: true,

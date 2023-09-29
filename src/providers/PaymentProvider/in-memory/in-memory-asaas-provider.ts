@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { IAsaasProvider, IChargeData, ICustomerData } from "../interface-asaas-payment";
+import { IDateProvider } from "@/providers/DateProvider/interface-date-provider";
 interface IInstallmentsInfo {
     id: string
     installments?: string
@@ -10,6 +11,7 @@ interface IPayment{
     id:string,
     customer: string,
     value: number,
+    netValue: number,
     billingType: string,
     installments: string,
     creditCard: any,
@@ -17,11 +19,16 @@ interface IPayment{
     dueDate: string,
     invoiceUrl: string,
     externalReference: string,
+    description: string
 }
 export class InMemoryAsaasProvider implements IAsaasProvider{
     private payments: IChargeData[] = []
     private customers: ICustomerData[] = []
     private installments: IInstallmentsInfo[] = []
+
+    constructor(
+        private dayjsDateProvider: IDateProvider
+    ){}
 
     async createPayment({
         customer,
@@ -30,7 +37,7 @@ export class InMemoryAsaasProvider implements IAsaasProvider{
         dueDate,
         installmentCount,
         installmentValue,
-        installments,
+        installment,
         description,
         externalReference,
         creditCard,
@@ -48,7 +55,7 @@ export class InMemoryAsaasProvider implements IAsaasProvider{
             dueDate,
             installmentCount,
             installmentValue,
-            installments,
+            installment,
             description,
             externalReference,
             creditCard,
@@ -59,19 +66,57 @@ export class InMemoryAsaasProvider implements IAsaasProvider{
             remoteIp
         }
         const instalmentsInfo = {
-            id: randomUUID(),
+            id: payment.id,
             installments: randomUUID(),
             installmentCount: installmentCount as number,
-            paymentValue: installmentValue as number
+            paymentValue: installmentValue as number,
         }
 
         this.payments.push(payment)
         this.installments.push(instalmentsInfo)
 
+        let netValue = 0 
+        let dateExpireDiscount = new Date('2023-12-19')
+        const dateNow = this.dayjsDateProvider.dateNow()
+        const verifyDiscountActive = this.dayjsDateProvider.compareIfBefore(dateNow, dateExpireDiscount)
+
+        if(billingType === 'BOLETO' || billingType === 'PIX'){
+            if(verifyDiscountActive){
+                netValue = Number(Math.abs(value - 0.99).toFixed(2))
+            }else{
+                netValue = Number(Math.abs(value - 1.99).toFixed(2))
+            }
+        }
+
+        if(billingType === 'CREDIT_CARD'){
+            if(verifyDiscountActive){
+                netValue = Math.abs((Number((value * 0.0199 + 0.49).toFixed(2)) - value))
+            }else{
+                netValue = Math.abs((Number((value * 0.0299 + 0.49).toFixed(2)) - value))
+            }
+        }
+
+        if(billingType === 'CREDIT_CARD' && Number(installmentCount) <= 6){
+            if(verifyDiscountActive){
+                netValue = Math.abs((Number((value * 0.0249 + 0.49).toFixed(2)) - value))
+            }else{
+                netValue = Math.abs((Number((value * 0.0349 + 0.49).toFixed(2)) - value))
+            }
+        }
+
+        if(billingType === 'CREDIT_CARD' && Number(installmentCount) > 6){
+            if(verifyDiscountActive){
+                netValue = Math.abs((Number((value * 0.0299 + 0.49).toFixed(2)) - value))
+            }else{
+                netValue = Math.abs((Number((value * 0.0399 + 0.49).toFixed(2)) - value))
+            }
+        }
+
         return {
             id: payment.id,
             customer: payment.customer,
             value: payment.value,
+            netValue,
             billingType: payment.billingType,
             installments: instalmentsInfo.id,
             creditCard,

@@ -131,13 +131,11 @@ model Exam {
 
 enum PaymentMethod {
   CREDIT_CARD
-  DEBIT_CARD
   FETLOCK
   PIX
 }
 
 enum Status {
-  PENDING
   APPROVED
   REPROVED
 }
@@ -145,6 +143,7 @@ enum Status {
 model Payment {
   id                String          @id @unique @default(uuid())
   users             User            @relation(fields: [idUser], references: [id])
+  idPaymentAsaas    String
   idUser            String
   idCostumer        String?         @unique
   idServiceExecuted String          @unique
@@ -153,8 +152,11 @@ model Payment {
   installmentValue  Decimal?
   serviceExecuted   ServiceExecuted @relation(fields: [idServiceExecuted], references: [id])
   paymentMethod     PaymentMethod
+  paymentStatus     Status
   value             Decimal
-  datePayment       DateTime        @default(now())
+  netValue          Decimal
+
+  datePayment DateTime?
 
   @@map("payments")
 }

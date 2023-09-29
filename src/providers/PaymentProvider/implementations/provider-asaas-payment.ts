@@ -34,7 +34,7 @@ export class AsaasProvider implements IAsaasProvider {
             })
             return responseCreatePayment
         } catch (error) {
-            console.log('Error create Payment in ASAAS',error)
+            console.log('Error create Payment in ASAAS')
 
             return undefined
         }
@@ -50,10 +50,9 @@ export class AsaasProvider implements IAsaasProvider {
             }).then((response)=> {
                 return response.data
             })
-    
             return responseCreateCustomer
         } catch (error) {
-            console.log('Error create Customer in ASAAS',error)
+            console.log('Error create Customer in ASAAS')
 
             return undefined
         }

@@ -15,11 +15,11 @@ export async function createAndAuthenticateUser(
     await prisma.user.create({
         data:{
             id: id ? id : randomUUID(),
-            name:'user1',
-            email: email ? email : 'user@test.com',
-            cpf: cpf ? cpf : "123.456.789-10",
+            name:'marcelo do teste',
+            email: email ? email : 'kaio.almeida@gmail.com',
+            cpf: cpf ? cpf : "24971563792",
             gender: 'MASCULINO',
-            phone: '77-77777-7777',
+            phone: '4738010919',
             password: await hash('123456', 8),
             emailActive: false,
             role: role ? role : 'PACIENT',
@@ -30,7 +30,7 @@ export async function createAndAuthenticateUser(
     const response = await request(fastifyApp.server)
         .post('/api/users/login')
         .send({
-            email: email ? email : 'user@test.com',
+            email: email ? email : 'kaio.almeida@gmail.com',
             password: '123456',
         }) 
     const { accessToken, refreshToken, user} = response.body as IResponseLoginAccount

@@ -3,13 +3,14 @@ import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-user
 import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-services-repository";
 import { hash } from "bcrypt";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
-import { ConfirmPaymentReceivedUseCase } from "./confirmn-payment-usecases";
+import { EventsWebHookPaymentsUseCases } from "./events-webhook-payments-usecases";
 import { MailProvider } from "@/providers/MailProvider/implementations/provider-sendgrid";
 import { InMemoryServiceExecutedRepository } from "@/repositories/in-memory/in-memory-services-executeds-respository";
 import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-clinics-repository";
 import { InMemoryAsaasProvider } from "@/providers/PaymentProvider/in-memory/in-memory-asaas-provider";
 import { randomUUID } from "crypto";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
 
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
 let asaasProviderInMemory: InMemoryAsaasProvider;
@@ -18,7 +19,8 @@ let clinicRepositoryInMemory: InMemoryClinicRepository;
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let mailProviderInMemory: MailProvider;
-let stu: ConfirmPaymentReceivedUseCase;
+let dateProviderInMemory: DayjsDateProvider;
+let stu: EventsWebHookPaymentsUseCases;
 
 export interface IDiscount {
     value: number
@@ -31,13 +33,14 @@ describe("Confirm payment received (unit)", () => {
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
-        asaasProviderInMemory = new InMemoryAsaasProvider()
+        dateProviderInMemory = new DayjsDateProvider()
+        asaasProviderInMemory = new InMemoryAsaasProvider(dateProviderInMemory)
         mailProviderInMemory = new MailProvider()
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
             usersRepositoryInMemory,
             serviceRepositoryInMemory,
             clinicRepositoryInMemory)
-        stu = new ConfirmPaymentReceivedUseCase(
+        stu = new EventsWebHookPaymentsUseCases(
             paymentRepositoryInMemory,
             serviceExecutedRepositoryInMemory,
             asaasProviderInMemory,
@@ -83,8 +86,6 @@ describe("Confirm payment received (unit)", () => {
             idClinic: clinic.id,
             idService: service.id,
             idUser: user.id,
-            dataPayment: new Date(),
-            date: new Date(),
             price: 500,
         })
 
@@ -100,20 +101,24 @@ describe("Confirm payment received (unit)", () => {
             billingType: 'CREDIT_CARD',
             value: 500,
             dueDate: new Date().toISOString(),
-            description: 'description',
+            description: service.name,
             externalReference: "1acafb98-7039-4c2c-bcb4-999b572d7b04",
             remoteIp: "116.213.42.532",
         })
 
-
         const confirmPayment = await stu.execute({
             event: 'PAYMENT_RECEIVED',
             payment: {
+                id: payment.id,
                 customer: payment.customer,
                 invoiceUrl: payment.invoiceUrl,
                 billingType: payment.billingType,
                 externalReference: payment.externalReference,
                 paymentDate: payment.dueDate,
+                value: payment.value,
+                netValue: payment.netValue,
+                description: payment.description,
+                installment: payment.installments,
             }
         })
 
@@ -121,12 +126,13 @@ describe("Confirm payment received (unit)", () => {
             expect.objectContaining({
                 paymentMethod: 'CREDIT_CARD',
                 invoiceUrl: 'https://invoice.com',
+                paymentStatus: 'APPROVED'
             })
         )
           
-   }, 100000);
+    }, 100000);
 
-   test("Should not be able to confirm a payment unique with status PAYMENT_REPROVED", async () => {
+    test("Should not be able to confirm a payment unique with status PAYMENT_REPROVED", async () => {
     const clinic = await clinicRepositoryInMemory.create({
         id: randomUUID(),
         name: "Clinic Test 1",
@@ -163,8 +169,6 @@ describe("Confirm payment received (unit)", () => {
         idClinic: clinic.id,
         idService: service.id,
         idUser: user.id,
-        dataPayment: new Date(),
-        date: new Date(),
         price: 500,
     })
 
@@ -189,15 +193,26 @@ describe("Confirm payment received (unit)", () => {
     const confirmPayment = await stu.execute({
         event: 'PAYMENT_REPROVED',
         payment: {
-            customer: payment.customer,
-            invoiceUrl: payment.invoiceUrl,
-            billingType: payment.billingType,
-            externalReference: payment.externalReference,
-            paymentDate: payment.dueDate,
+            id: payment.id,
+                customer: payment.customer,
+                invoiceUrl: payment.invoiceUrl,
+                billingType: payment.billingType,
+                externalReference: payment.externalReference,
+                paymentDate: payment.dueDate,
+                value: payment.value,
+                netValue: payment.netValue,
+                description: payment.description,
+                installment: payment.installments,
         }
     })
 
-    expect(confirmPayment).toBe(false)
+    expect(confirmPayment).toEqual(
+        expect.objectContaining({
+            paymentMethod: 'CREDIT_CARD',
+            invoiceUrl: 'https://invoice.com',
+            paymentStatus: 'REPROVED'
+        })
+    )
     }, 100000);
 
     test("Should be able to confirm a payment credi_card with installments", async () => {
@@ -237,8 +252,6 @@ describe("Confirm payment received (unit)", () => {
         idClinic: clinic.id,
         idService: service.id,
         idUser: user.id,
-        dataPayment: new Date(),
-        date: new Date(),
         price: 500,
     })
 
@@ -279,18 +292,23 @@ describe("Confirm payment received (unit)", () => {
     const confirmPayment = await stu.execute({
         event: 'PAYMENT_RECEIVED',
         payment: {
-            customer: payment.customer,
-            invoiceUrl: payment.invoiceUrl,
-            installments: payment.installments,
-            billingType: payment.billingType,
-            externalReference: payment.externalReference,
-            paymentDate: payment.dueDate,
+            id: payment.id,
+                customer: payment.customer,
+                invoiceUrl: payment.invoiceUrl,
+                billingType: payment.billingType,
+                externalReference: payment.externalReference,
+                paymentDate: payment.dueDate,
+                value: payment.value,
+                netValue: payment.netValue,
+                description: payment.description,
+                installment: payment.installments,
         }
     })
     expect(confirmPayment.payment).toEqual(
         expect.objectContaining({
             paymentMethod: 'CREDIT_CARD',
             invoiceUrl: 'https://invoice.com',
+            paymentStatus: 'APPROVED'
         })
     )
       
@@ -314,18 +332,22 @@ describe("Confirm payment received (unit)", () => {
             remoteIp: "116.213.42.532",
         })
         
-        await expect(()=> stu.execute({
+        const paymentReject = await stu.execute({
             event: 'PAYMENT_RECEIVED',
             payment: {
+                id: payment.id,
                 customer: payment.customer,
                 invoiceUrl: payment.invoiceUrl,
-                installments: payment.installments,
                 billingType: payment.billingType,
                 externalReference: payment.externalReference,
                 paymentDate: payment.dueDate,
+                value: payment.value,
+                netValue: payment.netValue,
+                description: payment.description,
+                installment: payment.installments,
             }
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
-          
+        })
+        expect(paymentReject).toEqual(false)
     }, 100000);
 });
 

@@ -10,17 +10,20 @@ import 'dotenv/config'
 export interface IRequestReceiveEvent {
     event: string
     payment: {
+        id: string
         customer: string
         invoiceUrl: string
-        decription?: string
-        externalReference: string
+        description?: string
+        externalReference?: string
         billingType: string
-        paymentDate: string
-        installments?: string
+        paymentDate?: string
+        installment?: string
+        value: number
+        netValue: number
     }
 }
 
-export class ConfirmPaymentReceivedUseCase{
+export class EventsWebHookPaymentsUseCases{
     constructor(
         private paymentsRepository: IPaymentsRepository,
         private serviceExecutedRepository: IServiceExecutedRepository,
@@ -36,29 +39,13 @@ export class ConfirmPaymentReceivedUseCase{
         if(event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_REPROVED'){ 
             return false
         }
-
-        //[] criar validação para caso o evento seja "REPROVED"
-        if(event === 'PAYMENT_REPROVED'){
-            //[x] criar variavel com caminho do templeate de email de pagamento reprovado
-            const templatePathPacient = './views/emails/payment-reproved.hbs'
-             //[x] enviar email para o usuario informando que o pagamento foi reprovado
-            await this.mailProvider.sendEmail(
-                'kaio-dev@outlook.com', 
-                'Kaio Moreira', 
-                'Pagamento Reprovado', 
-                null,
-                templatePathPacient, 
-                null)
-            return false;
-        }
-
         //[x] criar variavel installments para receber o valor e o numero de parcelo
         let installmentCount = 0
         let installmentValue = 0
         //[x] verificar se o pagamento é parcelado
-        if(payment.installments){
+        if(payment.installment){
             //[x] buscar installments pelo id recebido no payment recebido
-            const findInstallments = await this.asaasProvider.findUniqueInstallments(payment.installments)
+            const findInstallments = await this.asaasProvider.findUniqueInstallments(payment.installment)
 
             //[x] validar se o installments existe
             if(!findInstallments){
@@ -72,28 +59,60 @@ export class ConfirmPaymentReceivedUseCase{
             installmentCount = findInstallments.installmentCount
 
         } 
-       
         //[x] buscar service executed pelo id recebido no externalReference
-        const findServiceExecuted = await this.serviceExecutedRepository.findById(payment.externalReference) as unknown as IServiceExecutedFormmated
+        const findServiceExecuted = await this.serviceExecutedRepository.findById(String(payment.externalReference)) as unknown as IServiceExecutedFormmated
         //[x] validar se o service executed existe
         if(!findServiceExecuted){
-            throw new ResourceNotFoundError()
+            return false
         }
 
         //[x] validar se o billingType é BOLETO se for retorna FETLOCK, senao retorna o billingType
         let method = payment.billingType === 'BOLETO' ? 'FETLOCK' : payment.billingType as PaymentMethod
 
-        //[x] criar pagamento no banco de dados com os dados recebidos
-        const createPayment = await this.paymentsRepository.create({
+        //[] criar validação para caso o evento seja "REPROVED"
+        if(event === 'PAYMENT_REPROVED'){
+            //[] criar payment no banco de dados com os dados recebidos e status REPROVED
+            const createPaymentReproved = await this.paymentsRepository.create({
+                idUser: findServiceExecuted.user.id,
+                idServiceExecuted: String(payment.externalReference),
+                idCostumer: payment.customer,
+                idPaymentAsaas: payment.id,
+                paymentMethod: method,
+                installmentCount,
+                installmentValue,
+                paymentStatus: 'REPROVED',
+                invoiceUrl: payment.invoiceUrl,
+                value: findServiceExecuted.price,
+                netValue: payment.netValue,
+                datePayment: payment.paymentDate ? new Date(payment.paymentDate) : undefined
+            })
+            //[x] criar variavel com caminho do templeate de email de pagamento reprovado
+            const templatePathPacient = './views/emails/payment-reproved.hbs'
+             //[x] enviar email para o usuario informando que o pagamento foi reprovado
+            await this.mailProvider.sendEmail(
+                'kaio-dev@outlook.com', 
+                'Kaio Moreira', 
+                'Pagamento Reprovado', 
+                null,
+                templatePathPacient, 
+                null)
+            return createPaymentReproved;
+        }
+
+        //[x] criar pagamento APPROVED no banco de dados com os dados recebidos
+        const createPaymentApproved = await this.paymentsRepository.create({
             idUser: findServiceExecuted.user.id,
-            idServiceExecuted: findServiceExecuted.id,
+            idServiceExecuted: String(payment.externalReference),
             idCostumer: payment.customer,
+            idPaymentAsaas: payment.id,
             paymentMethod: method,
             installmentCount,
             installmentValue,
+            paymentStatus: 'APPROVED',
             invoiceUrl: payment.invoiceUrl,
             value: findServiceExecuted.price,
-            datePayment: payment.paymentDate,
+            netValue: payment.netValue,
+            datePayment: payment.paymentDate ? new Date(payment.paymentDate) : undefined
         })
         
         //[x] criar variavel com caminho do template de email
@@ -101,13 +120,13 @@ export class ConfirmPaymentReceivedUseCase{
         const templatePathAdmin = './views/emails/admin.hbs'
        
         //[x]* disparar envio de email de pagamento recebido do usuário com nota fiscal(invoice)
-        const sendInvoiceToUser = await this.mailProvider.sendEmail(
-            'kaio-dev@outlook.com', 
-            'Kaio Moreira', 
-            'Pagamento Confirmado', 
-            payment.invoiceUrl,
-            templatePathPacient, 
-            null)
+        // const sendInvoiceToUser = await this.mailProvider.sendEmail(
+        //     'kaio-dev@outlook.com', 
+        //     'Kaio Moreira', 
+        //     'Pagamento Confirmado', 
+        //     payment.invoiceUrl,
+        //     templatePathPacient, 
+        //     null)
 
         //[]* disparar envio de email de pagamento recebido para o admin com comprovante(payment - banco de dados API)
         // const sendInvoiceToUser = await this.mailProvider.sendEmail(
@@ -118,7 +137,7 @@ export class ConfirmPaymentReceivedUseCase{
         //     templatePathAdmin, 
         //     null)
         return {
-            payment: createPayment
+            payment: createPaymentApproved
         }
     }
 }

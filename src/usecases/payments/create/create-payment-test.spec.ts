@@ -42,7 +42,7 @@ describe("Create payment (unit)", () => {
             )
         dateProviderInMemory = new DayjsDateProvider()
         storageProviderInMemory = new FirebaseStorageProvider()
-        asaasProviderInMemory = new InMemoryAsaasProvider()
+        asaasProviderInMemory = new InMemoryAsaasProvider(dateProviderInMemory)
         stu = new CreatePaymentUseCase(
             usersRepositoryInMemory,
             asaasProviderInMemory,
@@ -89,8 +89,6 @@ describe("Create payment (unit)", () => {
             idClinic: clinic.id,
             idService: service.id,
             idUser: user.id,
-            dataPayment: new Date(),
-            date: new Date(),
             price: 500,
         })
 
@@ -112,20 +110,12 @@ describe("Create payment (unit)", () => {
             phone: "4738010919",
         }
 
-        const discount = {
-            value: 10,
-            dueDateLimitDays: 10,
-            type: "FIXED",
-        } as IDiscount
-
         const createdPaymentCreditCard = await stu.execute({
-            idUser: user.id,
             idServiceExecuted: serviceExecuted.id,
             billingType: "CREDIT_CARD",
             dueDate: '2023-09-21',
             creditCard,
             creditCardHolderInfo,
-            discount,
             remoteIp: '116.213.42.532',
         })
        expect(createdPaymentCreditCard.payment).toEqual(
@@ -173,8 +163,6 @@ describe("Create payment (unit)", () => {
             idClinic: clinic.id,
             idService: service.id,
             idUser: user.id,
-            dataPayment: new Date(),
-            date: new Date(),
             price: 500,
         })
 
@@ -196,14 +184,7 @@ describe("Create payment (unit)", () => {
             phone: "4738010919",
         }
 
-        const discount = {
-            value: 10,
-            dueDateLimitDays: 10,
-            type: "FIXED",
-        } as IDiscount
-
         const createdPaymentCreditCard = await stu.execute({
-            idUser: user.id,
             idServiceExecuted: serviceExecuted.id,
             billingType: "CREDIT_CARD",
             dueDate: '2023-09-21',
@@ -211,7 +192,6 @@ describe("Create payment (unit)", () => {
             creditCardHolderInfo,
             installmentCount: 5,
             installmentValue: 100,
-            discount,
             remoteIp: '116.213.42.532',
         })
         expect(createdPaymentCreditCard.payment).toEqual(
@@ -259,8 +239,6 @@ describe("Create payment (unit)", () => {
             idClinic: clinic.id,
             idService: service.id,
             idUser: user.id,
-            dataPayment: new Date(),
-            date: new Date(),
             price: 500,
         })
 
@@ -271,11 +249,9 @@ describe("Create payment (unit)", () => {
        } as IDiscount
 
        const createdPaymentFetlock = await stu.execute({
-           idUser: user.id,
            idServiceExecuted: serviceExecuted.id,
            billingType: "FETLOCK",
            dueDate: '2023-09-21',
-           discount,
            remoteIp: '116.213.42.532',
        })
        expect(createdPaymentFetlock.payment).toEqual(
@@ -325,22 +301,12 @@ describe("Create payment (unit)", () => {
             idClinic: clinic.id,
             idService: service.id,
             idUser: user.id,
-            dataPayment: new Date(),
-            date: new Date(),
             price: 500,
         })
 
-   const discount = {
-       value: 10,
-       dueDateLimitDays: 10,
-       type: "FIXED",
-   } as IDiscount
-
    const createdPaymentPix = await stu.execute({
-       idUser: user.id,
        idServiceExecuted: serviceExecuted.id,
        billingType: "PIX",
-       discount,
        description: 'compra teste de pix',
        remoteIp: '116.213.42.532',
    })
@@ -354,89 +320,11 @@ describe("Create payment (unit)", () => {
     
     }, 100000);
 
-    test("Should not be able to create a payment with user invalid", async () => {
-        const clinic = await clinicRepositoryInMemory.create({
-            name: "Clinic Test",
-            address:{
-                create:{
-                    city: "City Test",
-                    neighborhood: "Neighborhood Test",
-                    num: 1,
-                    state: "State Test",
-                    street: "Street Test",
-                    zip: "Zip Test",
-                    complement: "Complement Test",
-                    reference: "Reference Test"
-                }
-            }
-        })
-
-        const service = await serviceRepositoryInMemory.create({
-            name: "Service Test",
-            category: "EXAM",
-            price: 500,
-        })
-
-        const serviceExecuted = await serviceExecutedRepositoryInMemory.create({
-            id: "53d7be14-3da4-4a36-9e68-f58cc40e0b6a",
-            idClinic: clinic.id,
-            idService: service.id,
-            idUser: randomUUID(),
-            dataPayment: new Date(),
-            date: new Date(),
-            price: 500,
-        })
-
-        const creditCard = {
-            holderName: "marcelo h almeida",
-            number: "5162306219378829",
-            expiryMonth: "05",
-            expiryYear: "2024",
-            ccv: "318",
-        }
-
-        const creditCardHolderInfo = {
-            name: "Marcelo Henrique Almeida",
-            email: "marcelo.almeida@gmail.com",
-            cpfCnpj: "24971563792",
-            postalCode: "89223-005",
-            addressNumber: "277",
-            addressComplement: "Casa",
-            phone: "4738010919",
-        }
-
-        const discount = {
-            value: 10,
-            dueDateLimitDays: 10,
-            type: "FIXED",
-        } as IDiscount
-
-        await expect(()=> stu.execute({
-            idUser: randomUUID(),
-            idServiceExecuted: serviceExecuted.id,
-            billingType: "CREDIT_CARD",
-            dueDate: '2023-09-21',
-            creditCard,
-            creditCardHolderInfo,
-            discount,
-            remoteIp: '116.213.42.532',
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
-      
-    }, 100000);
-
     test("Should not be able to create a payment with idServiceExecuted invalid", async () => {
 
-   const discount = {
-       value: 10,
-       dueDateLimitDays: 10,
-       type: "FIXED",
-   } as IDiscount
-
     await expect(()=> stu.execute({
-        idUser: randomUUID(),
         idServiceExecuted: randomUUID(),
         billingType: "PIX",
-        discount,
         description: 'compra teste de pix',
         remoteIp: '116.213.42.532',
     })).rejects.toBeInstanceOf(ResourceNotFoundError)

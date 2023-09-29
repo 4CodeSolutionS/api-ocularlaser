@@ -1,4 +1,4 @@
-import { $Enums, Payment, Prisma } from "@prisma/client";
+import { $Enums, Payment, Prisma, Status } from "@prisma/client";
 import { IPaymentsRepository } from "../interface-payments-repository";
 import { randomUUID } from "crypto";
 
@@ -32,23 +32,29 @@ export class InMemoryPaymentRepository implements IPaymentsRepository{
         id,
         idUser,
         idServiceExecuted,
+        idPaymentAsaas,
         datePayment,
         idCostumer,
         paymentMethod,
         installmentCount,
         installmentValue,
+        paymentStatus,
         invoiceUrl,
-        value        
+        value,
+        netValue        
     }: Prisma.PaymentUncheckedCreateInput){
         const payment = {
             id: id ? id : randomUUID(),
             idUser,
             idServiceExecuted,
+            idPaymentAsaas,
             idCostumer: idCostumer ? idCostumer : null,
-            datePayment: new Date(datePayment as string),
+            datePayment: datePayment ? new Date(datePayment as string) : null,
             value: new Prisma.Decimal(value as number),
+            netValue: new Prisma.Decimal(netValue as number),
             installmentValue: installmentValue ? new Prisma.Decimal(installmentValue as number) : null,
             installmentCount: installmentCount ? new Prisma.Decimal(installmentCount as number) : null,
+            paymentStatus: paymentStatus as Status,
             paymentMethod,
             invoiceUrl,
         }
