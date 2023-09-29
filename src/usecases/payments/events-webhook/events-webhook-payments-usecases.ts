@@ -42,6 +42,7 @@ export class EventsWebHookPaymentsUseCases{
             console.log('event not found')
             throw new EmailAlreadyExistsError()
         }
+        console.log('passou do bloqueio de eventos')
         //[x] criar variavel installments para receber o valor e o numero de parcelo
         let installmentCount = 0
         let installmentValue = 0
@@ -63,6 +64,7 @@ export class EventsWebHookPaymentsUseCases{
             installmentCount = findInstallments.installmentCount
 
         } 
+        console.log('passou da pesquisa do installment')
         //[x] buscar service executed pelo id recebido no externalReference
         const findServiceExecuted = await this.serviceExecutedRepository.findById(String(payment.externalReference)) as unknown as IServiceExecutedFormmated
         //[x] validar se o service executed existe
@@ -70,7 +72,7 @@ export class EventsWebHookPaymentsUseCases{
             console.log('service executed not found')
             throw new ResourceNotFoundError()
         }
-
+        console.log('passou da pesquisa do serviceExecuted')
         //[x] validar se o billingType é BOLETO se for retorna FETLOCK, senao retorna o billingType
         let method = payment.billingType === 'BOLETO' ? 'FETLOCK' : payment.billingType as PaymentMethod
 
@@ -103,7 +105,7 @@ export class EventsWebHookPaymentsUseCases{
                 null)
             return createPaymentReproved;
         }
-
+        console.log('passou do bloqueio do pagamento reprovado')
         //[x] criar pagamento APPROVED no banco de dados com os dados recebidos
         const createPaymentApproved = await this.paymentsRepository.create({
             idUser: findServiceExecuted.user.id,
@@ -140,6 +142,7 @@ export class EventsWebHookPaymentsUseCases{
         //     null,
         //     templatePathAdmin, 
         //     null)
+        console.log('criou pagamento approved')
         return {
             payment: createPaymentApproved
         }
