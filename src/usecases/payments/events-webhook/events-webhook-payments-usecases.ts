@@ -100,11 +100,13 @@ export class EventsWebHookPaymentsUseCases{
                 null)
             return createPaymentReproved;
         }
+        console.log('id do customer')
+        console.log(payment.customer)
         //[x] criar pagamento APPROVED no banco de dados com os dados recebidos
         const createPaymentApproved = await this.paymentsRepository.create({
             idUser: findServiceExecuted.user.id,
             idServiceExecuted: String(payment.externalReference),
-            idCostumer: String(payment.customer),
+            idCostumer: payment.customer ? String(payment.customer) : undefined,
             idPaymentAsaas: payment.id,
             paymentMethod: method,
             installmentCount,
