@@ -8,6 +8,7 @@ import { IServiceExecutedRepository } from '@/repositories/interface-services-ex
 import { IServiceExecutedFormmated } from '@/usecases/servicesExecuted/mappers/list-service-executed-mapper';
 import { InvalidCustomerError } from '@/usecases/errors/invalid-customer-error';
 import { InvalidPaymentError } from '@/usecases/errors/invalid-payment-error';
+import { IPaymentsRepository } from '@/repositories/interface-payments-repository';
 
 export interface IAsaasPayment {
     id: string
@@ -61,7 +62,8 @@ export class CreatePaymentUseCase{
         private usersRepository: IUsersRepository,
         private asaasProvider: IAsaasProvider,
         private dateProvider: IDateProvider,
-        private serviceExecutedRepository: IServiceExecutedRepository
+        private serviceExecutedRepository: IServiceExecutedRepository,
+        private paymentRepository: IPaymentsRepository
     ) {}
 
     async execute({
@@ -73,6 +75,12 @@ export class CreatePaymentUseCase{
         installmentValue,
         remoteIp
     }:IRequestCreatePayment):Promise<IResponseCreatePayment>{
+        // buscar um payment pelo idServiceExecuted
+        const findPaymentExists = await this.paymentRepository.findByIdServiceExecuted(idServiceExecuted)
+        // validar se existe um payment
+        if(findPaymentExists){
+            throw new InvalidPaymentError()
+        }
         // buscar se existe uma service executed pelo id
         const findServiceExecutedExists = await this.serviceExecutedRepository.findById(idServiceExecuted) as unknown as IServiceExecutedFormmated
         // validar se existe uma service excuted
