@@ -8,8 +8,8 @@ export const firebaseApp = firebase
       projectId: env.FIREBASE_PROJECT_ID,
       clientEmail: env.FIREBASE_CLIENT_EMAIL,
       privateKey: env.FIREBASE_PRIVATE_KEY
-        // ? JSON.parse(env.FIREBASE_PRIVATE_KEY)
-        // : undefined,
+        ? JSON.parse(env.FIREBASE_PRIVATE_KEY)
+        : undefined,
     }),
     storageBucket: env.FIREBASE_BUCKET,
   })
