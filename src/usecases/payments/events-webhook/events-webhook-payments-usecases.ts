@@ -71,11 +71,11 @@ export class EventsWebHookPaymentsUseCases{
         let method = payment.billingType === 'BOLETO' ? 'FETLOCK' : payment.billingType as PaymentMethod
 
         //[x] verificar no banco se ja existe um pagamento com o idServiceExecuted
-        const findPayment = await this.paymentsRepository.findById(String(payment.externalReference))
-        if(findPayment){
+        const findPaymentExist = await this.paymentsRepository.findById(String(payment.externalReference))
+        if(findPaymentExist){
             throw new PaymentAlreadyExistsError()
         }
-
+        console.log(findPaymentExist)
         //[x] criar validação para caso o evento seja "REPROVED"
         if(event === 'PAYMENT_REPROVED'){
             //[] criar payment no banco de dados com os dados recebidos e status REPROVED
