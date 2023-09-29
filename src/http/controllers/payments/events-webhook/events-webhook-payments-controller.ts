@@ -3,7 +3,7 @@ import { PaymentAlreadyExistsError } from '@/usecases/errors/payment-already-exi
 import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { makeReceiveEventsPaymentsWebHook } from '@/usecases/factories/payments/make-events-payments-webhook-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { z } from 'zod'
+import { ZodError, z } from 'zod'
 
 export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, reply:FastifyReply){
         try {
@@ -59,13 +59,16 @@ export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, re
             
           } catch (error) {
             if(error instanceof ResourceNotFoundError){
-                return reply.status(200).send({ error})
+                return reply.status(200).send({ message: error.message })
             }
             if(error instanceof EventNotValidError){
-                return reply.status(200).send({ error })
+                return reply.status(200).send({ message: error.message })
             }
             if(error instanceof PaymentAlreadyExistsError){
-                return reply.status(200).send({ error })
+                return reply.status(200).send({ message: error.message })
+            }
+            if(error instanceof ZodError){
+                return reply.status(200).send({ message: error.message })
             }
             return reply.status(200).send({ message: error})
           }
