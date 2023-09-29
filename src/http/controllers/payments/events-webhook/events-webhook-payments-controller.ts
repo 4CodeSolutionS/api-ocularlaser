@@ -67,7 +67,7 @@ export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, re
             if(error instanceof EmailAlreadyExistsError){
                 return reply.status(200).send({ message: 'Event not valid' })
             }
-            return reply.status(200).send({ message: 'Failed return events' })
+            return reply.status(200).send({ message: error})
           }
 }
     
