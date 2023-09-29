@@ -72,7 +72,6 @@ describe('Events Payments Webhook (e2e)', ()=>{
         const responseCreatePaymentAsaas = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idUser: user.id,
             idServiceExecuted,
             billingType: 'PIX',
             // creditCard: {
@@ -191,7 +190,6 @@ describe('Events Payments Webhook (e2e)', ()=>{
         const responseCreatePaymentAsaas = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idUser: user.id,
             idServiceExecuted,
             billingType: 'PIX',
             remoteIp: "116.213.42.532"            
@@ -294,7 +292,6 @@ describe('Events Payments Webhook (e2e)', ()=>{
         const responseCreatePaymentAsaas = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idUser: user.id,
             idServiceExecuted,
             billingType: 'PIX',
             remoteIp: "116.213.42.532"            

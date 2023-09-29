@@ -72,7 +72,6 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idUser: user.id,
             idServiceExecuted,
             billingType: 'CREDIT_CARD',
             creditCard: {
@@ -156,7 +155,6 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idUser: user.id,
             idServiceExecuted,
             billingType: 'CREDIT_CARD',
             installmentCount: 12,
