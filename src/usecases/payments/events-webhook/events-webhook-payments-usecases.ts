@@ -2,6 +2,8 @@ import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider'
 import { IAsaasProvider } from '@/providers/PaymentProvider/interface-asaas-payment'
 import { IPaymentsRepository } from '@/repositories/interface-payments-repository'
 import { IServiceExecutedRepository } from '@/repositories/interface-services-executeds-repository'
+import { CredentialsInvalidError } from '@/usecases/errors/credentials-invalid-error'
+import { EmailAlreadyExistsError } from '@/usecases/errors/email-already-exists-error'
 import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { IServiceExecutedFormmated } from '@/usecases/servicesExecuted/mappers/list-service-executed-mapper'
 import { PaymentMethod, Prisma} from '@prisma/client'
@@ -38,7 +40,7 @@ export class EventsWebHookPaymentsUseCases{
         //[x] verifica se o evento é de pagamento é "PAYMENT_RECEIVED"
         if(event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_REPROVED'){ 
             console.log('event not found')
-            return false
+            throw new EmailAlreadyExistsError()
         }
         //[x] criar variavel installments para receber o valor e o numero de parcelo
         let installmentCount = 0
@@ -51,7 +53,7 @@ export class EventsWebHookPaymentsUseCases{
             //[x] validar se o installments existe
             if(!findInstallments){
                 console.log('installments not found')
-                throw new ResourceNotFoundError()
+                throw new CredentialsInvalidError()
             }
 
             //[x] criar variavel installmentValue para receber o valor da parcela
@@ -66,7 +68,7 @@ export class EventsWebHookPaymentsUseCases{
         //[x] validar se o service executed existe
         if(!findServiceExecuted){
             console.log('service executed not found')
-            return false
+            throw new ResourceNotFoundError()
         }
 
         //[x] validar se o billingType é BOLETO se for retorna FETLOCK, senao retorna o billingType
