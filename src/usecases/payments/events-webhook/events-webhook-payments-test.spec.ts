@@ -98,7 +98,7 @@ describe("Confirm payment received (unit)", () => {
     
         const payment = await asaasProviderInMemory.createPayment({
             customer: customer.id,
-            billingType: 'PIX',
+            billingType: 'CREDIT_CARD',
             value: 230,
             dueDate: new Date().toISOString(),
             description: service.name,
@@ -121,18 +121,18 @@ describe("Confirm payment received (unit)", () => {
                 installment: payment.installments,
             }
         })
-        console.log(confirmPayment)
-        // expect(confirmPayment.payment).toEqual(
-        //     expect.objectContaining({
-        //         paymentMethod: 'CREDIT_CARD',
-        //         invoiceUrl: 'https://invoice.com',
-        //         paymentStatus: 'APPROVED'
-        //     })
-        // )
+       
+        expect(confirmPayment.payment).toEqual(
+            expect.objectContaining({
+                paymentMethod: 'CREDIT_CARD',
+                invoiceUrl: 'https://invoice.com',
+                paymentStatus: 'APPROVED'
+            })
+        )
           
     }, 100000);
 
-    test.skip("Should not be able to confirm a payment unique with status PAYMENT_REPROVED", async () => {
+    test("Should not be able to confirm a payment unique with status PAYMENT_REPROVED", async () => {
     const clinic = await clinicRepositoryInMemory.create({
         id: randomUUID(),
         name: "Clinic Test 1",
@@ -183,6 +183,22 @@ describe("Confirm payment received (unit)", () => {
         customer: customer.id,
         billingType: 'CREDIT_CARD',
         value: 500,
+        creditCard: {
+            holderName: "marcelo h almeida",
+            number: "5184019740373151",
+            expiryMonth: "05",
+            expiryYear: "2024",
+            ccv: "318",
+        },
+        creditCardHolderInfo: {
+            name: "Marcelo Henrique Almeida",
+            email: "marcelo.almeida@gmail.com",
+            cpfCnpj: "24971563792",
+            postalCode: "89223-005",
+            addressNumber: "277",
+            addressComplement: "Casa",
+            phone: "4738010919",
+        },
         dueDate: new Date().toISOString(),
         description: 'description',
         externalReference: "1acafb98-7039-4c2c-bcb4-999b572d7b04",
@@ -215,7 +231,7 @@ describe("Confirm payment received (unit)", () => {
     )
     }, 100000);
 
-    test.skip("Should be able to confirm a payment credi_card with installments", async () => {
+    test("Should be able to confirm a payment credi_card with installments", async () => {
     const clinic = await clinicRepositoryInMemory.create({
         name: "Clinic Test",
         address:{
@@ -314,7 +330,7 @@ describe("Confirm payment received (unit)", () => {
       
     }, 100000);
 
-    test.skip("Should not be able to confirm a payment credi_card with invalid idServiceExecuted", async () => {
+    test("Should not be able to confirm a payment credi_card with invalid idServiceExecuted", async () => {
         const customer = await asaasProviderInMemory.createCustomer({
             cpfCnpj: "24971563792",
             email: "user@test.com",
@@ -332,7 +348,7 @@ describe("Confirm payment received (unit)", () => {
             remoteIp: "116.213.42.532",
         })
         
-        const paymentReject = await stu.execute({
+        await expect(()=> stu.execute({
             event: 'PAYMENT_RECEIVED',
             payment: {
                 id: payment.id,
@@ -346,8 +362,7 @@ describe("Confirm payment received (unit)", () => {
                 description: payment.description,
                 installment: payment.installments,
             }
-        })
-        expect(paymentReject).toEqual(false)
+        })).rejects.toBeInstanceOf(ResourceNotFoundError)
     }, 100000);
 });
 

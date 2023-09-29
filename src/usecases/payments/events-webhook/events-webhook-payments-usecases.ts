@@ -103,7 +103,7 @@ export class EventsWebHookPaymentsUseCases{
             //     null,
             //     templatePathPacient, 
             //     null)
-            // return createPaymentReproved;
+            return createPaymentReproved;
         }
         
         //[x] criar pagamento APPROVED no banco de dados com os dados recebidos
