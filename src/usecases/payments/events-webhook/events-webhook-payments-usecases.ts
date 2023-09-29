@@ -2,8 +2,8 @@ import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider'
 import { IAsaasProvider } from '@/providers/PaymentProvider/interface-asaas-payment'
 import { IPaymentsRepository } from '@/repositories/interface-payments-repository'
 import { IServiceExecutedRepository } from '@/repositories/interface-services-executeds-repository'
-import { CredentialsInvalidError } from '@/usecases/errors/credentials-invalid-error'
-import { EmailAlreadyExistsError } from '@/usecases/errors/email-already-exists-error'
+import { EventNotValidError } from '@/usecases/errors/event-not-valid-error'
+import { PaymentAlreadyExistsError } from '@/usecases/errors/payment-already-exists-error'
 import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { IServiceExecutedFormmated } from '@/usecases/servicesExecuted/mappers/list-service-executed-mapper'
 import { PaymentMethod, Prisma} from '@prisma/client'
@@ -39,7 +39,7 @@ export class EventsWebHookPaymentsUseCases{
     }:IRequestReceiveEvent):Promise<any>{
         //[x] verifica se o evento é de pagamento é "PAYMENT_RECEIVED"
         if(event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_REPROVED'){ 
-            throw new EmailAlreadyExistsError()
+            throw new EventNotValidError()
         }
         //[x] criar variavel installments para receber o valor e o numero de parcelo
         let installmentCount = 0
@@ -51,7 +51,7 @@ export class EventsWebHookPaymentsUseCases{
 
             //[x] validar se o installments existe
             if(!findInstallments){
-                throw new CredentialsInvalidError()
+                throw new ResourceNotFoundError()
             }
 
             //[x] criar variavel installmentValue para receber o valor da parcela
@@ -65,13 +65,18 @@ export class EventsWebHookPaymentsUseCases{
         const findServiceExecuted = await this.serviceExecutedRepository.findById(String(payment.externalReference)) as unknown as IServiceExecutedFormmated
         //[x] validar se o service executed existe
         if(!findServiceExecuted){
-            console.log('service executed not found')
             throw new ResourceNotFoundError()
         }
         //[x] validar se o billingType é BOLETO se for retorna FETLOCK, senao retorna o billingType
         let method = payment.billingType === 'BOLETO' ? 'FETLOCK' : payment.billingType as PaymentMethod
 
-        //[] criar validação para caso o evento seja "REPROVED"
+        //[x] verificar no banco se ja existe um pagamento com o idServiceExecuted
+        const findPayment = await this.paymentsRepository.findById(String(payment.externalReference))
+        if(findPayment){
+            throw new PaymentAlreadyExistsError()
+        }
+
+        //[x] criar validação para caso o evento seja "REPROVED"
         if(event === 'PAYMENT_REPROVED'){
             //[] criar payment no banco de dados com os dados recebidos e status REPROVED
             const createPaymentReproved = await this.paymentsRepository.create({
@@ -89,19 +94,18 @@ export class EventsWebHookPaymentsUseCases{
                 datePayment: payment.paymentDate ? new Date(payment.paymentDate) : undefined
             })
             //[x] criar variavel com caminho do templeate de email de pagamento reprovado
-            const templatePathPacient = './views/emails/payment-reproved.hbs'
-             //[x] enviar email para o usuario informando que o pagamento foi reprovado
-            await this.mailProvider.sendEmail(
-                'kaio-dev@outlook.com', 
-                'Kaio Moreira', 
-                'Pagamento Reprovado', 
-                null,
-                templatePathPacient, 
-                null)
-            return createPaymentReproved;
+            // const templatePathPacient = './views/emails/payment-reproved.hbs'
+            //  //[x] enviar email para o usuario informando que o pagamento foi reprovado
+            // await this.mailProvider.sendEmail(
+            //     'kaio-dev@outlook.com', 
+            //     'Kaio Moreira', 
+            //     'Pagamento Reprovado', 
+            //     null,
+            //     templatePathPacient, 
+            //     null)
+            // return createPaymentReproved;
         }
-        console.log('id do customer')
-        console.log(payment.customer)
+        
         //[x] criar pagamento APPROVED no banco de dados com os dados recebidos
         const createPaymentApproved = await this.paymentsRepository.create({
             idUser: findServiceExecuted.user.id,

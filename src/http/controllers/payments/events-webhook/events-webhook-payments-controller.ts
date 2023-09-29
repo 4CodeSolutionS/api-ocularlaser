@@ -1,5 +1,5 @@
-import { CredentialsInvalidError } from '@/usecases/errors/credentials-invalid-error'
-import { EmailAlreadyExistsError } from '@/usecases/errors/email-already-exists-error'
+import { EventNotValidError } from '@/usecases/errors/event-not-valid-error'
+import { PaymentAlreadyExistsError } from '@/usecases/errors/payment-already-exists-error'
 import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { makeReceiveEventsPaymentsWebHook } from '@/usecases/factories/payments/make-events-payments-webhook-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
@@ -59,13 +59,13 @@ export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, re
             
           } catch (error) {
             if(error instanceof ResourceNotFoundError){
-                return reply.status(200).send({ message: 'Service Executed not found' })
+                return reply.status(200).send({ error})
             }
-            if(error instanceof CredentialsInvalidError){
-                return reply.status(200).send({ message: 'invalid installment' })
+            if(error instanceof EventNotValidError){
+                return reply.status(200).send({ error })
             }
-            if(error instanceof EmailAlreadyExistsError){
-                return reply.status(200).send({ message: 'Event not valid' })
+            if(error instanceof PaymentAlreadyExistsError){
+                return reply.status(200).send({ error })
             }
             return reply.status(200).send({ message: error})
           }
