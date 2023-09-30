@@ -4,6 +4,8 @@ import { IServiceExecutedRepository } from "@/repositories/interface-services-ex
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { FirebaseStorageProvider } from "@/providers/StorageProvider/implementations/firebase-storage.provider";
 import { IStorageProvider } from '@/providers/StorageProvider/storage-provider.interface';
+import { Service } from '@google-cloud/storage/build/src/nodejs-common';
+import { ServiceAlreadyApprovedError } from '@/usecases/errors/service-already-approved-error';
 
 interface IRequestUploadExams {
     idServiceExecuted: string
@@ -39,6 +41,10 @@ export class CreateExamsUseCase{
         // verificar se existe um service executado com esse id
         if(!serviceExecuted){
             throw new ResourceNotFoundError()
+        }
+
+        if(serviceExecuted.approved){
+            throw new ServiceAlreadyApprovedError()
         }
 
         const pathFolder = './src/tmp/exams'

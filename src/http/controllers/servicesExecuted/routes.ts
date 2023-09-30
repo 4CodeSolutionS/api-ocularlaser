@@ -31,6 +31,6 @@ export async function servicesExecutedsRoutes(fastifyApp: FastifyInstance){
     fastifyApp.get('/user', {onRequest: [verifyUserRole('ADMIN', 'SUPER')]}, ListServiceExecutedByUser)
 
     // aprovar serviço
-    fastifyApp.patch('/:id',{onRequest: [verifyUserRole('ADMIN', 'SUPER')]}, AproveServiceExecuted)
+    fastifyApp.patch('/:id/approve',{onRequest: [verifyUserRole('ADMIN', 'SUPER')]}, AproveServiceExecuted)
 
 }

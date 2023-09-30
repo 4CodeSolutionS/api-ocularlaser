@@ -11,6 +11,7 @@ import { CreateServiceExecutedUseCase } from "@/usecases/servicesExecuted/create
 import { hash } from "bcrypt";
 import { FirebaseStorageProvider } from "@/providers/StorageProvider/implementations/firebase-storage.provider";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { ServiceAlreadyApprovedError } from "@/usecases/errors/service-already-approved-error";
 
 let mailProviderInMemory: InMemoryMailProvider;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
@@ -90,8 +91,6 @@ describe("Create exams (unit)", () => {
             idUser: user.id,
             idClinic: clinic.id,
             idService: service.id,
-            date: new Date(),
-            dataPayment: new Date(),
         })
 
        const fileNames = [
@@ -166,8 +165,6 @@ describe("Create exams (unit)", () => {
             idUser: user.id,
             idClinic: clinic.id,
             idService: service.id,
-            date: new Date(),
-            dataPayment: new Date(),
         })
 
         const fileNames: {filename:string}[] = [];
@@ -177,4 +174,70 @@ describe("Create exams (unit)", () => {
          idServiceExecuted: serviceExecuted.id
      })).rejects.toBeInstanceOf(ResourceNotFoundError)
      });
+
+     test("Should not be able to create exams with service executed already approved", async () => {
+        // criar um service executed
+        const clinic = await clinicRepositoryInMemory.create({
+            name: "Clinic Test",
+            address:{
+                create:{
+                    city: "City Test",
+                    neighborhood: "Neighborhood Test",
+                    num: 1,
+                    state: "State Test",
+                    street: "Street Test",
+                    zip: "Zip Test",
+                    complement: "Complement Test",
+                    reference: "Reference Test"
+                }
+            }
+       })
+
+        const user = await usersRepositoryInMemory.create({
+            cpf: "123456789",
+            email: "user1@test.com",
+            name: "User Test",
+            gender: "MASCULINO",
+            phone: "123456789",
+            password: await hash("123456", 8),
+        })
+
+        const service = await serviceRepositoryInMemory.create({
+            name: "Service Test",
+            category: "EXAM",
+            price: 500,
+        })
+
+        const serviceExecuted = await createServiceExecutedUseCase.execute({
+            idUser: user.id,
+            idClinic: clinic.id,
+            idService: service.id,
+        })
+
+       const fileNames = [
+        {
+            filename: "icon-javascript.png",
+        },
+        {
+            filename: "ocular.png",
+        }
+       ];
+
+       const {exams} = await stu.execute({
+            fileNameExame: fileNames,
+            idServiceExecuted: serviceExecuted.id
+       })
+
+       await serviceExecutedRepositoryInMemory.aproveById(serviceExecuted.id)
+
+       const findServiceExecuted = await serviceExecutedRepositoryInMemory.findById(serviceExecuted.id)
+
+        expect(findServiceExecuted?.approved).toEqual(true)
+
+       await expect(()=> stu.execute({
+            fileNameExame: fileNames,
+            idServiceExecuted: serviceExecuted.id
+        })).rejects.toBeInstanceOf(ServiceAlreadyApprovedError)
+
+    });
 })

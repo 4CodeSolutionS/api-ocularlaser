@@ -94,16 +94,16 @@ describe('Upload exams (e2e)', ()=>{
             'PACIENT',
         )
 
-        const responseFindClinic = await request(fastifyApp.server)
+        const responseCreateExam = await request(fastifyApp.server)
         .post(`/api/exams/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .set('Content-Type', 'multipart/form-data')
         .attach('exams', './src/tmp/exams/ocular.png')
         .attach('exams', './src/tmp/exams/icon-javascript.png')
 
-        expect(responseFindClinic.statusCode).toEqual(201)
-        expect(responseFindClinic.body).toHaveLength(2)
-        expect(responseFindClinic.body).toEqual([
+        expect(responseCreateExam.statusCode).toEqual(201)
+        expect(responseCreateExam.body).toHaveLength(2)
+        expect(responseCreateExam.body).toEqual([
             expect.objectContaining({
                 urlExam: expect.any(String),
             }),
@@ -124,14 +124,14 @@ describe('Upload exams (e2e)', ()=>{
 
         const fakeIdServiceExecuted = randomUUID()
 
-        const responseFindClinic = await request(fastifyApp.server)
+        const responseCreateExam = await request(fastifyApp.server)
         .post(`/api/exams/${fakeIdServiceExecuted}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .set('Content-Type', 'multipart/form-data')
         .attach('exams', './src/tmp/exams/ocular.png')
         .attach('exams', './src/tmp/exams/icon-javascript.png')
 
-        expect(responseFindClinic.statusCode).toEqual(404)
+        expect(responseCreateExam.statusCode).toEqual(404)
     })
 
     test('should not be able to upload exams with name file empty', async()=>{
@@ -226,6 +226,96 @@ describe('Upload exams (e2e)', ()=>{
         .attach('', '')
 
         expect(responseCreateExams.statusCode).toEqual(400)
+    })
+
+    test('should not be able to upload exams with service executed already approved', async()=>{
+        //criar service executed
+        const {accessToken: accessTokenAdmin, user: userAdmin} = await createAndAuthenticateUser(
+            fastifyApp,
+            'ADMIN',
+            randomUUID(),
+            'jaine@gmail.com',
+            '975.614.080-13'
+        )
+
+
+        const responseCreateClinic = await request(fastifyApp.server)
+        .post(`/api/clinics`)
+        .set('Authorization', `Bearer ${accessTokenAdmin}`)
+        .send({
+            address: {
+                id:'53fc1777-97d9-409c-b0bd-4d2d5a47cd40',
+                street: 'Rua Teste',
+                num: 123,
+                complement: 'Complemento Teste',
+                city: 'São Paulo',
+                state: 'SP',
+                zip: '12345678',
+                neighborhood: 'Bairro Teste',
+                reference: 'Referencia Teste',
+                },
+                name: 'Clinica Teste 7'
+        })
+
+        const {id: idClinic} = responseCreateClinic.body as Clinic
+
+        // criar service
+        const responseCreateService = await request(fastifyApp.server)
+        .post(`/api/services`)
+        .set('Authorization', `Bearer ${accessTokenAdmin}`)
+        .send({
+            name: 'Consulta teste 7',
+            price: 100,
+            category: 'QUERY' 
+        })
+        const {id: idService} = responseCreateService.body as Service
+
+        // criar service executed
+        const responseCreateServiceExecuted = await request(fastifyApp.server)
+        .post(`/api/services-executeds`)
+        .set('Authorization', `Bearer ${accessTokenAdmin}`)
+        .send({
+            user:{
+                id: userAdmin.id
+            },
+            clinic: {
+                id: idClinic
+            },
+            service: {
+                id: idService
+            },
+        })
+
+        const {id} = responseCreateServiceExecuted.body as ServiceExecuted
+        const {accessToken, user} = await createAndAuthenticateUser(
+            fastifyApp,
+            'PACIENT',
+            randomUUID(),
+            'user8@test.com',
+            '123-456-789-88'
+        )
+
+        await request(fastifyApp.server)
+        .post(`/api/exams/${id}/approve`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .set('Content-Type', 'multipart/form-data')
+        .attach('exams', './src/tmp/exams/ocular.png')
+        .attach('exams', './src/tmp/exams/icon-javascript.png')
+
+
+        const responseApprovedServiceExecuted = await request(fastifyApp.server)
+        .patch(`/api/services-executeds/${id}/approve`)
+        .set('Authorization', `Bearer ${accessTokenAdmin}`)
+        .send()
+
+        const responseCreateExam = await request(fastifyApp.server)
+        .post(`/api/exams/${id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .set('Content-Type', 'multipart/form-data')
+        .attach('exams', './src/tmp/exams/ocular.png')
+        .attach('exams', './src/tmp/exams/icon-javascript.png')
+
+        expect(responseCreateExam.statusCode).toEqual(401)
     })
 
 })
