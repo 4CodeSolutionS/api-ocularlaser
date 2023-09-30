@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Payment, Prisma } from "@prisma/client";
 import { IPaymentsRepository } from "../interface-payments-repository";
 import { prisma } from "@/lib/prisma";
 
@@ -22,7 +22,23 @@ export class PrismaPaymentRepository implements IPaymentsRepository{
     }
    
     async create(data: Prisma.PaymentUncheckedCreateInput){
-        const payment = await prisma.payment.create({data})
+        const payment = await prisma.payment.create({
+            data,
+            select:{
+                id: true,
+                idPaymentAsaas: true,
+                users: true,
+                serviceExecuted: true,
+                datePayment: true,
+                installmentCount: true,
+                installmentValue: true,
+                invoiceUrl: true,
+                paymentMethod: true,
+                paymentStatus: true,
+                value: true,
+                netValue: true,
+            }
+        }) as unknown as Payment
         return payment
     }
 
