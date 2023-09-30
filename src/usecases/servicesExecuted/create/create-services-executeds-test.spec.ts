@@ -82,5 +82,5 @@ describe("Create service executed (unit)", () => {
             })
         )
     });
-
+    // create validação para testar user, clinic e service se existem
 })

@@ -47,31 +47,24 @@ export class CreateServiceExecutedUseCase{
         idService,
         idClinic,
     }:IRequestServiceExecuted){
-
         // encontrar usuario pelo id
         const findUserExist = await this.usersRepository.getUserSecurity(idUser)
-
         // validar se usuario existe pelo id
         if(!findUserExist){
             throw new ResourceNotFoundError()
         }
-
         // buscar servico pelo id
         const findServiceExists = await this.servicesRepository.findById(idService)
-
         // validar se servico existe pelo id
         if(!findServiceExists){
             throw new ResourceNotFoundError()
         }
-
         // buscar clinica pelo id
         const findClinicExists = await this.clinicsRepository.findById(idClinic)
-
         // validar se clinica existe pelo id
         if(!findClinicExists){
             throw new ResourceNotFoundError()
         }
-
         // salvar service executed no banco de dados
         const serviceExecuted = await this.serviceExecutedRepository.create({
             idUser,
@@ -79,8 +72,7 @@ export class CreateServiceExecutedUseCase{
             idClinic,
             price: findServiceExists.price,
         })
-
-
+        
         // criar array de urls dos exames
         // let listUrlExams: string[] = []
     //     // variaveis para o template de email
