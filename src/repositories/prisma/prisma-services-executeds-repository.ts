@@ -34,7 +34,13 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                         gender: true,
                     }
                 },
-                clinic: true,
+                clinic: {
+                    select:{
+                        id: true,
+                        name: true,
+                        address: true,
+                    }
+                },
                 payment: true,
                 exams: true,
                 price: true,
