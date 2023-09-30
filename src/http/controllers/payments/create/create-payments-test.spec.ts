@@ -4,6 +4,7 @@ import { fastifyApp } from "@/app";
 import { Clinic, Service, ServiceExecuted } from "@prisma/client";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 import { randomUUID } from "node:crypto";
+import { IAsaasPayment } from "@/usecases/payments/create/create-payment-usecases";
 
 describe('Create Payments (e2e)', ()=>{
     beforeAll(async()=>{
@@ -14,7 +15,7 @@ describe('Create Payments (e2e)', ()=>{
         await fastifyApp.close()
     })
 
-    test.skip('should be able to create payment credit_card unique', async()=>{
+    test('should be able to create payment credit_card unique', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -91,17 +92,16 @@ describe('Create Payments (e2e)', ()=>{
             },
             remoteIp: "116.213.42.532"            
         })
-
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test.skip('should be able to create payment credit_card installment', async()=>{
+    test('should be able to create payment credit_card installment', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
             randomUUID(),
             'carll@gmail.gmail.com',
-            '46201884840'
+            '18852978070'
         )
 
         // criar clinica
@@ -178,7 +178,7 @@ describe('Create Payments (e2e)', ()=>{
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test.skip('should be able to create payment pix', async()=>{
+    test('should be able to create payment pix', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -241,11 +241,10 @@ describe('Create Payments (e2e)', ()=>{
             billingType: 'PIX',
             remoteIp: "116.213.42.532"            
         })
-        console.log(responseCreatePayment.body)
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test.skip('should be able to create payment boleto', async()=>{
+    test('should be able to create payment boleto', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -374,7 +373,6 @@ describe('Create Payments (e2e)', ()=>{
             billingType: 'FETLOCK',
             remoteIp: "116.213.42.532"            
         })
-        console.log(responseCreatePayment.error)
          expect(responseCreatePayment.statusCode).toEqual(400)
     }, 100000)
 
@@ -433,7 +431,7 @@ describe('Create Payments (e2e)', ()=>{
             },
         })
         const {id: idServiceExecuted} = responseCreateServiceExecuted.body as ServiceExecuted
-        console.log(idServiceExecuted)
+
         //criar pagamento na asaas
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
@@ -458,7 +456,109 @@ describe('Create Payments (e2e)', ()=>{
             },
             remoteIp: "116.213.42.532"          
         })
-        console.log(responseCreatePayment.error)
          expect(responseCreatePayment.statusCode).toEqual(400)
+    }, 100000)
+
+    test('should not be able to payout payment already exists to same service executed', async()=>{
+        const {accessToken, user} = await createAndAuthenticateUser(
+            fastifyApp,
+            'ADMIN',
+            randomUUID(),
+            'jaine@gmail.com',
+            '97561408013'
+        )
+
+        // criar clinica
+        const responseCreateClinic = await request(fastifyApp.server)
+        .post(`/api/clinics`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+            address: {
+                street: 'Rua Teste',
+                num: 123,
+                complement: 'Complemento Teste',
+                city: 'São Paulo',
+                state: 'SP',
+                zip: '12345678',
+                neighborhood: 'Bairro Teste',
+                reference: 'Referencia Teste',
+                },
+                name: 'Clinica Care Test 6'
+        })
+
+        const {id: idClinic} = responseCreateClinic.body as Clinic
+
+        // criar service
+        const responseCreateService = await request(fastifyApp.server)
+        .post(`/api/services`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+            name: 'Consulta ocular + exame 6',
+            price: 500,
+            category: 'QUERY' 
+        })
+        const {id: idService, name: serviceName} = responseCreateService.body as Service
+        // criar service executed
+        const responseCreateServiceExecuted = await request(fastifyApp.server)
+        .post(`/api/services-executeds`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+            user:{
+                id: user.id
+            },
+            clinic: {
+                id: idClinic
+            },
+            service: {
+                id: idService
+            },
+        })
+        const {id: idServiceExecuted} = responseCreateServiceExecuted.body as ServiceExecuted
+
+        //criar pagamento na asaas
+        const responseCreatePayment = await request(fastifyApp.server)
+        .post(`/api/payments`)
+        .send({
+            idServiceExecuted,
+            billingType: 'PIX',
+            remoteIp: "116.213.42.532"          
+        })
+        const {
+            id,
+            customer,
+            installment,
+            value,
+            netValue,
+            description,
+            billingType,
+            invoiceUrl,
+            dueDate,
+        } = responseCreatePayment.body as IAsaasPayment
+
+        const responseEventsPaymentWebhook = await request(fastifyApp.server)
+        .post(`/api/payments/events-webhook-payments`)
+        .send({
+            event: 'PAYMENT_RECEIVED',
+            payment: {
+                id,
+                customer,
+                installment,
+                value,
+                netValue,
+                description,
+                billingType,
+                invoiceUrl,
+                externalReference: idServiceExecuted,
+                paymentDate: dueDate,
+            }
+        })
+        const responseCreatePaymentAlreadyExists = await request(fastifyApp.server)
+        .post(`/api/payments`)
+        .send({
+            idServiceExecuted,
+            billingType: 'PIX',
+            remoteIp: "116.213.42.532"          
+        })
+         expect(responseCreatePaymentAlreadyExists.statusCode).toEqual(409)
     }, 100000)
 })

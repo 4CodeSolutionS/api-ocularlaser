@@ -145,7 +145,7 @@ model Payment {
   users             User            @relation(fields: [idUser], references: [id])
   idPaymentAsaas    String
   idUser            String
-  idCostumer        String?
+  idCostumerAsaas   String?
   idServiceExecuted String          @unique
   invoiceUrl        String
   installmentCount  Decimal?

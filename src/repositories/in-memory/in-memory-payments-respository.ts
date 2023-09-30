@@ -5,7 +5,6 @@ import { randomUUID } from "crypto";
 export class InMemoryPaymentRepository implements IPaymentsRepository{
     private payments: Payment[] = [];
 
-
     async findByIdServiceExecuted(id: string){
         const payment = this.payments.find(payment => payment.idServiceExecuted === id)
 
@@ -35,7 +34,7 @@ export class InMemoryPaymentRepository implements IPaymentsRepository{
         idServiceExecuted,
         idPaymentAsaas,
         datePayment,
-        idCostumer,
+        idCostumerAsaas,
         paymentMethod,
         installmentCount,
         installmentValue,
@@ -49,7 +48,7 @@ export class InMemoryPaymentRepository implements IPaymentsRepository{
             idUser,
             idServiceExecuted,
             idPaymentAsaas,
-            idCostumer: idCostumer ? idCostumer : null,
+            idCostumerAsaas: idCostumerAsaas ? idCostumerAsaas : null,
             datePayment: datePayment ? new Date(datePayment as string) : null,
             value: new Prisma.Decimal(value as number),
             netValue: new Prisma.Decimal(netValue as number),

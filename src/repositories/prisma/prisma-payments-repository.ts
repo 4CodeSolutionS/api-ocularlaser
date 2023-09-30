@@ -1,4 +1,4 @@
-import { $Enums, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { IPaymentsRepository } from "../interface-payments-repository";
 import { prisma } from "@/lib/prisma";
 

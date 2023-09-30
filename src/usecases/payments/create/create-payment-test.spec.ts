@@ -62,7 +62,7 @@ describe("Create payment (unit)", () => {
             asaasProviderInMemory,
             dateProviderInMemory,
             serviceExecutedRepositoryInMemory,
-            paymentRepositoryInMemory
+            paymentRepositoryInMemory,
         )
 
     });
@@ -346,7 +346,7 @@ describe("Create payment (unit)", () => {
     
     }, 100000);
 
-    test("Should not be able to create a payment with idServiceExecuted already exists", async () => {
+    test("should not be able to payout payment already exists to same service executed", async () => {
         const clinic = await clinicRepositoryInMemory.create({
             name: "Clinic Test",
             address:{

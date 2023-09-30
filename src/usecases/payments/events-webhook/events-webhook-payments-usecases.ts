@@ -81,7 +81,7 @@ export class EventsWebHookPaymentsUseCases{
             const createPaymentReproved = await this.paymentsRepository.create({
                 idUser: findServiceExecuted.user.id,
                 idServiceExecuted: String(payment.externalReference),
-                idCostumer: payment.customer,
+                idCostumerAsaas: payment.customer,
                 idPaymentAsaas: payment.id,
                 paymentMethod: method,
                 installmentCount,
@@ -109,7 +109,7 @@ export class EventsWebHookPaymentsUseCases{
         const createPaymentApproved = await this.paymentsRepository.create({
             idUser: findServiceExecuted.user.id,
             idServiceExecuted: String(payment.externalReference),
-            idCostumer: payment.customer ? String(payment.customer) : undefined,
+            idCostumerAsaas: payment.customer ? String(payment.customer) : undefined,
             idPaymentAsaas: payment.id,
             paymentMethod: method,
             installmentCount,

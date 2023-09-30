@@ -74,22 +74,6 @@ describe('Events Payments Webhook (e2e)', ()=>{
         .send({
             idServiceExecuted,
             billingType: 'PIX',
-            // creditCard: {
-            //     holderName: "marcelo h almeida",
-            //     number: "5162306219378829",
-            //     expiryMonth: "05",
-            //     expiryYear: "2024",
-            //     ccv: "318",
-            // },
-            // creditCardHolderInfo: {
-            //     name: "Marcelo Henrique Almeida",
-            //     email: "marcelo.almeida@gmail.com",
-            //     cpfCnpj: "24971563792",
-            //     postalCode: "89223-005",
-            //     addressNumber: "277",
-            //     addressComplement: "Casa",
-            //     phone: "4738010919",
-            // },
             remoteIp: "116.213.42.532"            
         })
 
@@ -327,6 +311,10 @@ describe('Events Payments Webhook (e2e)', ()=>{
             }
         })
         expect(responseEventsPaymentWebhook.statusCode).toEqual(200)
-        expect(responseEventsPaymentWebhook.body).toEqual(false)
+        expect(responseEventsPaymentWebhook.body).toEqual(
+            expect.objectContaining({
+                message: "Event not valid!"
+            })
+        )
     }, 100000)
 })
