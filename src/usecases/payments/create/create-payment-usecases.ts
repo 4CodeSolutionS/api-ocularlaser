@@ -76,14 +76,7 @@ export class CreatePaymentUseCase{
         installmentValue,
         remoteIp
     }:IRequestCreatePayment):Promise<IResponseCreatePayment>{
-        // buscar um payment pelo idServiceExecuted
-        console.log("aqui antes da bucas do payment")
-        console.log(idServiceExecuted)
-        const findPaymentExists = await this.paymentRepository.findByIdServiceExecuted(idServiceExecuted)
-        // validar se existe um payment
-        if(findPaymentExists){
-            throw new PaymentAlreadyExistsError()
-        }
+        
         // buscar se existe uma service executed pelo id
         const findServiceExecutedExists = await this.serviceExecutedRepository.findById(idServiceExecuted) as unknown as IServiceExecutedFormmated
         // validar se existe uma service excuted
