@@ -13,5 +13,6 @@ ADMIN ou PACIENT.
 * [x] Corrigir case com uso do storage do firebase
 * [x] Remover o idCostumerAsaas em Payments
 * [x] Alterar o idCostumer em users para idCostumerAsaas
-* [ ] pegar remoteIp da requisição que foi enviada para o backend em vez de chumbar
+* [x] Pegar remoteIp da requisição que foi enviada para o backend em vez de chumbar
+* [x] Corrigir teste e2e que enviavam remoteIp pelo body.
 * [ ] Criar test uni e e2e para validar user, clinic e service no service executed

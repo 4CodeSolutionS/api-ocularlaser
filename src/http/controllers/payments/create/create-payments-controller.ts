@@ -29,19 +29,20 @@ export async function CreatePayment (request: FastifyRequest, reply:FastifyReply
                 }).optional(),
                 installmentCount: z.number().int().nonnegative().optional(),
                 installmentValue: z.number().int().nonnegative().optional(),
-                remoteIp: z.string().nonempty()
             })
+            const remoteIpSchema = z.string().nonempty()
+
             const { 
                 billingType,
                 creditCard,
                 creditCardHolderInfo,
                 installmentCount,
                 installmentValue,
-                remoteIp,
                 idServiceExecuted
                 }
             = paymentSchemaBody.parse(request.body)
 
+            const remoteIpParsed = remoteIpSchema.parse(request.socket.remoteAddress)
             const createPaymentUseCase = await makeCreatePayment()
             
             const {payment} = await createPaymentUseCase.execute({
@@ -49,7 +50,7 @@ export async function CreatePayment (request: FastifyRequest, reply:FastifyReply
                 creditCardHolderInfo,
                 installmentCount,
                 installmentValue,
-                remoteIp,
+                remoteIp: remoteIpParsed,
                 idServiceExecuted,
                 billingType,
             })

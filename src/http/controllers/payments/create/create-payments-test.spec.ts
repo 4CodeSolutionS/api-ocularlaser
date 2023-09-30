@@ -90,7 +90,6 @@ describe('Create Payments (e2e)', ()=>{
                 addressComplement: "Casa",
                 phone: "4738010919",
             },
-            remoteIp: "116.213.42.532"            
         })
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
@@ -173,7 +172,6 @@ describe('Create Payments (e2e)', ()=>{
                 addressComplement: "Casa",
                 phone: "4738010919",
             },
-            remoteIp: "116.213.42.532"            
         })
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
@@ -239,7 +237,6 @@ describe('Create Payments (e2e)', ()=>{
         .send({
             idServiceExecuted,
             billingType: 'PIX',
-            remoteIp: "116.213.42.532"            
         })
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
@@ -305,7 +302,6 @@ describe('Create Payments (e2e)', ()=>{
         .send({
             idServiceExecuted,
             billingType: 'FETLOCK',
-            remoteIp: "116.213.42.532"            
         })
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
@@ -371,7 +367,6 @@ describe('Create Payments (e2e)', ()=>{
         .send({
             idServiceExecuted,
             billingType: 'FETLOCK',
-            remoteIp: "116.213.42.532"            
         })
          expect(responseCreatePayment.statusCode).toEqual(400)
     }, 100000)
@@ -454,7 +449,6 @@ describe('Create Payments (e2e)', ()=>{
                 addressComplement: "Casa",
                 phone: "4738010919",
             },
-            remoteIp: "116.213.42.532"          
         })
          expect(responseCreatePayment.statusCode).toEqual(400)
     }, 100000)
@@ -521,7 +515,6 @@ describe('Create Payments (e2e)', ()=>{
         .send({
             idServiceExecuted,
             billingType: 'PIX',
-            remoteIp: "116.213.42.532"          
         })
         const {
             id,
@@ -557,7 +550,6 @@ describe('Create Payments (e2e)', ()=>{
         .send({
             idServiceExecuted,
             billingType: 'PIX',
-            remoteIp: "116.213.42.532"          
         })
          expect(responseCreatePaymentAlreadyExists.statusCode).toEqual(409)
     }, 100000)
