@@ -12,6 +12,10 @@ import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-cli
 import { randomUUID } from "crypto";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { InMemoryAsaasProvider } from "@/providers/PaymentProvider/in-memory/in-memory-asaas-provider";
+import { InvalidPaymentError } from "@/usecases/errors/invalid-payment-error";
+import { EventsWebHookPaymentsUseCases } from "../events-webhook/events-webhook-payments-usecases";
+import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
+import { PaymentAlreadyExistsError } from "@/usecases/errors/payment-already-exists-error";
 
 
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
@@ -22,6 +26,8 @@ let usersRepositoryInMemory: InMemoryUsersRepository;
 let asaasProviderInMemory: InMemoryAsaasProvider;
 let dateProviderInMemory: DayjsDateProvider;
 let storageProviderInMemory: FirebaseStorageProvider;
+let eventPaymentWebHook: EventsWebHookPaymentsUseCases;
+let mailProviderInMemory: InMemoryMailProvider
 let stu: CreatePaymentUseCase;
 
 export interface IDiscount {
@@ -31,6 +37,7 @@ export interface IDiscount {
 }
 describe("Create payment (unit)", () => {
     beforeEach(async () => {
+        paymentRepositoryInMemory = new InMemoryPaymentRepository()
         usersRepositoryInMemory = new InMemoryUsersRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         clinicRepositoryInMemory = new InMemoryClinicRepository()
@@ -40,14 +47,22 @@ describe("Create payment (unit)", () => {
             serviceRepositoryInMemory,
             clinicRepositoryInMemory
             )
+        mailProviderInMemory = new InMemoryMailProvider()
         dateProviderInMemory = new DayjsDateProvider()
         storageProviderInMemory = new FirebaseStorageProvider()
         asaasProviderInMemory = new InMemoryAsaasProvider(dateProviderInMemory)
+        eventPaymentWebHook = new EventsWebHookPaymentsUseCases(
+            paymentRepositoryInMemory,
+            serviceExecutedRepositoryInMemory,
+            asaasProviderInMemory,
+            mailProviderInMemory
+            )
         stu = new CreatePaymentUseCase(
             usersRepositoryInMemory,
             asaasProviderInMemory,
             dateProviderInMemory,
-            serviceExecutedRepositoryInMemory
+            serviceExecutedRepositoryInMemory,
+            paymentRepositoryInMemory
         )
 
     });
@@ -330,4 +345,98 @@ describe("Create payment (unit)", () => {
     })).rejects.toBeInstanceOf(ResourceNotFoundError)
     
     }, 100000);
+
+    test("Should not be able to create a payment with idServiceExecuted already exists", async () => {
+        const clinic = await clinicRepositoryInMemory.create({
+            name: "Clinic Test",
+            address:{
+                create:{
+                    city: "City Test",
+                    neighborhood: "Neighborhood Test",
+                    num: 1,
+                    state: "State Test",
+                    street: "Street Test",
+                    zip: "Zip Test",
+                    complement: "Complement Test",
+                    reference: "Reference Test"
+                }
+            }
+        })
+
+        const user = await usersRepositoryInMemory.create({
+            cpf: "24971563792",
+            email: "user1@test.com",
+            name: "User Test",
+            gender: "MASCULINO",
+            phone: "123456789",
+            password: await hash("123456", 8),
+        })
+
+        const service = await serviceRepositoryInMemory.create({
+            name: "Service Test",
+            category: "EXAM",
+            price: 500,
+        })
+
+        const serviceExecuted = await serviceExecutedRepositoryInMemory.create({
+            id: "53d7be14-3da4-4a36-9e68-f58cc40e0b6a",
+            idClinic: clinic.id,
+            idService: service.id,
+            idUser: user.id,
+            price: 500,
+        })
+
+        const creditCard = {
+            holderName: "marcelo h almeida",
+            number: "5162306219378829",
+            expiryMonth: "05",
+            expiryYear: "2024",
+            ccv: "318",
+        }
+
+        const creditCardHolderInfo = {
+            name: "Marcelo Henrique Almeida",
+            email: "marcelo.almeida@gmail.com",
+            cpfCnpj: "24971563792",
+            postalCode: "89223-005",
+            addressNumber: "277",
+            addressComplement: "Casa",
+            phone: "4738010919",
+        }
+
+        const {payment} = await stu.execute({
+            idServiceExecuted: serviceExecuted.id,
+            billingType: "CREDIT_CARD",
+            dueDate: '2023-09-21',
+            creditCard,
+            creditCardHolderInfo,
+            remoteIp: '116.213.42.532',
+        })
+        
+        const confirmPayment = await eventPaymentWebHook.execute({
+            event: 'PAYMENT_RECEIVED',
+            payment: {
+                id: payment.id,
+                customer: payment.customer,
+                invoiceUrl: payment.invoiceUrl,
+                billingType: payment.billingType,
+                externalReference: payment.externalReference,
+                paymentDate: payment.dueDate,
+                value: payment.value,
+                netValue: payment.netValue,
+                description: payment.description,
+                installment: payment.installment,
+            }
+        })
+        await expect(()=> stu.execute({
+            idServiceExecuted: serviceExecuted.id,
+            billingType: "CREDIT_CARD",
+            dueDate: '2023-09-21',
+            creditCard,
+            creditCardHolderInfo,
+            remoteIp: '116.213.42.532',
+        })).rejects.toBeInstanceOf(PaymentAlreadyExistsError)
+
+    }, 100000);
+    
 });

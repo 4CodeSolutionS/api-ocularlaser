@@ -75,7 +75,6 @@ export class EventsWebHookPaymentsUseCases{
         if(findPaymentExist){
             throw new PaymentAlreadyExistsError()
         }
-        console.log(findPaymentExist)
         //[x] criar validação para caso o evento seja "REPROVED"
         if(event === 'PAYMENT_REPROVED'){
             //[] criar payment no banco de dados com os dados recebidos e status REPROVED

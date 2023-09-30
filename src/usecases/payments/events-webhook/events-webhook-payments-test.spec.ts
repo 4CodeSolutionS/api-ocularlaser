@@ -118,7 +118,7 @@ describe("Confirm payment received (unit)", () => {
                 value: payment.value,
                 netValue: payment.netValue,
                 description: payment.description,
-                installment: payment.installments,
+                installment: payment.installment,
             }
         })
        
@@ -218,7 +218,7 @@ describe("Confirm payment received (unit)", () => {
                 value: payment.value,
                 netValue: payment.netValue,
                 description: payment.description,
-                installment: payment.installments,
+                installment: payment.installment,
         }
     })
 
@@ -317,7 +317,7 @@ describe("Confirm payment received (unit)", () => {
                 value: payment.value,
                 netValue: payment.netValue,
                 description: payment.description,
-                installment: payment.installments,
+                installment: payment.installment,
         }
     })
     expect(confirmPayment.payment).toEqual(
@@ -360,7 +360,7 @@ describe("Confirm payment received (unit)", () => {
                 value: payment.value,
                 netValue: payment.netValue,
                 description: payment.description,
-                installment: payment.installments,
+                installment: payment.installment,
             }
         })).rejects.toBeInstanceOf(ResourceNotFoundError)
     }, 100000);

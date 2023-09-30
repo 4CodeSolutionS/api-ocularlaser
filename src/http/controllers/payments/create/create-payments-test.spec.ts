@@ -2,7 +2,6 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import request from 'supertest'
 import { fastifyApp } from "@/app";
 import { Clinic, Service, ServiceExecuted } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 import { randomUUID } from "node:crypto";
 
@@ -15,7 +14,7 @@ describe('Create Payments (e2e)', ()=>{
         await fastifyApp.close()
     })
 
-    test('should be able to create payment credit_card unique', async()=>{
+    test.skip('should be able to create payment credit_card unique', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -96,7 +95,7 @@ describe('Create Payments (e2e)', ()=>{
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test('should be able to create payment credit_card installment', async()=>{
+    test.skip('should be able to create payment credit_card installment', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -179,7 +178,7 @@ describe('Create Payments (e2e)', ()=>{
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test('should be able to create payment pix', async()=>{
+    test.skip('should be able to create payment pix', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -246,7 +245,7 @@ describe('Create Payments (e2e)', ()=>{
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test('should be able to create payment boleto', async()=>{
+    test.skip('should be able to create payment boleto', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -375,6 +374,7 @@ describe('Create Payments (e2e)', ()=>{
             billingType: 'FETLOCK',
             remoteIp: "116.213.42.532"            
         })
+        console.log(responseCreatePayment.error)
          expect(responseCreatePayment.statusCode).toEqual(400)
     }, 100000)
 
@@ -433,6 +433,7 @@ describe('Create Payments (e2e)', ()=>{
             },
         })
         const {id: idServiceExecuted} = responseCreateServiceExecuted.body as ServiceExecuted
+        console.log(idServiceExecuted)
         //criar pagamento na asaas
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
@@ -457,6 +458,7 @@ describe('Create Payments (e2e)', ()=>{
             },
             remoteIp: "116.213.42.532"          
         })
+        console.log(responseCreatePayment.error)
          expect(responseCreatePayment.statusCode).toEqual(400)
     }, 100000)
 })

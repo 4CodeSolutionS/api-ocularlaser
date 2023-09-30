@@ -6,16 +6,7 @@ export class PrismaPaymentRepository implements IPaymentsRepository{
     async findByIdServiceExecuted(id: string){
         const payment = await prisma.payment.findUnique({
             where:{
-                idServiceExecuted: id
-            }
-        })
-
-        return payment
-    }
-    async findByIdCostumerPayment(id: string){
-        const payment = await prisma.payment.findFirst({
-            where:{
-                idCostumer: id
+                idServiceExecuted: id,
             }
         })
 

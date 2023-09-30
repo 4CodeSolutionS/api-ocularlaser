@@ -9,6 +9,7 @@ import { IServiceExecutedFormmated } from '@/usecases/servicesExecuted/mappers/l
 import { InvalidCustomerError } from '@/usecases/errors/invalid-customer-error';
 import { InvalidPaymentError } from '@/usecases/errors/invalid-payment-error';
 import { IPaymentsRepository } from '@/repositories/interface-payments-repository';
+import { PaymentAlreadyExistsError } from '@/usecases/errors/payment-already-exists-error';
 
 export interface IAsaasPayment {
     id: string
@@ -76,10 +77,12 @@ export class CreatePaymentUseCase{
         remoteIp
     }:IRequestCreatePayment):Promise<IResponseCreatePayment>{
         // buscar um payment pelo idServiceExecuted
+        console.log("aqui antes da bucas do payment")
+        console.log(idServiceExecuted)
         const findPaymentExists = await this.paymentRepository.findByIdServiceExecuted(idServiceExecuted)
         // validar se existe um payment
         if(findPaymentExists){
-            throw new InvalidPaymentError()
+            throw new PaymentAlreadyExistsError()
         }
         // buscar se existe uma service executed pelo id
         const findServiceExecutedExists = await this.serviceExecutedRepository.findById(idServiceExecuted) as unknown as IServiceExecutedFormmated
