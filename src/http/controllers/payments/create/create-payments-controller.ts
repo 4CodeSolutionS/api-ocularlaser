@@ -9,7 +9,9 @@ import { z } from 'zod'
 export async function CreatePayment (request: FastifyRequest, reply:FastifyReply){
         try {
             const paymentSchemaBody = z.object({
-                idServiceExecuted: z.string().uuid().nonempty(),
+                serviceExecuted: z.object({
+                    id: z.string().uuid().nonempty(),
+                }),
                 billingType: z.enum(['CREDIT_CARD', 'FETLOCK', 'PIX']),
                 creditCard: z.object({
                     holderName: z.string().nonempty(),
@@ -38,7 +40,7 @@ export async function CreatePayment (request: FastifyRequest, reply:FastifyReply
                 creditCardHolderInfo,
                 installmentCount,
                 installmentValue,
-                idServiceExecuted
+                serviceExecuted: { id: idServiceExecuted }
                 }
             = paymentSchemaBody.parse(request.body)
 

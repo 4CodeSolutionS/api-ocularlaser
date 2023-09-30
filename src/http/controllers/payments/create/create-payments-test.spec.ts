@@ -72,7 +72,9 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'CREDIT_CARD',
             creditCard: {
                 holderName: "marcelo h almeida",
@@ -153,7 +155,9 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'CREDIT_CARD',
             installmentCount: 12,
             creditCard: {
@@ -235,7 +239,9 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'PIX',
         })
          expect(responseCreateService.statusCode).toEqual(201)
@@ -300,7 +306,9 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'FETLOCK',
         })
          expect(responseCreateService.statusCode).toEqual(201)
@@ -365,7 +373,9 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'FETLOCK',
         })
          expect(responseCreatePayment.statusCode).toEqual(400)
@@ -431,7 +441,9 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'CREDIT_CARD',
             creditCard: {
                 holderName: "marcelo h almeida",
@@ -513,7 +525,9 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'PIX',
         })
         const {
@@ -548,7 +562,9 @@ describe('Create Payments (e2e)', ()=>{
         const responseCreatePaymentAlreadyExists = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'PIX',
         })
          expect(responseCreatePaymentAlreadyExists.statusCode).toEqual(409)
