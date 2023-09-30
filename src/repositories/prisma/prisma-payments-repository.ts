@@ -27,7 +27,21 @@ export class PrismaPaymentRepository implements IPaymentsRepository{
             select:{
                 id: true,
                 idPaymentAsaas: true,
-                users: true,
+                users: {
+                    select:{
+                        id: true,
+                        idCostumerAsaas: true,
+                        name: true,
+                        email: true,
+                        phone: true,
+                        cpf: true,
+                        role: true,
+                        gender: true,
+                        emailActive: true,
+                        createdAt: true,
+                        clinic: true,
+                    }
+                },
                 serviceExecuted: true,
                 datePayment: true,
                 installmentCount: true,
