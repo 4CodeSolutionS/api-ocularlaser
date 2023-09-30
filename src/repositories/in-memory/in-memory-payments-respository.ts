@@ -4,7 +4,14 @@ import { randomUUID } from "crypto";
 
 export class InMemoryPaymentRepository implements IPaymentsRepository{
     private payments: Payment[] = [];
+    
+    async listByPaymentStatus(status: string, page = 1){
+        const listPayments = this.payments
+        .filter(payment => payment.paymentStatus === status)
+        .slice((page - 1) * 20, page * 20)
 
+        return listPayments
+    }
     async findByIdServiceExecuted(id: string){
         const payment = this.payments.find(payment => payment.idServiceExecuted === id)
 

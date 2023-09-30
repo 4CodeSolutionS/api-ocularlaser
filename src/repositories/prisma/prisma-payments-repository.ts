@@ -1,8 +1,11 @@
-import { Payment, Prisma } from "@prisma/client";
+import { $Enums, Payment, Prisma } from "@prisma/client";
 import { IPaymentsRepository } from "../interface-payments-repository";
 import { prisma } from "@/lib/prisma";
 
 export class PrismaPaymentRepository implements IPaymentsRepository{
+    async listByPaymentStatus(status: string, page?: number | undefined): Promise<{ id: string; idPaymentAsaas: string; idUser: string; idServiceExecuted: string; invoiceUrl: string; installmentCount: Prisma.Decimal | null; installmentValue: Prisma.Decimal | null; paymentMethod: $Enums.PaymentMethod; paymentStatus: $Enums.Status; value: Prisma.Decimal; netValue: Prisma.Decimal; datePayment: Date | null; }[]> {
+        throw new Error("Method not implemented.");
+    }
     async findByIdServiceExecuted(id: string){
         const payment = await prisma.payment.findUnique({
             where:{

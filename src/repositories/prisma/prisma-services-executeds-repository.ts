@@ -1,8 +1,49 @@
-import { Prisma, ServiceExecuted } from "@prisma/client";
+import { Prisma, ServiceExecuted, Status } from "@prisma/client";
 import { IServiceExecutedRepository } from "../interface-services-executeds-repository";
 import { prisma } from "@/lib/prisma";
 
 export class PrismaServicesExecutedsRepository implements IServiceExecutedRepository {
+    async listByPaymentStatus(status: Status, page = 1){
+        const servicesExecuted = await prisma.serviceExecuted.findMany({
+            where:{
+                payment:{
+                    paymentStatus: status
+                }
+
+            },
+            select:{
+                id: true,
+                service: true,
+                user: {
+                    select:{
+                        id: true,
+                        idCostumerAsaas: true,
+                        name: true,
+                        email: true,
+                        phone: true,
+                        cpf: true,
+                        role: true,
+                        gender: true,
+                    }
+                },
+                clinic: {
+                    select:{
+                        id: true,
+                        name: true,
+                        address: true,
+                    }
+                },
+                payment: true,
+                exams: true,
+                price: true,
+                approved: true,
+            },
+            take: 20,
+            skip: (page - 1) * 20
+        }) as unknown as ServiceExecuted[]
+
+        return servicesExecuted
+    }
     async getterPriceAsNumber(id: string){
         const serviceExecuted = await prisma.serviceExecuted.findUnique({
             where: {

@@ -6,11 +6,13 @@ import { InMemoryServiceExecutedRepository } from "@/repositories/in-memory/in-m
 import { hash } from "bcrypt";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { ListServicesExecutedUseCases } from "./list-services-executeds-usecases";
+import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
 
 let mailProviderInMemory: InMemoryMailProvider;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
+let paymentRepositoryInMemory: InMemoryPaymentRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let stu: ListServicesExecutedUseCases;
 
@@ -20,10 +22,12 @@ describe("List service executed (unit)", () => {
         usersRepositoryInMemory = new InMemoryUsersRepository()
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
+        paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
             usersRepositoryInMemory,
             serviceRepositoryInMemory,
-            clinicRepositoryInMemory
+            clinicRepositoryInMemory,
+            paymentRepositoryInMemory
         )
         stu = new ListServicesExecutedUseCases(serviceExecutedRepositoryInMemory)
 

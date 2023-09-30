@@ -1,4 +1,4 @@
-import { Clinic, Service, ServiceExecuted, User } from "@prisma/client";
+import { Clinic, Payment, Service, ServiceExecuted, User } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 
 export interface IServiceExecutedInnerJoin{
@@ -17,9 +17,8 @@ export interface IServiceExecutedFormmated{
     user: User;
     service: Service;
     clinic: Clinic;
+    payment: Payment;
     price: number;
-    dataPayment: Date;
-    date: Date;
     approved: boolean;
 }
 

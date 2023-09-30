@@ -39,7 +39,9 @@ describe("Confirm payment received (unit)", () => {
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
             usersRepositoryInMemory,
             serviceRepositoryInMemory,
-            clinicRepositoryInMemory)
+            clinicRepositoryInMemory,
+            paymentRepositoryInMemory
+            )
         stu = new EventsWebHookPaymentsUseCases(
             paymentRepositoryInMemory,
             serviceExecutedRepositoryInMemory,

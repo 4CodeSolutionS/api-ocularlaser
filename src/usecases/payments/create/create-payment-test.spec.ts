@@ -12,7 +12,6 @@ import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-cli
 import { randomUUID } from "crypto";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { InMemoryAsaasProvider } from "@/providers/PaymentProvider/in-memory/in-memory-asaas-provider";
-import { InvalidPaymentError } from "@/usecases/errors/invalid-payment-error";
 import { EventsWebHookPaymentsUseCases } from "../events-webhook/events-webhook-payments-usecases";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { PaymentAlreadyExistsError } from "@/usecases/errors/payment-already-exists-error";
@@ -45,7 +44,8 @@ describe("Create payment (unit)", () => {
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
             usersRepositoryInMemory,
             serviceRepositoryInMemory,
-            clinicRepositoryInMemory
+            clinicRepositoryInMemory,
+            paymentRepositoryInMemory
             )
         mailProviderInMemory = new InMemoryMailProvider()
         dateProviderInMemory = new DayjsDateProvider()

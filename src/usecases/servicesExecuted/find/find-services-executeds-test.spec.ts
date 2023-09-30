@@ -8,6 +8,7 @@ import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memo
 import { FindServicesExecutedUseCases } from "./find-services-executeds-usecases";
 import { CreateServiceExecutedUseCase } from "../create/create-services-executeds-usecases";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
 
 let mailProviderInMemory: InMemoryMailProvider;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
@@ -15,6 +16,7 @@ let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let createServiceExecuted: CreateServiceExecutedUseCase;
+let paymentRepositoryInMemory: InMemoryPaymentRepository;
 let stu: FindServicesExecutedUseCases;
 
 describe("Find service executed (unit)", () => {
@@ -23,10 +25,12 @@ describe("Find service executed (unit)", () => {
         usersRepositoryInMemory = new InMemoryUsersRepository()
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
+        paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
             usersRepositoryInMemory,
             serviceRepositoryInMemory,
-            clinicRepositoryInMemory
+            clinicRepositoryInMemory,
+            paymentRepositoryInMemory
         )
         createServiceExecuted = new CreateServiceExecutedUseCase(
             serviceExecutedRepositoryInMemory,

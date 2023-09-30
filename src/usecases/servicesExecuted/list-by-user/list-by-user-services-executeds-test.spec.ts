@@ -6,11 +6,13 @@ import { InMemoryServiceExecutedRepository } from "@/repositories/in-memory/in-m
 import { hash } from "bcrypt";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { ListServicesExecutedByUserUseCases } from "./list-by-user-services-executeds-usecases";
+import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
 
 let clinicRepositoryInMemory: InMemoryClinicRepository;
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
+let paymentRepositoryInMemory: InMemoryPaymentRepository;
 let stu: ListServicesExecutedByUserUseCases;
 
 describe("List service executed by user (unit)", () => {
@@ -18,10 +20,12 @@ describe("List service executed by user (unit)", () => {
         usersRepositoryInMemory = new InMemoryUsersRepository()
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
+        paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
             usersRepositoryInMemory,
             serviceRepositoryInMemory,
-            clinicRepositoryInMemory
+            clinicRepositoryInMemory,
+            paymentRepositoryInMemory
         )
         stu = new ListServicesExecutedByUserUseCases(
             serviceExecutedRepositoryInMemory,

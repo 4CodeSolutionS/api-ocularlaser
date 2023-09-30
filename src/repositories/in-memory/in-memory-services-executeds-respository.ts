@@ -1,10 +1,11 @@
-import { Prisma, ServiceExecuted } from "@prisma/client";
+import { Prisma, Service, ServiceExecuted } from "@prisma/client";
 import { IServiceExecutedRepository } from "../interface-services-executeds-repository";
 import { randomUUID } from "crypto";
 import { InMemoryUsersRepository } from "./in-memory-users-repository";
 import { InMemoryServicesRepository } from "./in-memory-services-repository";
 import { InMemoryClinicRepository } from "./in-memory-clinics-repository";
 import { IServiceExecutedFormmated } from "@/usecases/servicesExecuted/mappers/list-service-executed-mapper";
+import { InMemoryPaymentRepository } from "./in-memory-payments-respository";
 
 export class InMemoryServiceExecutedRepository implements IServiceExecutedRepository{
     private servicesExecuted: ServiceExecuted[] = []
@@ -13,8 +14,27 @@ export class InMemoryServiceExecutedRepository implements IServiceExecutedReposi
         private usersRepository: InMemoryUsersRepository,
         private servicesRepository: InMemoryServicesRepository,
         private clinicsRepository: InMemoryClinicRepository,
+        private paymentsRepository: InMemoryPaymentRepository
 
     ){
+    }
+    async listByPaymentStatus(status: string, page = 1){
+        const payments = await this.paymentsRepository.listByPaymentStatus(status, page)
+        
+        let servicesExecutedFormatted: ServiceExecuted[] = []
+
+        for(let payment of payments){
+            const serviceExecuted = await this.findById(payment.idServiceExecuted)
+
+            const serviceExecutedFormated = {
+                ...serviceExecuted,
+                payment
+            } as unknown as ServiceExecuted
+
+            servicesExecutedFormatted.push(serviceExecutedFormated)
+        }
+
+        return servicesExecutedFormatted as unknown as ServiceExecuted[]
     }
     async getterPriceAsNumber(id: string){
         const serviceExecuted = this.servicesExecuted.find(serviceExecuted => serviceExecuted.id === id)
