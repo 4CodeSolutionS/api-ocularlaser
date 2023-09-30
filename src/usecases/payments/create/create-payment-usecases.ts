@@ -64,7 +64,6 @@ export class CreatePaymentUseCase{
         private asaasProvider: IAsaasProvider,
         private dateProvider: IDateProvider,
         private serviceExecutedRepository: IServiceExecutedRepository,
-        private paymentRepository: IPaymentsRepository
     ) {}
 
     async execute({
@@ -76,7 +75,7 @@ export class CreatePaymentUseCase{
         installmentValue,
         remoteIp
     }:IRequestCreatePayment):Promise<IResponseCreatePayment>{
-        
+       
         // buscar se existe uma service executed pelo id
         const findServiceExecutedExists = await this.serviceExecutedRepository.findById(idServiceExecuted) as unknown as IServiceExecutedFormmated
         // validar se existe uma service excuted
