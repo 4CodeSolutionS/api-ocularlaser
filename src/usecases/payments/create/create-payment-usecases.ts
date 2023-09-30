@@ -95,7 +95,7 @@ export class CreatePaymentUseCase{
         const newDate = this.dateProvider.dateNow()
         const formatDateToString = this.dateProvider.convertToUTC(newDate)
         // validar se o cliente existe no asaas se não existir criar
-        if(!user.idCostumerPayment){
+        if(!user.idCostumerAsaas){
             // atualizar user com o id do cliente no asaas
             const createCustomer = await this.asaasProvider.createCustomer({
                 name: user.name,
@@ -107,11 +107,11 @@ export class CreatePaymentUseCase{
                 throw new InvalidCustomerError()
             }
            const customer =  await this.usersRepository.updateIdCostumerPayment(user.id, createCustomer.id as string)
-           newCustomer = String(customer.idCostumerPayment)
+           newCustomer = String(customer.idCostumerAsaas)
         }
 
         // verificar se o usuario tem um idCostumerPayment se não tiver retorna o new customer criado anteriormente
-        const idCostumerPayment = user.idCostumerPayment ? user.idCostumerPayment : String(newCustomer)
+        const idCostumerPayment = user.idCostumerAsaas ? user.idCostumerAsaas : String(newCustomer)
         // se o billingType for "pix" precisamos criar o pagamento na asaas
         // criar cobrança do pagamento no asaas
         if(billingType === 'PIX'){

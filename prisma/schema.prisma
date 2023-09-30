@@ -29,7 +29,7 @@ model Key {
 
 model User {
   id                String            @id @unique @default(uuid())
-  idCostumerPayment String?           @unique
+  idCostumerAsaas   String?           @unique
   name              String
   email             String            @unique
   password          String
@@ -145,7 +145,6 @@ model Payment {
   users             User            @relation(fields: [idUser], references: [id])
   idPaymentAsaas    String
   idUser            String
-  idCostumerAsaas   String?
   idServiceExecuted String          @unique
   invoiceUrl        String
   installmentCount  Decimal?

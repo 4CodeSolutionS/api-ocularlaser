@@ -5,10 +5,10 @@ import { prisma } from "@/lib/prisma";
 export class PrismaUsersRepository implements IUsersRepository{
     async findByIdCostumerPayment(id: string){
         const user = await prisma.user.findUnique({
-            where: {idCostumerPayment: id},
+            where: {idCostumerAsaas: id},
             select: {
                 id: true,
-                idCostumerPayment: true,
+                idCostumerAsaas: true,
                 name: true,
                 cpf: true,
                 email: true,
@@ -31,7 +31,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                 id: idUser
             },
             data:{
-                idCostumerPayment
+                idCostumerAsaas: idCostumerPayment
             }
         })
 
@@ -48,7 +48,7 @@ export class PrismaUsersRepository implements IUsersRepository{
             },
             select: {
                 id: true,
-                idCostumerPayment: true,
+                idCostumerAsaas: true,
                 name: true,
                 cpf: true,
                 email: true,
@@ -68,7 +68,7 @@ export class PrismaUsersRepository implements IUsersRepository{
             where: {id},
             select: {
                 id: true,
-                idCostumerPayment: true,
+                idCostumerAsaas: true,
                 name: true,
                 cpf: true,
                 email: true,
@@ -111,7 +111,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                 data,
                 select: {
                     id: true,
-                    idCostumerPayment: true,
+                    idCostumerAsaas: true,
                     name: true,
                     cpf: true,
                     email: true,
@@ -133,7 +133,7 @@ export class PrismaUsersRepository implements IUsersRepository{
         const users = await prisma.user.findMany({
             select: {
                 id: true,
-                idCostumerPayment: true,
+                idCostumerAsaas: true,
                 name: true,
                 cpf: true,
                 email: true,
@@ -156,7 +156,7 @@ export class PrismaUsersRepository implements IUsersRepository{
             where: {id},
             select: {
                 id: true,
-                idCostumerPayment: true,
+                idCostumerAsaas: true,
                 name: true,
                 cpf: true,
                 email: true,
