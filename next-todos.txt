@@ -15,4 +15,5 @@ ADMIN ou PACIENT.
 * [x] Alterar o idCostumer em users para idCostumerAsaas
 * [x] Pegar remoteIp da requisição que foi enviada para o backend em vez de chumbar
 * [x] Corrigir teste e2e que enviavam remoteIp pelo body.
+* [ ] Receber no controller event payment webhook apenas evento PAYMENT_RECEIVED e PAYMENT_REPROVED
 * [ ] Criar test uni e e2e para validar user, clinic e service no service executed

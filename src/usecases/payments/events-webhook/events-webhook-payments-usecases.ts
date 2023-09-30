@@ -37,8 +37,8 @@ export class EventsWebHookPaymentsUseCases{
         event,
         payment
     }:IRequestReceiveEvent):Promise<any>{
-        //[x] verifica se o evento é de pagamento é "PAYMENT_RECEIVED"
-        if(event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_REPROVED'){ 
+        //[x] verifica se o evento é de pagamento é "PAYMENT_REPROVED_BY_RISK_ANALYSIS"
+        if(event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_REPROVED_BY_RISK_ANALYSIS'){ 
             throw new EventNotValidError()
         }
         //[x] criar variavel installments para receber o valor e o numero de parcelo
@@ -76,7 +76,7 @@ export class EventsWebHookPaymentsUseCases{
             throw new PaymentAlreadyExistsError()
         }
         //[x] criar validação para caso o evento seja "REPROVED"
-        if(event === 'PAYMENT_REPROVED'){
+        if(event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS'){
             //[] criar payment no banco de dados com os dados recebidos e status REPROVED
             const createPaymentReproved = await this.paymentsRepository.create({
                 idUser: findServiceExecuted.user.id,

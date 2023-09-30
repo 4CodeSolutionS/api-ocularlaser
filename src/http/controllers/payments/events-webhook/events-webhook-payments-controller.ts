@@ -8,7 +8,7 @@ import { ZodError, z } from 'zod'
 export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, reply:FastifyReply){
         try {
             const eventPaymentSchema = z.object({
-                event: z.string().nonempty(),
+                event: z.enum(['PAYMENT_RECEIVED', 'PAYMENT_REPROVED_BY_RISK_ANALYSIS']),
                 payment: z.object({
                     id: z.string().nonempty(),
                     customer: z.string().nonempty(),

@@ -207,7 +207,7 @@ describe("Confirm payment received (unit)", () => {
 
 
     const confirmPayment = await stu.execute({
-        event: 'PAYMENT_REPROVED',
+        event: 'PAYMENT_REPROVED_BY_RISK_ANALYSIS',
         payment: {
             id: payment.id,
                 customer: payment.customer,
