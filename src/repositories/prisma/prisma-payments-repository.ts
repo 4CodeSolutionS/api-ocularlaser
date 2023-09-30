@@ -42,7 +42,13 @@ export class PrismaPaymentRepository implements IPaymentsRepository{
                                 gender: true,
                                 emailActive: true,
                                 createdAt: true,
-                                clinic: true,
+                                clinic: {
+                                    select:{
+                                        id: true,
+                                        name: true,
+                                        address: true,
+                                    }
+                                },
                             }
                         },
                         clinic: true,
