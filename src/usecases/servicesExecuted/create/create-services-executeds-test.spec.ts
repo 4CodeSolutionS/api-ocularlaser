@@ -7,6 +7,8 @@ import { hash } from "bcrypt";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { CreateServiceExecutedUseCase } from "./create-services-executeds-usecases";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
+import { randomUUID } from "node:crypto";
+import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 
 let mailProviderInMemory: InMemoryMailProvider;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
@@ -85,5 +87,93 @@ describe("Create service executed (unit)", () => {
                 id: expect.any(String),
             })
         )
+    });
+
+    test("Should not be able to create a service executed with clinic invalid", async () => {
+        const user = await usersRepositoryInMemory.create({
+        cpf: "123456789",
+        email: "user1@test.com",
+        name: "User Test",
+        gender: "MASCULINO",
+        phone: "123456789",
+        password: await hash("123456", 8),
+        })
+
+        const service = await serviceRepositoryInMemory.create({
+            name: "Service Test",
+            category: "EXAM",
+            price: 500,
+        })
+
+        expect(()=> stu.execute({
+            idUser: user.id,
+            idClinic: randomUUID(),
+            idService: service.id,
+        })).rejects.toBeInstanceOf(ResourceNotFoundError) 
+
+    });
+
+    test("Should be able to create a service executed with user invalid", async () => {
+        const clinic = await clinicRepositoryInMemory.create({
+            name: "Clinic Test",
+            address:{
+                create:{
+                    city: "City Test",
+                    neighborhood: "Neighborhood Test",
+                    num: 1,
+                    state: "State Test",
+                    street: "Street Test",
+                    zip: "Zip Test",
+                    complement: "Complement Test",
+                    reference: "Reference Test"
+                }
+            }
+        })
+
+
+        const service = await serviceRepositoryInMemory.create({
+            name: "Service Test",
+            category: "EXAM",
+            price: 500,
+        })
+
+        expect(()=> stu.execute({
+            idUser: randomUUID(),
+            idClinic: clinic.id,
+            idService: service.id,
+        })).rejects.toBeInstanceOf(ResourceNotFoundError)
+    });
+
+    test("Should be able to create a service executed with service invalid", async () => {
+        const clinic = await clinicRepositoryInMemory.create({
+            name: "Clinic Test",
+            address:{
+                create:{
+                    city: "City Test",
+                    neighborhood: "Neighborhood Test",
+                    num: 1,
+                    state: "State Test",
+                    street: "Street Test",
+                    zip: "Zip Test",
+                    complement: "Complement Test",
+                    reference: "Reference Test"
+                }
+            }
+        })
+
+        const user = await usersRepositoryInMemory.create({
+            cpf: "123456789",
+            email: "user1@test.com",
+            name: "User Test",
+            gender: "MASCULINO",
+            phone: "123456789",
+            password: await hash("123456", 8),
+        })
+
+        expect(()=> stu.execute({
+            idUser: user.id,
+            idClinic: clinic.id,
+            idService: randomUUID(),
+        })).rejects.toBeInstanceOf(ResourceNotFoundError)
     });
 })
