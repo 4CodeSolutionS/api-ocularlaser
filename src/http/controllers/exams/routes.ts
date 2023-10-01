@@ -1,7 +1,7 @@
 import { verifyTokenJWT } from "@/http/middlewares/verify-token-jwt"
 import { UploadExams } from "./upload-exams/upload-exams-controller"
 import { FastifyInstance } from "fastify"
-import { tmpDirectoriesUploadConfig } from "@/config/upload-files"
+import { tmpDirectoriesUploadConfig } from "@/config/multer-upload-files"
 import multer from "fastify-multer";
 import { verifyUserRole } from "@/http/middlewares/verify-user-role";
 
