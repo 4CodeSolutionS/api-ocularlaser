@@ -5,7 +5,7 @@ export async function verifyAsaasToken(
     response: FastifyReply,
 ) {
     // destruturar do headers o toke
-    const authHeader = request.headers;
+    const authHeader = request.headers['asaas-access-token'];
 
     console.log(authHeader);
 
