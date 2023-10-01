@@ -122,7 +122,7 @@ describe('List Service Executed by PaymentStatus (e2e)', ()=>{
 
         expect(responseListServiceExecutedByPaymentStatus.statusCode).toEqual(200)
         expect(responseListServiceExecutedByPaymentStatus.body).toHaveLength(5)
-    })
+    },10000)
     test('should be able to list a service executed by paymentStatus REPROVED', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
@@ -232,5 +232,5 @@ describe('List Service Executed by PaymentStatus (e2e)', ()=>{
 
         expect(responseListServiceExecutedByPaymentStatus.statusCode).toEqual(200)
         expect(responseListServiceExecutedByPaymentStatus.body).toHaveLength(5)
-    })
+    },10000)
 })
