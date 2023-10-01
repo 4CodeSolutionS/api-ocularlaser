@@ -83,7 +83,7 @@ describe('Approve Service Executed (e2e)', ()=>{
         })
         const {id} = responseCreateServiceExecuted.body as ServiceExecuted
         const responseApproveServiceExecuted = await request(fastifyApp.server)
-        .patch(`/api/services-executeds/${id}`)
+        .patch(`/api/services-executeds/${id}/approve`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send()
 

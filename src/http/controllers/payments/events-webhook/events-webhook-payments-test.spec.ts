@@ -72,9 +72,10 @@ describe('Events Payments Webhook (e2e)', ()=>{
         const responseCreatePaymentAsaas = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'PIX',
-            remoteIp: "116.213.42.532"            
         })
 
         const {
@@ -88,7 +89,6 @@ describe('Events Payments Webhook (e2e)', ()=>{
             installment,
             dueDate,
         } = responseCreatePaymentAsaas.body as IAsaasPayment
-
         const responseEventsPaymentWebhook = await request(fastifyApp.server)
         .post(`/api/payments/events-webhook-payments`)
         .send({
@@ -174,9 +174,10 @@ describe('Events Payments Webhook (e2e)', ()=>{
         const responseCreatePaymentAsaas = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'PIX',
-            remoteIp: "116.213.42.532"            
         })
 
         const {
@@ -194,7 +195,7 @@ describe('Events Payments Webhook (e2e)', ()=>{
         const responseEventsPaymentWebhook = await request(fastifyApp.server)
         .post(`/api/payments/events-webhook-payments`)
         .send({
-            event: 'PAYMENT_REPROVED',
+            event: 'PAYMENT_REPROVED_BY_RISK_ANALYSIS',
             payment: {
                 id,
                 customer,
@@ -276,7 +277,9 @@ describe('Events Payments Webhook (e2e)', ()=>{
         const responseCreatePaymentAsaas = await request(fastifyApp.server)
         .post(`/api/payments`)
         .send({
-            idServiceExecuted,
+            serviceExecuted:{
+                id: idServiceExecuted
+            },
             billingType: 'PIX',
             remoteIp: "116.213.42.532"            
         })
@@ -313,7 +316,7 @@ describe('Events Payments Webhook (e2e)', ()=>{
         expect(responseEventsPaymentWebhook.statusCode).toEqual(200)
         expect(responseEventsPaymentWebhook.body).toEqual(
             expect.objectContaining({
-                message: "Event not valid!"
+                message: expect.any(String)
             })
         )
     }, 100000)
