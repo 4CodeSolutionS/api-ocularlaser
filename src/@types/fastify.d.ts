@@ -6,7 +6,7 @@ declare module 'fastify' {
   interface FastifyRequest {
     files: File
     user:{
-      role: 'ADMIN' | 'PACIENT' | 'DOCTOR'
+      role: Role
       id: string;
     }
   }
