@@ -79,7 +79,18 @@ export class PrismaUsersRepository implements IUsersRepository{
                 createdAt: true,
                 clinic: true,
                 payments: true,
-                servicesExecuteds: true,
+                servicesExecuteds: {
+                    select: {
+                        id: true,
+                        idUser: true,
+                        clinic: true,
+                        service: true,
+                        payment: true,
+                        exams: true,
+                        approved: true,
+                        price: true,
+                    }
+                },
             }
         }) as unknown as User
 
