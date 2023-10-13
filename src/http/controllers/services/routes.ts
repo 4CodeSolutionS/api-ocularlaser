@@ -20,7 +20,7 @@ export async function servicesRoutes(fastifyApp: FastifyInstance){
     // list serviço
     fastifyApp.get('/', ListService)
 
-    //delete serviço
+    // delete serviço
     fastifyApp.delete('/:id',{
         onRequest:[verifyTokenJWT, verifyUserRole('ADMIN', 'SUPER')]
     } ,DeleteService)
