@@ -34,5 +34,5 @@ jobs:
           FIREBASE_BUCKET: gs://olharlaser.appspot.com
           FIREBASE_CLIENT_EMAIL: firebase-adminsdk-zxkjk@olharlaser.iam.gserviceaccount.com
           FIREBASE_PROJECT_ID: olharlaser
-          FIREBASE_PRIVATE_KEY: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggS
+          FIREBASE_PRIVATE_KEY: "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggS"
           FOLDER_TMP: ./src/tmp
