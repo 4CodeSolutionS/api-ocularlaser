@@ -20,7 +20,7 @@ jobs:
       - run: npm run test:unit
         env:
           JWT_SECRET_ACCESS_TOKEN: 9ab0f1edab31a2a241cf1e3225d14931
-          JWT_SECRET_REFRESH_TOKEN: 62a4861e75e1c95b39c0469e3d18e666"
+          JWT_SECRET_REFRESH_TOKEN: 62a4861e75e1c95b39c0469e3d18e666
           JWT_EXPIRES_IN_REFRESH_TOKEN: 7d
           JWT_EXPIRES_IN_ACCESS_TOKEN: 10m
           SENDGRID_API_KEY: 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
@@ -34,5 +34,5 @@ jobs:
           FIREBASE_BUCKET: gs://olharlaser.appspot.com
           FIREBASE_CLIENT_EMAIL: firebase-adminsdk-zxkjk@olharlaser.iam.gserviceaccount.com
           FIREBASE_PROJECT_ID: olharlaser
-          FIREBASE_PRIVATE_KEY: "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggS"
+          FIREBASE_PRIVATE_KEY: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggS
           FOLDER_TMP: ./src/tmp
