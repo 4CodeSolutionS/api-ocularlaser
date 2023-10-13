@@ -4,7 +4,6 @@ import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-s
 import { hash } from "bcrypt";
 import { CreatePaymentUseCase } from "./create-payment-usecases";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
-import { AsaasProvider } from "@/providers/PaymentProvider/implementations/provider-asaas-payment";
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
 import { FirebaseStorageProvider } from "@/providers/StorageProvider/implementations/firebase-storage.provider";
 import { InMemoryServiceExecutedRepository } from "@/repositories/in-memory/in-memory-services-executeds-respository";
