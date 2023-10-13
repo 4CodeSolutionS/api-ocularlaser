@@ -7,18 +7,21 @@ import { ListService } from "./list/list-services-controller";
 import { verifyUserRole } from "@/http/middlewares/verify-user-role";
 
 export async function servicesRoutes(fastifyApp: FastifyInstance){
-    fastifyApp.addHook('onRequest', verifyTokenJWT)
-    fastifyApp.addHook('onRequest', verifyUserRole('ADMIN', 'SUPER'))
-
     // criar serviço
-    fastifyApp.post('/', CreateService)
+    fastifyApp.post('/',{
+        onRequest:[verifyTokenJWT, verifyUserRole('ADMIN', 'SUPER')]
+    }, CreateService)
 
     // find serviço
-    fastifyApp.get('/:id', FindService)
+    fastifyApp.get('/:id', {
+        onRequest:[verifyTokenJWT, verifyUserRole('ADMIN', 'SUPER')]
+    }, FindService)
 
     // list serviço
     fastifyApp.get('/', ListService)
 
     //delete serviço
-    fastifyApp.delete('/:id', DeleteService)
+    fastifyApp.delete('/:id',{
+        onRequest:[verifyTokenJWT, verifyUserRole('ADMIN', 'SUPER')]
+    } ,DeleteService)
 }

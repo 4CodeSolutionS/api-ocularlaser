@@ -5,9 +5,10 @@ export async function verifyAsaasToken(
     response: FastifyReply,
 ) {
     try {
-        // destruturar do headers o toke
+        //[x] destruturar do headers o token da asaas
         const authHeader = request.headers['asaas-access-token'];
 
+        //[x] se não existir o token, retorna erro
         if(!authHeader){
             throw new Error("Token not valid")
         }
