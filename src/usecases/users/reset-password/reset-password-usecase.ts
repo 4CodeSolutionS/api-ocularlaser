@@ -1,12 +1,10 @@
 import { IUsersRepository } from "@/repositories/interface-users-repository";
-import { AccessTimeOutError } from "@/usecases/errors/access-time-out-error";
 import 'dotenv/config'
 import { ITokensRepository } from "@/repositories/interface-tokens-repository";
 import { IDateProvider } from "@/providers/DateProvider/interface-date-provider";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { hash } from "bcrypt";
 import { User } from "@prisma/client";
-import { IEthrealProvider } from "@/providers/MailProvider/interface-ethreal-provider";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestResetPassword {
     token: string
@@ -29,7 +27,7 @@ export class ResetPasswordUseCase{
 
         // verifica se token foi encontrado
         if(!findToken){
-            throw new ResourceNotFoundError()
+            throw new AppError('Token não encontrado', 404)
         }
 
         // verificar se o token está expirado
@@ -41,11 +39,12 @@ export class ResetPasswordUseCase{
                 )
             )
             {
-                throw new AccessTimeOutError()
+                throw new AppError('Token expirado', 401)
             }
 
         // buscar usuário no banco
         const user = await this.usersRepository.findById(findToken.idUser) as User
+        
         // criptografar senha
         const newPassword = await hash(password, 8)
 

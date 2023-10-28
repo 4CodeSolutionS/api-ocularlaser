@@ -8,6 +8,7 @@ declare module 'fastify' {
     user:{
       role: Role
       id: string;
+      token: string;
     }
   }
 }

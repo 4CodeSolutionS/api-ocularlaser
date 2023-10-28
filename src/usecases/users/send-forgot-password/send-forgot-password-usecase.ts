@@ -5,7 +5,7 @@ import { IDateProvider } from "@/providers/DateProvider/interface-date-provider"
 import { randomUUID } from "crypto";
 import { env } from "@/env";
 import { IMailProvider } from "@/providers/MailProvider/interface-mail-provider";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestForgotPasswordEmail {
     email: string
@@ -28,16 +28,16 @@ export class SendForgotPasswordUseCase{
 
         // validar se usuario existe no banco
         if(!findUserByEmail){
-            throw new ResourceNotFoundError()
+            throw new AppError('Usuário não encontrado', 404)
         }
         // pegar caminho do arquivo handlebars forgot-password.hbs
         let pathTemplate = env.NODE_ENV === "development" ? 
-        './views/emails/verify-email.hbs':
-        './build/views/emails/verify-email.hbs' 
+        './views/emails/forgot-password.hbs':
+        './build/views/emails/forgot-password.hbs' 
 
         // criar token com uuid
         const token = randomUUID()
-
+        console.log(token)
          // criar data de expiração
         const expireDate = this.dayjsDateProvider.addHours(3)
 
@@ -49,17 +49,14 @@ export class SendForgotPasswordUseCase{
         })
 
         // criar o link para redeinir senha
-        const link = env.NODE_ENV === "development" ?
-        `${env.APP_URL_DEVLOPMENT}/users/reset-password?token=${token}`:
-        `${env.APP_URL_PRODUCTION}/users/reset-password?token=${token}`
-
+        const link = `${env.APP_URL_DEVLOPMENT}/reset-password?token=${token}`
         // enviar email com link de recuperação de senha
-        // await this.sendMailProvider.sendEmail(
-        //     findUserByEmail.email, 
-        //     findUserByEmail.name, 
-        //     'Redefinição de Senha', 
-        //     link, 
-        //     pathTemplate 
-        // )
+        await this.sendMailProvider.sendEmail(
+            findUserByEmail.email, 
+            findUserByEmail.name, 
+            'Redefinição de Senha', 
+            link, 
+            pathTemplate 
+        )
     }
 }

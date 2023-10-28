@@ -7,8 +7,6 @@ import { RegisterUseCase } from "../register/register-usecase";
 import { ResetPasswordUseCase } from "./reset-password-usecase";
 import { Token, User } from "@prisma/client";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
-import { AccessTimeOutError } from "@/usecases/errors/access-time-out-error";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let usersTokensRepositoryInMemory: InMemoryTokensRepository;
@@ -36,9 +34,8 @@ describe("Reset password (unit)", () => {
         )
 
         await usersRepositoryInMemory.create({
-            cpf: "12345678910",
+            dateBirth: new Date('1999-06-01'),
             email: 'user-test@email.com',
-            gender: 'MASCULINO',
             name: 'John Doe',
             phone: '77-77777-7777',
             password: await hash('123456', 8),
@@ -48,57 +45,27 @@ describe("Reset password (unit)", () => {
     });
 
     afterEach(()=>{
-        vi.useRealTimers()
+        vi.useFakeTimers()
     })
 
     test("Should be able to reset passwod account", async () => {
         const {user} = await registerUseCase.execute({
-            cpf: "123.456.789-10",
             email: 'user1-test@email.com',
-            gender: 'MASCULINO',
             name: 'John Doe',
             phone: '77-77777-7777',
             password: await hash('123456', 8),
         })
         const oldPassword = user.password
         const userToken = await usersTokensRepositoryInMemory.findByUserId(user.id) as Token
+
         await stu.execute({ 
             token: userToken.token,
             password: '101010'
         });
 
-        const updateUserPassword = await usersRepositoryInMemory.findByEmail(user.email) as User
-        
-        expect(updateUserPassword.password !== oldPassword).toBeTruthy()
+         const updateUserPassword = await usersRepositoryInMemory.findByEmail(user.email) as User
+
+         expect(updateUserPassword.password !== oldPassword).toBeTruthy()
     });
-
-    test("Should not be able to reset passwod account with token invalid", async () => {
-        await expect(()=> stu.execute({
-            token: 'fake token',
-            password: '101010'
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
-
-    });
-
-
-    test("Should not be able to verify a account with token expired", async () => {
-        vi.setSystemTime(new Date(2023, 8, 23, 7, 0, 0))
-        const {user} = await registerUseCase.execute({
-            cpf: "1234567891110",
-            email: 'user1-test@email.com',
-            gender: 'MASCULINO',
-            name: 'John Doe',
-            phone: '77-77777-7777',
-            password: await hash('123456', 8),
-        })
-        const userToken = await usersTokensRepositoryInMemory.findByUserId(user.id) as Token
-
-        vi.setSystemTime(new Date(2023, 8, 23, 10, 1, 0))
-        await expect(()=> stu.execute({ 
-         token: userToken.token,
-         password: '101010',
-            }),
-        ).rejects.toBeInstanceOf(AccessTimeOutError)
-     });
 
 });

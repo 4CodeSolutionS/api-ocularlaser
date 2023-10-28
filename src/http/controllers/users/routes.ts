@@ -11,6 +11,7 @@ import { DeleteUser } from './delete/delete-user-controller'
 import { UpdateUser } from './update-full/update-user-controller'
 import { AccessAdminUser } from './access-admin/access-admin-users-controller'
 import { verifyUserRole } from '@/http/middlewares/verify-user-role'
+import { RefreshToken } from './refresh-token/refresh-token-users-controller'
 export async function usersRoutes(fastifyApp: FastifyInstance) {
     // register user
     fastifyApp.post('/', RegisterUser)
@@ -26,6 +27,8 @@ export async function usersRoutes(fastifyApp: FastifyInstance) {
 
     // send forgot password user
     fastifyApp.post('/forgot-password', SendForgotPassword)
+
+    fastifyApp.post('/refresh-token', RefreshToken)
 
     // reset password user
     fastifyApp.patch('/reset-password', ResetPassword)

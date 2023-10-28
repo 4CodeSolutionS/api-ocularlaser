@@ -20,7 +20,9 @@ const envSchema = z.object({
     CHARACTERS: z.string().nonempty(),
     ASAAS_API_URL: z.string().nonempty(),
     ASAAS_API_KEY: z.string().nonempty(),
-    FOLDER_TMP: z.string().nonempty(),
+    FOLDER_TMP_DEVELOPMENT: z.string().nonempty(),
+    FOLDER_TMP_PRODUCTION: z.string().nonempty(),
+    REDIS_URL: z.string().nonempty(),
 })
 
 const _env = envSchema.safeParse(process.env)

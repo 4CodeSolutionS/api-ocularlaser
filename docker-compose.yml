@@ -8,5 +8,16 @@ services:
     environment:
       - POSTGRESQL_USERNAME=kaiodev
       - POSTGRESQL_PASSWORD=1ebd9d49b83bd87fb8f9e069dd8bd47e
-      - POSTGRESQL_DATABASE=dbOlharLaser
+      - POSTGRESQL_DATABASE=dbOcularLaser
+    
+  redis:
+        image: redis:alpine
+        container_name: redis
+        ports: 
+            - 6379:6379
+        volumes:
+            - redis:/data
+volumes:
+  redis:
+    driver: local
 

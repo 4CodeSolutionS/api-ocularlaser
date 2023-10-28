@@ -4,11 +4,10 @@ import { VerifyEmailUseCase } from "./verify-email-usecase";
 import { hash } from "bcrypt";
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
 import { InMemoryTokensRepository } from "@/repositories/in-memory/in-memory-tokens-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { RegisterUseCase } from "../register/register-usecase";
-import { AccessTimeOutError } from "@/usecases/errors/access-time-out-error";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
-import { Token } from "@prisma/client";
+import { User } from "@prisma/client";
+import { AppError } from "@/usecases/errors/app-error";
 
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let usersTokensRepositoryInMemory: InMemoryTokensRepository;
@@ -34,23 +33,18 @@ describe("Verify email user (unit)", () => {
             usersTokensRepositoryInMemory,
             dayjsDateProvider
         )
-        
-       vi.useFakeTimers()
 
+        vi.useFakeTimers()
     });
 
     afterEach(()=>{
-        vi.useRealTimers()
-
+        vi.useFakeTimers()
     })
 
     test("Should be able to verify a new account", async () => {
         const {user} = await registerUseCase.execute({
-            cpf: "1234567891110",
             email: 'user1-test@email.com',
-            gender: 'MASCULINO',
             name: 'John Doe',
-            phone: '77-77777-7777',
             password: await hash('123456', 8),
         })
         const userToken = await usersTokensRepositoryInMemory.findByUserId(user.id)
@@ -60,47 +54,39 @@ describe("Verify email user (unit)", () => {
             email: 'user1-test@email.com'
         });
 
-        const userActive = await usersRepositoryInMemory.findByEmail('user1-test@email.com')
+        const userActive = await usersRepositoryInMemory.findByEmail('user1-test@email.com') as User
 
-        expect(userActive?.emailActive).toBe(true)
+        expect(userActive.emailActive).toBe(true)
     });
 
-    test("Should not be able to verify a new account with Email already exists", async () => {
+    test("Should not be able to verify a new account with email already exists", async () => {
         const email = 'email@notexists.com'
 
+        const {user} = await registerUseCase.execute({
+            email: 'user1-test@email.com',
+            name: 'John Doe',
+            password: await hash('123456', 8),
+        })
+        const userToken = await usersTokensRepositoryInMemory.findByUserId(user.id)
+
        await expect(()=> stu.execute({ 
-        token: 'xxx',
+        token: userToken?.token as string,
         email,
     }),
-        ).rejects.toBeInstanceOf(ResourceNotFoundError)
+        ).rejects.toEqual(new AppError('Usuário não encontrado', 404))
     });
 
     test("Should not be able to verify a account with token not found", async () => {
+        const {user} = await registerUseCase.execute({
+            email: 'user1-test@email.com',
+            name: 'John Doe',
+            password: await hash('123456', 8),
+        })
+
        await expect(()=> stu.execute({ 
         token: 'xxx',
         email: 'user1-test@email.com',
     }),
-        ).rejects.toBeInstanceOf(ResourceNotFoundError)
+        ).rejects.toEqual(new AppError('Token não encontrado', 404))  
     });
-
-    test("Should not be able to verify a account with token expired", async () => {
-        vi.setSystemTime( new Date(2023, 8, 23, 7, 0, 0))
-        const {user} = await registerUseCase.execute({
-            cpf: "1234567891110",
-            email: 'user1-test@email.com',
-            gender: 'MASCULINO',
-            name: 'John Doe',
-            phone: '77-77777-7777',
-            password: await hash('123456', 8),
-        })
-        const userToken = await usersTokensRepositoryInMemory.findByUserId(user.id) as Token
-
-        vi.setSystemTime( new Date(2023, 8, 23, 10, 1, 0))
-        await expect(()=> 
-        stu.execute({ 
-         token: userToken.token,
-         email: 'user1-test@email.com',
-     }),
-         ).rejects.toBeInstanceOf(AccessTimeOutError)
-     });
 });

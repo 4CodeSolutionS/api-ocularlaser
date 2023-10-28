@@ -1,4 +1,3 @@
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { makeLogoutUser } from '@/usecases/factories/users/make-logout-user-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -17,14 +16,13 @@ export async function LogoutUser (request: FastifyRequest, reply:FastifyReply){
 
         await logoutUserUseCase.execute({
             refreshToken,
-            idUser: request.user.id
+            idUser: request.user.id,
+            token: request.user.token
         })
         return reply.status(200).send({message: 'Logout performed successfully!'})
 
       } catch (error) {
-        if(error instanceof ResourceNotFoundError){
-          return reply.status(401).send({ message: error.message})
-        }
+        
         throw error
       }
 }

@@ -1,9 +1,8 @@
 import { IUsersRepository } from "@/repositories/interface-users-repository";
-import { AccessTimeOutError } from "@/usecases/errors/access-time-out-error";
 import 'dotenv/config'
 import { ITokensRepository } from "@/repositories/interface-tokens-repository";
 import { IDateProvider } from "@/providers/DateProvider/interface-date-provider";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestVerifyEmail {
     token: string
@@ -24,26 +23,14 @@ export class VerifyEmailUseCase{
         const findUserByEmail = await this.usersRepository.findByEmail(email)
 
         if(!findUserByEmail){
-            throw new ResourceNotFoundError()
+            throw new AppError('Usuário não encontrado', 404)
         }
 
         const findToken = await this.usersTokensRepository.findByToken(token)
+
         if(!findToken){
-            throw new ResourceNotFoundError()
+            throw new AppError('Token não encontrado', 404)
         }
-
-        // verificar se o token está expirado
-        if  (
-                this.dayjsDateProvider.compareIfBefore
-                (
-                    findToken.expireDate, 
-                    this.dayjsDateProvider.dateNow()
-                )
-            )
-            {
-                throw new AccessTimeOutError()
-            }
-
 
         //atualizar emailActive para true
         await this.usersRepository.activeEmail(findUserByEmail.id)
