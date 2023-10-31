@@ -8,7 +8,9 @@ import { LoginUseCase } from "../login/login-usecase";
 import { LogoutUseCase } from "./logout-usecase";
 import { InMemoryCacheProvider } from "@/providers/CacheProvider/in-memory/in-memory-cache-provider";
 import { AppError } from "@/usecases/errors/app-error";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let usersTokensRepositoryInMemory: InMemoryTokensRepository;
 let dayjsDateProvider: DayjsDateProvider
@@ -19,7 +21,8 @@ let stu: LogoutUseCase;
 
 describe("Logout (unit)", () => {
     beforeEach(async () => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         usersTokensRepositoryInMemory = new InMemoryTokensRepository()
         dayjsDateProvider = new DayjsDateProvider()
         sendMailProvider = new InMemoryMailProvider()
@@ -41,6 +44,9 @@ describe("Logout (unit)", () => {
             email: 'email1@test.com',
             name: 'Kaio Moreira',
             password: await hash('123456', 8),
+            cpf: '1564896351',
+            gender: 'MASCULINO',
+            phone: '77-77777-7777',
         }); 
 
         vi.useFakeTimers()

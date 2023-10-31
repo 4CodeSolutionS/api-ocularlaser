@@ -7,6 +7,7 @@ import { hash } from "bcrypt";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { ListServiceExecutedByPaymentStatusUseCase } from "./list-by-payment-status-services-executeds-usecase";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
 let mailProviderInMemory: InMemoryMailProvider;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
@@ -14,12 +15,14 @@ let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
+let cardRepositoryInMemory: InMemoryCardRepository;
 let stu: ListServiceExecutedByPaymentStatusUseCase;
 
 describe("List service executed by clinic (unit)", () => {
     beforeEach(async () => {
+        cardRepositoryInMemory = new InMemoryCardRepository()
         mailProviderInMemory = new InMemoryMailProvider()
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()

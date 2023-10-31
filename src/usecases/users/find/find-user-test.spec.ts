@@ -3,13 +3,16 @@ import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-user
 import { FindUserUseCase } from "./find-user-usecase";
 import { hash } from "bcrypt";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
 let usersRepositoryInMemory: InMemoryUsersRepository;
+let cardRepositoryInMemory: InMemoryCardRepository;
 let stu: FindUserUseCase;
 
 describe("Find user (unit)", () => {
     beforeEach(async () => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         stu = new FindUserUseCase(
             usersRepositoryInMemory, 
         )

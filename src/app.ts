@@ -12,6 +12,8 @@ import { servicesExecutedsRoutes } from "./http/controllers/servicesExecuted/rou
 import { examsRoutes } from "./http/controllers/exams/routes";
 import { keysRoutes } from "./http/controllers/keys/route";
 import { paymentsRoutes } from "./http/controllers/payments/routes";
+import { cardsRoutes } from "./http/controllers/cards/routes";
+import { AppError } from "./usecases/errors/app-error";
 
 export const fastifyApp = fastify()
 
@@ -55,13 +57,21 @@ fastifyApp.register(paymentsRoutes,{
     prefix: 'api/payments'
 })
 
+fastifyApp.register(cardsRoutes,{
+    prefix: 'api/cards'
+})
+
 fastifyApp.setErrorHandler((error:FastifyError, _request:FastifyRequest, reply: FastifyReply)=>{
   if(error instanceof ZodError){
-      return reply.status(400).send({message: 'Validation error', issues: error.format()})
+      return reply.status(400).send({message: 'Erro de Validação', issues: error.format()})
   }
 
   if(error.message.includes('Multipart: Boundary not found')){
-        return reply.status(400).send({message: 'The file name cannot be empty'})
+        return reply.status(400).send({message: 'O arquivo nao pode ser vazio'})
+  }
+
+  if(error instanceof AppError){
+    return reply.status(error.statusCode).send({message: error.message})
   }
 
   if(env.NODE_ENV !== 'production'){

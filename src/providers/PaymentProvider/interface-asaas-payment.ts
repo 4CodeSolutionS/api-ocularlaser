@@ -9,11 +9,12 @@ export interface IChargeData{
     installment?: string,
     description?: string,
     externalReference: string,
+    creditCardToken?: string
     creditCard?: {
-        holderName: string
-        number: string 
-        expiryMonth: string
-        expiryYear: string
+        holderName?: string
+        number?: string 
+        expiryMonth?: string
+        expiryYear?: string
         ccv: string
     }
     creditCardHolderInfo?: {

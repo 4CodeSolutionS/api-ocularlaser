@@ -4,13 +4,16 @@ import { hash } from "bcrypt";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { DeleteUserUseCase } from "./delete-user-usecase";
 import { User } from "@prisma/client";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let stu: DeleteUserUseCase;
 
 describe("Delete user (unit)", () => {
     beforeEach(async () => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         stu = new DeleteUserUseCase(
             usersRepositoryInMemory, 
         )

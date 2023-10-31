@@ -8,7 +8,9 @@ import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memo
 import { LoginUseCase } from "../login/login-usecase";
 import { Token } from "@prisma/client";
 import { AppError } from "@/usecases/errors/app-error";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let usersTokensRepositoryInMemory: InMemoryTokensRepository;
 let dayjsDateProvider: DayjsDateProvider
@@ -18,7 +20,8 @@ let stu: RefreshTokenUseCase;
 
 describe("Refresh token (unit)", () => {
     beforeEach(async () => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         usersTokensRepositoryInMemory = new InMemoryTokensRepository()
         dayjsDateProvider = new DayjsDateProvider()
         sendMailProvider = new InMemoryMailProvider()
@@ -38,6 +41,9 @@ describe("Refresh token (unit)", () => {
             email: 'user1-test@email.com',
             name: 'John Doe',
             password: await hash('123456', 8),
+            cpf: '1321654788',
+            gender: 'MASCULINO',
+            phone: '77-77777-7777',
         })
         vi.useFakeTimers()
     });

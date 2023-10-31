@@ -9,11 +9,13 @@ import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-s
 import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-users-repository";
 import { CreateServiceExecutedUseCase } from "@/usecases/servicesExecuted/create/create-services-executeds-usecases";
 import { hash } from "bcrypt";
-import { FirebaseStorageProvider } from "@/providers/StorageProvider/implementations/firebase-storage.provider";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { ServiceAlreadyApprovedError } from "@/usecases/errors/service-already-approved-error";
+import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
 let mailProviderInMemory: InMemoryMailProvider;
+let cardRepositoryInMemory: InMemoryCardRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
@@ -21,19 +23,23 @@ let examsRepositoryInMemory: InMemoryExamsRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let storageProviderInMemory: InMemoryStorageProvider;
 let createServiceExecutedUseCase: CreateServiceExecutedUseCase;
+let paymentRepositoryInMemory: InMemoryPaymentRepository;
 let stu: CreateExamsUseCase;
 
 describe("Create exams (unit)", () => {
     beforeEach(async () => {
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        paymentRepositoryInMemory = new InMemoryPaymentRepository()
         mailProviderInMemory = new InMemoryMailProvider()
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         examsRepositoryInMemory = new InMemoryExamsRepository();
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
             usersRepositoryInMemory,
             serviceRepositoryInMemory,
-            clinicRepositoryInMemory
+            clinicRepositoryInMemory,
+            paymentRepositoryInMemory
         )
         storageProviderInMemory = new InMemoryStorageProvider();
         createServiceExecutedUseCase = new CreateServiceExecutedUseCase(

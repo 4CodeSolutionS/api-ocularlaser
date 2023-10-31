@@ -1,11 +1,14 @@
 import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider'
 import { IAsaasProvider } from '@/providers/PaymentProvider/interface-asaas-payment'
+import { ICardRepository } from '@/repositories/interface-cards-repository'
 import { IPaymentsRepository } from '@/repositories/interface-payments-repository'
 import { IServiceExecutedRepository } from '@/repositories/interface-services-executeds-repository'
+import { AppError } from '@/usecases/errors/app-error'
 import { EventNotValidError } from '@/usecases/errors/event-not-valid-error'
 import { PaymentAlreadyExistsError } from '@/usecases/errors/payment-already-exists-error'
 import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { IServiceExecutedFormmated } from '@/usecases/servicesExecuted/mappers/list-service-executed-mapper'
+import { cryptingData } from '@/utils/crypting-data'
 import { PaymentMethod, Prisma} from '@prisma/client'
 import 'dotenv/config'
 
@@ -22,6 +25,9 @@ export interface IRequestReceiveEvent {
         installment?: string
         value: number
         netValue: number
+        creditCard?: {
+            creditCardToken: string
+        }
     }
 }
 
@@ -30,6 +36,7 @@ export class EventsWebHookPaymentsUseCases{
         private paymentsRepository: IPaymentsRepository,
         private serviceExecutedRepository: IServiceExecutedRepository,
         private asaasProvider: IAsaasProvider,
+        private cardsRepository: ICardRepository,
         private mailProvider: IMailProvider
     ) {}
 
@@ -41,7 +48,7 @@ export class EventsWebHookPaymentsUseCases{
         if(event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_REPROVED_BY_RISK_ANALYSIS'){ 
             throw new EventNotValidError()
         }
-        //[x] criar variavel installments para receber o valor e o numero de parcelo
+        //[x] criar variavel installments para receber o valor e o numero de parcela
         let installmentCount = 0
         let installmentValue = 0
         //[x] verificar se o pagamento é parcelado
@@ -103,7 +110,6 @@ export class EventsWebHookPaymentsUseCases{
             //     null)
             return createPaymentReproved;
         }
-        
         //[x] criar pagamento APPROVED no banco de dados com os dados recebidos
         const createPaymentApproved = await this.paymentsRepository.create({
             idUser: findServiceExecuted.user.id,
@@ -118,6 +124,7 @@ export class EventsWebHookPaymentsUseCases{
             netValue: new Prisma.Decimal(payment.netValue),
             datePayment: payment.paymentDate ? new Date(payment.paymentDate) : undefined
         })
+        
         //[x] criar variavel com caminho do template de email
         const templatePathPacient = './views/emails/payment-confirmed.hbs'
         const templatePathAdmin = './views/emails/admin.hbs'
@@ -139,6 +146,23 @@ export class EventsWebHookPaymentsUseCases{
         //     null,
         //     templatePathAdmin, 
         //     null)
+        if(!payment.creditCard){
+            return {
+                payment: createPaymentApproved
+            }
+        }
+        // criar cartão no banco de dados pelo id do usuario
+        const findCard = await this.cardsRepository.findByIdUser(findServiceExecuted.user.id)
+        // verificar se o cartão existe
+        if(!findCard){
+            throw new AppError('Cartão não encontrado')
+        }
+        //  criptografar token do cartão
+        const cryptTokenCard = cryptingData(payment.creditCard.creditCardToken)
+
+        // atualizar token tokenCardAsaas do cartão do usuario
+        await this.cardsRepository.updateTokenCard(findCard.id, cryptTokenCard)
+       
         return {
             payment: createPaymentApproved
         }

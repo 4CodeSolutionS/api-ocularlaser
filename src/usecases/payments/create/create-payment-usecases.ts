@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { PaymentMethod } from '@prisma/client';
+import { Card, PaymentMethod } from '@prisma/client';
 import { IUsersRepository } from '@/repositories/interface-users-repository';
 import { IAsaasProvider } from '@/providers/PaymentProvider/interface-asaas-payment';
 import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error';
@@ -10,6 +10,11 @@ import { InvalidCustomerError } from '@/usecases/errors/invalid-customer-error';
 import { InvalidPaymentError } from '@/usecases/errors/invalid-payment-error';
 import { IPaymentsRepository } from '@/repositories/interface-payments-repository';
 import { PaymentAlreadyExistsError } from '@/usecases/errors/payment-already-exists-error';
+import { ICardRepository } from '@/repositories/interface-cards-repository';
+import { cryptingData } from '@/utils/crypting-data';
+import { decryptingData } from '@/utils/decrypting-data';
+import { compare, hash } from 'bcrypt';
+import { AppError } from '@/usecases/errors/app-error';
 
 export interface IAsaasPayment {
     id: string
@@ -24,6 +29,7 @@ export interface IAsaasPayment {
     externalReference: string
     paymentDate: string
     dueDate: string
+    creditCardToken?: string
 }
 
 interface IRequestCreatePayment {
@@ -33,12 +39,12 @@ interface IRequestCreatePayment {
     description?: string
     installmentCount?: number
     installmentValue?: number
-    
+    creditCardToken?: string
     creditCard?: {
-        holderName: string
-        number: string 
-        expiryMonth: string
-        expiryYear: string
+        holderName?: string
+        number?: string 
+        expiryMonth?: string
+        expiryYear?: string
         ccv: string
     }
     creditCardHolderInfo?: {
@@ -64,7 +70,8 @@ export class CreatePaymentUseCase{
         private asaasProvider: IAsaasProvider,
         private dateProvider: IDateProvider,
         private serviceExecutedRepository: IServiceExecutedRepository,
-        private paymentRepository: IPaymentsRepository
+        private paymentRepository: IPaymentsRepository,
+        private cardsRepository: ICardRepository,
     ) {}
 
     async execute({
@@ -136,8 +143,52 @@ export class CreatePaymentUseCase{
         // se o billingType for "cartão de crédito"
         // criar cobrança do pagamento no asaas
         if(billingType === 'CREDIT_CARD'){
-            // calcular valor da parcela
-            const installmentValue = (findServiceExecutedExists.price / Number(installmentCount)).toFixed(2) as unknown as number;
+             // calcular valor da parcela
+             const installmentValue = (findServiceExecutedExists.price / Number(installmentCount)).toFixed(2) as unknown as number;
+            // verificar se ja existe token do cartão
+            const {cards} = user as any
+            const cardFormat = cards as Card[]
+
+            if(cardFormat.length === 1 ){
+                if(!creditCard){
+                    throw new AppError('Credenciais inválidas')
+                }
+    
+                // filtrar token do cartão
+                  const cardToken = cardFormat.find(card => card.idUser === user.id) 
+
+                  if(!cardToken){
+                    throw new AppError('Error ao buscar usuário')
+                  }
+
+                  // descriptografar dados token
+                  const decrypTokenCard = decryptingData(cardToken.tokenCardAsaas as string)
+
+                  // comparar ccv com ccv cryptografado
+                  const isValidCCV = await compare(creditCard.ccv as string, cardToken.ccv as string)
+  
+                  // validar se ccv é valido
+                  if(!isValidCCV){
+                      throw new AppError('Credenciais inválidas')
+                  }
+  
+                  const payment = await this.asaasProvider.createPayment({
+                      customer: idCostumerPayment,
+                      billingType,
+                      value: Number(findServiceExecutedExists.price),
+                      dueDate: formatDateToString,
+                      creditCardToken: decrypTokenCard,
+                      installmentCount: installmentCount ? Number(installmentCount) : undefined,
+                      installmentValue: Number.isNaN(installmentValue) ? undefined : installmentValue,
+                      description: findServiceExecutedExists.service.name,
+                      externalReference: findServiceExecutedExists.id,
+                      remoteIp: String(remoteIp),
+                  }) as IAsaasPayment
+                  return {
+                      payment
+                  }
+              }
+           
             // criar cobrança do pagamento no asaas
             const payment = await this.asaasProvider.createPayment({
                 customer: idCostumerPayment,
@@ -155,11 +206,36 @@ export class CreatePaymentUseCase{
             if(!payment){
                 throw new InvalidPaymentError()
             }
+            let criptData = []
+            if(!creditCard){
+                throw new AppError('Credenciais inválidas')
+            }
+
+            const {number} = creditCard
+            const formatNumber = number as string
+            // formatando numero do cartão
+            const formatNum = `****${formatNumber.slice(-4)}`
+            // criptografar dados do cartão
+            for(let value of [formatNum, creditCard.holderName, `${creditCard.expiryMonth}/${creditCard.expiryYear}`]){
+                const valueCrypt = cryptingData(value as string)
+                criptData.push(valueCrypt)
+            }
+
+            // criptografar ccv com bcrypt hash
+            const hashCCV = await hash(creditCard.ccv as string, 8)
+            
+            // salvar dados do cartão no banco de dados
+            const card = await this.cardsRepository.create({
+                idUser: user.id,
+                num: criptData[0] as string,
+                name: criptData[1] as string,
+                expireDate: criptData[2] as string,
+                ccv: hashCCV,
+            })
             return {
                 payment
             }
         }
-
         // então se o billingType for em "boleto bancário"
         // criar cobrança do pagamento no asaas
          const payment = await this.asaasProvider.createPayment({

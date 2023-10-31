@@ -17,6 +17,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                 role: true,
                 createdAt: true,
                 emailActive: true,
+                cards: true,
                 clinic: true,
                 payments: true,
                 servicesExecuteds: true,
@@ -25,6 +26,7 @@ export class PrismaUsersRepository implements IUsersRepository{
 
         return user
     }
+    
     async updateIdCostumerPayment(idUser: string, idCostumerPayment: string){
         const user = await prisma.user.update({
             where:{
@@ -77,6 +79,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                 role: true,
                 gender: true,
                 createdAt: true,
+                cards: true,
                 clinic: true,
                 payments: true,
                 servicesExecuteds: {
@@ -153,6 +156,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                 gender: true,
                 role: true,
                 createdAt: true,
+                cards: true,
                 clinic: true,
                 payments: true,
                 servicesExecuteds: true,
@@ -177,6 +181,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                 role: true,
                 createdAt: true,
                 password: true,
+                cards: true,
                 clinic: true,
                 payments: true,
                 servicesExecuteds: true,

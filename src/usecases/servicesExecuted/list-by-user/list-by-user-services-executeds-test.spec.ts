@@ -7,7 +7,9 @@ import { hash } from "bcrypt";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { ListServicesExecutedByUserUseCases } from "./list-by-user-services-executeds-usecases";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
@@ -17,7 +19,8 @@ let stu: ListServicesExecutedByUserUseCases;
 
 describe("List service executed by user (unit)", () => {
     beforeEach(async () => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()

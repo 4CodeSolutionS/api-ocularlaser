@@ -6,7 +6,9 @@ import { CredentialsInvalidError } from "@/usecases/errors/credentials-invalid-e
 import 'dotenv/config'
 import { InMemoryTokensRepository } from "@/repositories/in-memory/in-memory-tokens-repository";
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let usersTokensRepositoryInMemory: InMemoryTokensRepository;
 let dayjsDateProvider: DayjsDateProvider
@@ -14,7 +16,8 @@ let stu: LoginUseCase;
 
 describe("Login user (unit)", () => {
     beforeEach(async () => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         usersTokensRepositoryInMemory = new InMemoryTokensRepository()
         dayjsDateProvider = new DayjsDateProvider()
         stu = new LoginUseCase(
