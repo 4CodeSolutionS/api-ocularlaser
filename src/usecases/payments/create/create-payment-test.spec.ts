@@ -14,6 +14,8 @@ import { InMemoryAsaasProvider } from "@/providers/PaymentProvider/in-memory/in-
 import { EventsWebHookPaymentsUseCases } from "../events-webhook/events-webhook-payments-usecases";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { PaymentAlreadyExistsError } from "@/usecases/errors/payment-already-exists-error";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
@@ -25,6 +27,7 @@ let asaasProviderInMemory: InMemoryAsaasProvider;
 let dateProviderInMemory: DayjsDateProvider;
 let storageProviderInMemory: FirebaseStorageProvider;
 let eventPaymentWebHook: EventsWebHookPaymentsUseCases;
+let cardRepositoryInMemory: InMemoryCardRepository;
 let mailProviderInMemory: InMemoryMailProvider
 let stu: CreatePaymentUseCase;
 
@@ -35,8 +38,9 @@ export interface IDiscount {
 }
 describe("Create payment (unit)", () => {
     beforeEach(async () => {
+        cardRepositoryInMemory = new InMemoryCardRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
@@ -54,14 +58,16 @@ describe("Create payment (unit)", () => {
             paymentRepositoryInMemory,
             serviceExecutedRepositoryInMemory,
             asaasProviderInMemory,
+            cardRepositoryInMemory,
             mailProviderInMemory
-            )
+        )
         stu = new CreatePaymentUseCase(
             usersRepositoryInMemory,
             asaasProviderInMemory,
             dateProviderInMemory,
             serviceExecutedRepositoryInMemory,
             paymentRepositoryInMemory,
+            cardRepositoryInMemory
         )
 
     });
@@ -138,6 +144,117 @@ describe("Create payment (unit)", () => {
                 externalReference: "53d7be14-3da4-4a36-9e68-f58cc40e0b6a",
               })
        )
+    }, 100000);
+
+    test("Should be able to create a payment to type credit_card with cardTokenAsaas", async () => {
+        const clinic = await clinicRepositoryInMemory.create({
+            name: "Clinic Test",
+            address:{
+                create:{
+                    city: "City Test",
+                    neighborhood: "Neighborhood Test",
+                    num: 1,
+                    state: "State Test",
+                    street: "Street Test",
+                    zip: "Zip Test",
+                    complement: "Complement Test",
+                    reference: "Reference Test"
+                }
+            }
+        })
+
+        const user = await usersRepositoryInMemory.create({
+            cpf: "249715637921",
+            email: "user100@test.com",
+            name: "User Test",
+            gender: "MASCULINO",
+            phone: "123456789",
+            password: await hash("123456", 8),
+        })
+
+        const service = await serviceRepositoryInMemory.create({
+            name: "Service Test",
+            category: "EXAM",
+            price: 500,
+        })
+
+        const serviceExecuted = await serviceExecutedRepositoryInMemory.create({
+            id: "c1bafd02-506a-40cc-95a4-d6c6c9aa4cf9",
+            idClinic: clinic.id,
+            idService: service.id,
+            idUser: user.id,
+            price: 500,
+        })
+
+        const serviceExecutedTwo = await serviceExecutedRepositoryInMemory.create({
+            id: "5b9bc595-a0ec-46d7-b060-d33293f488e9",
+            idClinic: clinic.id,
+            idService: service.id,
+            idUser: user.id,
+            price: 230,
+        })
+
+        const creditCard = {
+            holderName: "marcelo h almeida",
+            number: "5162306219378829",
+            expiryMonth: "05",
+            expiryYear: "2024",
+            ccv: "318",
+        }
+
+        const creditCardHolderInfo = {
+            name: "Marcelo Henrique Almeida",
+            email: "marcelo.almeida@gmail.com",
+            cpfCnpj: "24971563792",
+            postalCode: "89223-005",
+            addressNumber: "277",
+            addressComplement: "Casa",
+            phone: "4738010919",
+        }
+
+        const createdPaymentCreditCardOne = await stu.execute({
+            idServiceExecuted: serviceExecuted.id,
+            billingType: "CREDIT_CARD",
+            dueDate: '2023-09-21',
+            creditCard,
+            creditCardHolderInfo,
+            remoteIp: '116.213.42.532',
+        })
+
+        const {payment} = createdPaymentCreditCardOne
+        const confirmPayment = await eventPaymentWebHook.execute({
+            event: 'PAYMENT_RECEIVED',
+            payment: {
+                id: payment.id,
+                customer: payment.customer,
+                invoiceUrl: payment.invoiceUrl,
+                billingType: payment.billingType,
+                externalReference: payment.externalReference,
+                paymentDate: payment.dueDate,
+                value: payment.value,
+                netValue: payment.netValue,
+                description: payment.description,
+                creditCard: {creditCardToken: payment.creditCardToken as string},
+            }
+        })
+
+        const createdPaymentCreditCardTwo = await stu.execute({
+            idServiceExecuted: serviceExecutedTwo.id,
+            billingType: "CREDIT_CARD",
+            dueDate: '2023-09-21',
+            creditCard:{
+                ccv: "318",
+            },
+            remoteIp: '116.213.42.532',
+        })
+
+        expect(createdPaymentCreditCardTwo.payment).toEqual(
+            expect.objectContaining({
+              billingType: "CREDIT_CARD",
+              externalReference: "5b9bc595-a0ec-46d7-b060-d33293f488e9",
+            })
+     )
+
     }, 100000);
 
     test("Should be able to create a payment to type credit_card with installments", async () => {
@@ -436,6 +553,278 @@ describe("Create payment (unit)", () => {
             remoteIp: '116.213.42.532',
         })).rejects.toBeInstanceOf(PaymentAlreadyExistsError)
 
+    }, 100000);
+
+    test("Should not be able to create a payment to type credit_card with cardTokenAsaas with ccv invalid", async () => {
+        const clinic = await clinicRepositoryInMemory.create({
+            name: "Clinic Test",
+            address:{
+                create:{
+                    city: "City Test",
+                    neighborhood: "Neighborhood Test",
+                    num: 1,
+                    state: "State Test",
+                    street: "Street Test",
+                    zip: "Zip Test",
+                    complement: "Complement Test",
+                    reference: "Reference Test"
+                }
+            }
+        })
+
+        const user = await usersRepositoryInMemory.create({
+            cpf: "249715637921",
+            email: "user101@test.com",
+            name: "User Test",
+            gender: "MASCULINO",
+            phone: "123456789",
+            password: await hash("123456", 8),
+        })
+
+        const service = await serviceRepositoryInMemory.create({
+            name: "Service Test",
+            category: "EXAM",
+            price: 500,
+        })
+
+        const serviceExecuted = await serviceExecutedRepositoryInMemory.create({
+            id: "c1bafd02-506a-40cc-95a4-d6c6c9aa4cf9",
+            idClinic: clinic.id,
+            idService: service.id,
+            idUser: user.id,
+            price: 500,
+        })
+
+        const serviceExecutedTwo = await serviceExecutedRepositoryInMemory.create({
+            id: "5b9bc595-a0ec-46d7-b060-d33293f488e9",
+            idClinic: clinic.id,
+            idService: service.id,
+            idUser: user.id,
+            price: 230,
+        })
+
+        const creditCard = {
+            holderName: "marcelo h almeida",
+            number: "5162306219378829",
+            expiryMonth: "05",
+            expiryYear: "2024",
+            ccv: "318",
+        }
+
+        const creditCardHolderInfo = {
+            name: "Marcelo Henrique Almeida",
+            email: "marcelo.almeida@gmail.com",
+            cpfCnpj: "24971563792",
+            postalCode: "89223-005",
+            addressNumber: "277",
+            addressComplement: "Casa",
+            phone: "4738010919",
+        }
+
+        const createdPaymentCreditCardOne = await stu.execute({
+            idServiceExecuted: serviceExecuted.id,
+            billingType: "CREDIT_CARD",
+            dueDate: '2023-09-21',
+            creditCard,
+            creditCardHolderInfo,
+            remoteIp: '116.213.42.532',
+        })
+
+        const {payment} = createdPaymentCreditCardOne
+        const confirmPayment = await eventPaymentWebHook.execute({
+            event: 'PAYMENT_RECEIVED',
+            payment: {
+                id: payment.id,
+                customer: payment.customer,
+                invoiceUrl: payment.invoiceUrl,
+                billingType: payment.billingType,
+                externalReference: payment.externalReference,
+                paymentDate: payment.dueDate,
+                value: payment.value,
+                netValue: payment.netValue,
+                description: payment.description,
+                creditCard: {creditCardToken: payment.creditCardToken as string},
+            }
+        })
+
+       await expect(()=>stu.execute({
+        idServiceExecuted: serviceExecutedTwo.id,
+        billingType: "CREDIT_CARD",
+        dueDate: '2023-09-21',
+        creditCard:{
+            ccv: "000",
+        },
+        remoteIp: '116.213.42.532',
+    })).rejects.toEqual(new AppError('Credenciais inválidas',400))
+
+    }, 100000);
+
+    test("Should not be able to create a payment to type credit_card with cardTokenAsaas with card invalid", async () => {
+        const clinic = await clinicRepositoryInMemory.create({
+            name: "Clinic Test",
+            address:{
+                create:{
+                    city: "City Test",
+                    neighborhood: "Neighborhood Test",
+                    num: 1,
+                    state: "State Test",
+                    street: "Street Test",
+                    zip: "Zip Test",
+                    complement: "Complement Test",
+                    reference: "Reference Test"
+                }
+            }
+        })
+
+        const user = await usersRepositoryInMemory.create({
+            cpf: "249715637921",
+            email: "user101@test.com",
+            name: "User Test",
+            gender: "MASCULINO",
+            phone: "123456789",
+            password: await hash("123456", 8),
+        })
+
+        const service = await serviceRepositoryInMemory.create({
+            name: "Service Test",
+            category: "EXAM",
+            price: 500,
+        })
+
+        const serviceExecuted = await serviceExecutedRepositoryInMemory.create({
+            id: "c1bafd02-506a-40cc-95a4-d6c6c9aa4cf9",
+            idClinic: clinic.id,
+            idService: service.id,
+            idUser: user.id,
+            price: 500,
+        })
+
+        const serviceExecutedTwo = await serviceExecutedRepositoryInMemory.create({
+            id: "5b9bc595-a0ec-46d7-b060-d33293f488e9",
+            idClinic: clinic.id,
+            idService: service.id,
+            idUser: user.id,
+            price: 230,
+        })
+
+        const creditCard = {
+            holderName: "marcelo h almeida",
+            number: "5162306219378829",
+            expiryMonth: "05",
+            expiryYear: "2024",
+            ccv: "318",
+        }
+
+        const creditCardHolderInfo = {
+            name: "Marcelo Henrique Almeida",
+            email: "marcelo.almeida@gmail.com",
+            cpfCnpj: "24971563792",
+            postalCode: "89223-005",
+            addressNumber: "277",
+            addressComplement: "Casa",
+            phone: "4738010919",
+        }
+
+        const createdPaymentCreditCardOne = await stu.execute({
+            idServiceExecuted: serviceExecuted.id,
+            billingType: "CREDIT_CARD",
+            dueDate: '2023-09-21',
+            creditCard,
+            creditCardHolderInfo,
+            remoteIp: '116.213.42.532',
+        })
+
+        const {payment} = createdPaymentCreditCardOne
+        const confirmPayment = await eventPaymentWebHook.execute({
+            event: 'PAYMENT_RECEIVED',
+            payment: {
+                id: payment.id,
+                customer: payment.customer,
+                invoiceUrl: payment.invoiceUrl,
+                billingType: payment.billingType,
+                externalReference: payment.externalReference,
+                paymentDate: payment.dueDate,
+                value: payment.value,
+                netValue: payment.netValue,
+                description: payment.description,
+                creditCard: {creditCardToken: payment.creditCardToken as string},
+            }
+        })
+
+       await expect(()=>stu.execute({
+        idServiceExecuted: serviceExecutedTwo.id,
+        billingType: "CREDIT_CARD",
+        dueDate: '2023-09-21',
+        remoteIp: '116.213.42.532',
+    })).rejects.toEqual(new AppError('Credenciais inválidas',400))
+
+    }, 100000);
+
+    test("Should be able to create a payment to type credit_card with card invalid", async () => {
+        const clinic = await clinicRepositoryInMemory.create({
+            name: "Clinic Test",
+            address:{
+                create:{
+                    city: "City Test",
+                    neighborhood: "Neighborhood Test",
+                    num: 1,
+                    state: "State Test",
+                    street: "Street Test",
+                    zip: "Zip Test",
+                    complement: "Complement Test",
+                    reference: "Reference Test"
+                }
+            }
+        })
+
+        const user = await usersRepositoryInMemory.create({
+            cpf: "24971563792",
+            email: "user102@test.com",
+            name: "User Test",
+            gender: "MASCULINO",
+            phone: "123456789",
+            password: await hash("123456", 8),
+        })
+
+        const service = await serviceRepositoryInMemory.create({
+            name: "Service Test",
+            category: "EXAM",
+            price: 500,
+        })
+
+        const serviceExecuted = await serviceExecutedRepositoryInMemory.create({
+            id: "53d7be14-3da4-4a36-9e68-f58cc40e0b6a",
+            idClinic: clinic.id,
+            idService: service.id,
+            idUser: user.id,
+            price: 500,
+        })
+
+        const creditCard = {
+            holderName: "marcelo h almeida",
+            number: "5162306219378829",
+            expiryMonth: "05",
+            expiryYear: "2024",
+            ccv: "318",
+        }
+
+        const creditCardHolderInfo = {
+            name: "Marcelo Henrique Almeida",
+            email: "marcelo.almeida@gmail.com",
+            cpfCnpj: "24971563792",
+            postalCode: "89223-005",
+            addressNumber: "277",
+            addressComplement: "Casa",
+            phone: "4738010919",
+        }
+
+        await expect(()=> stu.execute({
+            idServiceExecuted: serviceExecuted.id,
+            billingType: "CREDIT_CARD",
+            dueDate: '2023-09-21',
+            remoteIp: '116.213.42.532',
+        })).rejects.toEqual(new AppError('Credenciais inválidas',400))
+      
     }, 100000);
     
 });

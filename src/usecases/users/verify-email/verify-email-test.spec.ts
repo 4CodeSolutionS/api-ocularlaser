@@ -8,7 +8,9 @@ import { RegisterUseCase } from "../register/register-usecase";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { User } from "@prisma/client";
 import { AppError } from "@/usecases/errors/app-error";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let usersTokensRepositoryInMemory: InMemoryTokensRepository;
 let dayjsDateProvider: DayjsDateProvider
@@ -18,7 +20,8 @@ let stu: VerifyEmailUseCase;
 
 describe("Verify email user (unit)", () => {
     beforeEach(async () => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         usersTokensRepositoryInMemory = new InMemoryTokensRepository()
         sendMailProvider = new InMemoryMailProvider()
         dayjsDateProvider = new DayjsDateProvider()
@@ -46,6 +49,9 @@ describe("Verify email user (unit)", () => {
             email: 'user1-test@email.com',
             name: 'John Doe',
             password: await hash('123456', 8),
+            cpf: '465168765',
+            gender: 'MASCULINO',
+            phone: '77-77777-7777',
         })
         const userToken = await usersTokensRepositoryInMemory.findByUserId(user.id)
 
@@ -66,6 +72,9 @@ describe("Verify email user (unit)", () => {
             email: 'user1-test@email.com',
             name: 'John Doe',
             password: await hash('123456', 8),
+            cpf: '7912385456',
+            gender: 'MASCULINO',
+            phone: '77-77777-7777',
         })
         const userToken = await usersTokensRepositoryInMemory.findByUserId(user.id)
 
@@ -81,6 +90,9 @@ describe("Verify email user (unit)", () => {
             email: 'user1-test@email.com',
             name: 'John Doe',
             password: await hash('123456', 8),
+            cpf: '7981234564',
+            gender: 'MASCULINO',
+            phone: '77-77777-7777',
         })
 
        await expect(()=> stu.execute({ 

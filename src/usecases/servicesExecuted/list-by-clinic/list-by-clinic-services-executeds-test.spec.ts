@@ -8,7 +8,9 @@ import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memo
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { ListServicesExecutedByClinicUseCases } from "./list-by-clinic-services-executeds-usecases";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let mailProviderInMemory: InMemoryMailProvider;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
 let serviceRepositoryInMemory: InMemoryServicesRepository;
@@ -19,8 +21,9 @@ let stu: ListServicesExecutedByClinicUseCases;
 
 describe("List service executed by clinic (unit)", () => {
     beforeEach(async () => {
+        cardRepositoryInMemory = new InMemoryCardRepository()
         mailProviderInMemory = new InMemoryMailProvider()
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()

@@ -6,14 +6,17 @@ import { InMemoryKeysRepository } from "@/repositories/in-memory/in-memory-keys-
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { randomUUID } from "crypto";
 import { KeyAlreadyActive } from "@/usecases/errors/key-already-active";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let keysRepositoryInMemory: InMemoryKeysRepository
 let stu: AccessAdminUsersUseCase;
 
 describe("Get Access Admin for user (unit)", () => {
     beforeEach(async () => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         keysRepositoryInMemory = new InMemoryKeysRepository()
         stu = new AccessAdminUsersUseCase(
             usersRepositoryInMemory,

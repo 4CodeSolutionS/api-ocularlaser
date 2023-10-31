@@ -23,6 +23,7 @@ const envSchema = z.object({
     FOLDER_TMP_DEVELOPMENT: z.string().nonempty(),
     FOLDER_TMP_PRODUCTION: z.string().nonempty(),
     REDIS_URL: z.string().nonempty(),
+    CRYPTO_PASSWORD: z.string().nonempty(),
 })
 
 const _env = envSchema.safeParse(process.env)

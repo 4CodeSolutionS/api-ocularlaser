@@ -6,7 +6,9 @@ import { CPFAlreadyExistsError } from "@/usecases/errors/cpf-already-exists-erro
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
 import { InMemoryTokensRepository } from "@/repositories/in-memory/in-memory-tokens-repository";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let usersTokensRepositoryInMemory: InMemoryTokensRepository;
 let dayjsDateProvider: DayjsDateProvider
@@ -15,7 +17,8 @@ let stu: RegisterUseCase;
 
 describe("Register user (unit)", () => {
     beforeEach(() => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         usersTokensRepositoryInMemory = new InMemoryTokensRepository()
         sendMailProvider = new InMemoryMailProvider()
         dayjsDateProvider = new DayjsDateProvider()

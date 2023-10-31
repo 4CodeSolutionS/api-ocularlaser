@@ -9,7 +9,9 @@ import { CreateServiceExecutedUseCase } from "./create-services-executeds-usecas
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
 import { randomUUID } from "node:crypto";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let mailProviderInMemory: InMemoryMailProvider;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
 let serviceRepositoryInMemory: InMemoryServicesRepository;
@@ -20,8 +22,9 @@ let stu: CreateServiceExecutedUseCase;
 
 describe("Create service executed (unit)", () => {
     beforeEach(async () => {
+        cardRepositoryInMemory = new InMemoryCardRepository()
         mailProviderInMemory = new InMemoryMailProvider()
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()

@@ -11,6 +11,9 @@ import { InMemoryAsaasProvider } from "@/providers/PaymentProvider/in-memory/in-
 import { randomUUID } from "crypto";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
+import { cryptingData } from "@/utils/crypting-data";
+import { CreatePaymentUseCase } from "../create/create-payment-usecases";
 
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
 let asaasProviderInMemory: InMemoryAsaasProvider;
@@ -20,6 +23,8 @@ let serviceRepositoryInMemory: InMemoryServicesRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let mailProviderInMemory: MailProvider;
 let dateProviderInMemory: DayjsDateProvider;
+let cardRepositoryInMemory: InMemoryCardRepository;
+let createPaymentUseCase: CreatePaymentUseCase;
 let stu: EventsWebHookPaymentsUseCases;
 
 export interface IDiscount {
@@ -27,9 +32,18 @@ export interface IDiscount {
     dueDateLimitDays: number
     type: 'FIXED' | 'PERCENTAGE'
 }
+
+interface ICreditCard{
+    holderName?: string,
+    number?: string
+    expiryMonth?: string
+    expiryYear?: string
+    ccv: string
+}
 describe("Confirm payment received (unit)", () => {
     beforeEach(async () => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
@@ -42,10 +56,20 @@ describe("Confirm payment received (unit)", () => {
             clinicRepositoryInMemory,
             paymentRepositoryInMemory
             )
+        createPaymentUseCase = new CreatePaymentUseCase(
+            usersRepositoryInMemory,
+            asaasProviderInMemory,
+            dateProviderInMemory,
+            serviceExecutedRepositoryInMemory,
+            paymentRepositoryInMemory,
+            cardRepositoryInMemory,
+        )
+       
         stu = new EventsWebHookPaymentsUseCases(
             paymentRepositoryInMemory,
             serviceExecutedRepositoryInMemory,
             asaasProviderInMemory,
+            cardRepositoryInMemory,
             mailProviderInMemory
         )
 
@@ -97,17 +121,34 @@ describe("Confirm payment received (unit)", () => {
             name: "User Test",
             phone: "123456789",
         })
-    
-        const payment = await asaasProviderInMemory.createPayment({
-            customer: customer.id,
-            billingType: 'CREDIT_CARD',
-            value: 230,
-            dueDate: new Date().toISOString(),
-            description: service.name,
-            externalReference: "1acafb98-7039-4c2c-bcb4-999b572d7b04",
-            remoteIp: "116.213.42.532",
-        })
 
+        const creditCard = {
+            holderName: "marcelo h almeida",
+            number: "5162306219378829",
+            expiryMonth: "05",
+            expiryYear: "2024",
+            ccv: "318",
+        }
+
+        const creditCardHolderInfo = {
+            name: "Marcelo Henrique Almeida",
+            email: "marcelo.almeida@gmail.com",
+            cpfCnpj: "24971563792",
+            postalCode: "89223-005",
+            addressNumber: "277",
+            addressComplement: "Casa",
+            phone: "4738010919",
+        }
+
+        const createdPaymentCreditCard = await createPaymentUseCase.execute({
+            idServiceExecuted: "1acafb98-7039-4c2c-bcb4-999b572d7b04",
+            billingType: "CREDIT_CARD",
+            dueDate: '2023-09-21',
+            creditCard,
+            creditCardHolderInfo,
+            remoteIp: '116.213.42.532',
+        })
+        const {payment} = createdPaymentCreditCard
         const confirmPayment = await stu.execute({
             event: 'PAYMENT_RECEIVED',
             payment: {
@@ -121,9 +162,12 @@ describe("Confirm payment received (unit)", () => {
                 netValue: payment.netValue,
                 description: payment.description,
                 installment: payment.installment,
+                creditCard: {creditCardToken: payment.creditCardToken as string},
             }
         })
-       
+        
+
+
         expect(confirmPayment.payment).toEqual(
             expect.objectContaining({
                 paymentMethod: 'CREDIT_CARD',
@@ -307,6 +351,22 @@ describe("Confirm payment received (unit)", () => {
             phone: "4738010919",
         },
     })
+    const {expiryMonth,expiryYear,holderName,number,ccv} = payment.creditCard as ICreditCard
+    let criptData = []
+    // criptografar dados do cartão
+    for(let value of [number, holderName, `${expiryMonth}/${expiryYear}`, ccv]){
+        const valueCrypt = cryptingData(value as string)
+        criptData.push(valueCrypt)
+    }
+    // salvar dados do cartão no banco de dados
+    const card = await cardRepositoryInMemory.create({
+            idUser: user.id,
+            name: criptData[0] as string,
+            num: criptData[1] as string,
+            expireDate: criptData[2] as string,
+            ccv: criptData[3] as string,
+        })
+        
     const confirmPayment = await stu.execute({
         event: 'PAYMENT_RECEIVED',
         payment: {
@@ -320,6 +380,7 @@ describe("Confirm payment received (unit)", () => {
                 netValue: payment.netValue,
                 description: payment.description,
                 installment: payment.installment,
+                creditCard: {creditCardToken:payment.creditCardToken},
         }
     })
     expect(confirmPayment.payment).toEqual(

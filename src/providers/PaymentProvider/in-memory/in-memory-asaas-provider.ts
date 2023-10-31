@@ -20,6 +20,7 @@ interface IPayment{
     invoiceUrl: string,
     externalReference: string,
     description: string
+    creditCardToken: string,
 }
 export class InMemoryAsaasProvider implements IAsaasProvider{
     private payments: IChargeData[] = []
@@ -119,12 +120,13 @@ export class InMemoryAsaasProvider implements IAsaasProvider{
             netValue,
             billingType: payment.billingType,
             installment: instalmentsInfo.id,
-            creditCard,
             status: 'PAYMENT_RECEIVED',
+            creditCard: payment.creditCard,
             dueDate: payment.dueDate,
             invoiceUrl: 'https://invoice.com',
             description: payment.description,
             externalReference,
+            creditCardToken: randomUUID(),
         } as IPayment
     }
     

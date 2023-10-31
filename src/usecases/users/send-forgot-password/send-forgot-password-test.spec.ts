@@ -7,7 +7,9 @@ import { SendForgotPasswordUseCase } from "./send-forgot-password-usecase";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { Token } from "@prisma/client";
 import { AppError } from "@/usecases/errors/app-error";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let usersTokensRepositoryInMemory: InMemoryTokensRepository;
 let dayjsDateProvider: DayjsDateProvider
@@ -16,7 +18,8 @@ let stu: SendForgotPasswordUseCase;
 
 describe("Send forgot password user (unit)", () => {
     beforeEach(async () => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         usersTokensRepositoryInMemory = new InMemoryTokensRepository()
         dayjsDateProvider = new DayjsDateProvider()
         sendMailProvider = new InMemoryMailProvider()
@@ -32,6 +35,9 @@ describe("Send forgot password user (unit)", () => {
             email: 'user1-test@email.com',
             name: 'John Doe',
             password: await hash('123456', 8),
+            cpf: '879465132',
+            gender: 'MASCULINO',
+            phone: '77-77777-7777',
         })
     });
 

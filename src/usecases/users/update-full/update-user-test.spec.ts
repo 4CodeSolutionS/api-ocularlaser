@@ -5,13 +5,16 @@ import { UpdateUserUseCase } from "./update-user-usecase";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { CPFAlreadyExistsError } from "@/usecases/errors/cpf-already-exists-error";
 import { EmailAlreadyExistsError } from "@/usecases/errors/email-already-exists-error";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
+let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let stu: UpdateUserUseCase;
 
 describe("Update user (unit)", () => {
     beforeEach(async() => {
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        cardRepositoryInMemory = new InMemoryCardRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         stu = new UpdateUserUseCase(
             usersRepositoryInMemory, 
         )

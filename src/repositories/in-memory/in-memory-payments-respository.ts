@@ -1,4 +1,4 @@
-import { $Enums, Payment, Prisma, Status } from "@prisma/client";
+import { Payment, Prisma, Status } from "@prisma/client";
 import { IPaymentsRepository } from "../interface-payments-repository";
 import { randomUUID } from "crypto";
 
@@ -12,6 +12,7 @@ export class InMemoryPaymentRepository implements IPaymentsRepository{
 
         return listPayments
     }
+    
     async findByIdServiceExecuted(id: string){
         const payment = this.payments.find(payment => payment.idServiceExecuted === id)
 

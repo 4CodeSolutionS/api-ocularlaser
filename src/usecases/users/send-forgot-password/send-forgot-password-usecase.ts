@@ -56,7 +56,8 @@ export class SendForgotPasswordUseCase{
             findUserByEmail.name, 
             'Redefinição de Senha', 
             link, 
-            pathTemplate 
+            pathTemplate,
+            null
         )
     }
 }

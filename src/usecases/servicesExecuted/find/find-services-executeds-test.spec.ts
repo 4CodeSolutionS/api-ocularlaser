@@ -9,8 +9,10 @@ import { FindServicesExecutedUseCases } from "./find-services-executeds-usecases
 import { CreateServiceExecutedUseCase } from "../create/create-services-executeds-usecases";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
 let mailProviderInMemory: InMemoryMailProvider;
+let cardRepositoryInMemory: InMemoryCardRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
@@ -21,8 +23,9 @@ let stu: FindServicesExecutedUseCases;
 
 describe("Find service executed (unit)", () => {
     beforeEach(async () => {
+        cardRepositoryInMemory = new InMemoryCardRepository()
         mailProviderInMemory = new InMemoryMailProvider()
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()

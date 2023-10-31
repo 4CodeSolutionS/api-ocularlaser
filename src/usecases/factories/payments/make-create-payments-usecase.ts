@@ -1,6 +1,6 @@
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs"
-import { MailProvider } from "@/providers/MailProvider/implementations/provider-sendgrid"
 import { AsaasProvider } from "@/providers/PaymentProvider/implementations/provider-asaas-payment"
+import { PrismaCardRepository } from "@/repositories/prisma/prisma-cards-repository"
 import { PrismaPaymentRepository } from "@/repositories/prisma/prisma-payments-repository"
 import { PrismaServicesExecutedsRepository } from "@/repositories/prisma/prisma-services-executeds-repository"
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository"
@@ -12,12 +12,14 @@ export async function makeCreatePayment(): Promise<CreatePaymentUseCase> {
     const serviceExecutedRepository = new PrismaServicesExecutedsRepository()
     const asaasProvider = new AsaasProvider()
     const paymentRepository = new PrismaPaymentRepository()
+    const cardRepository = new PrismaCardRepository()
     const createPaymentUseCase = new CreatePaymentUseCase(
         usersRepository,
         asaasProvider,
         dateProvider,
         serviceExecutedRepository,
-        paymentRepository
+        paymentRepository,
+        cardRepository
         )
 
     return createPaymentUseCase

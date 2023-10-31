@@ -10,6 +10,7 @@ import { ServiceExecuted } from "@prisma/client";
 import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { CreateServiceExecutedUseCase } from "../create/create-services-executeds-usecases";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
+import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 
 let mailProviderInMemory: InMemoryMailProvider;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
@@ -18,12 +19,14 @@ let usersRepositoryInMemory: InMemoryUsersRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let createServiceExecuted: CreateServiceExecutedUseCase;
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
+let cardRepositoryInMemory: InMemoryCardRepository;
 let stu: AproveServiceExecuted;
 
 describe("Aprove service executed (unit)", () => {
     beforeEach(async () => {
+        cardRepositoryInMemory = new InMemoryCardRepository()
         mailProviderInMemory = new InMemoryMailProvider()
-        usersRepositoryInMemory = new InMemoryUsersRepository()
+        usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         clinicRepositoryInMemory = new InMemoryClinicRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()

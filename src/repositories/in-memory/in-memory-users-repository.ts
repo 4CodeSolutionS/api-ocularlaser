@@ -1,10 +1,15 @@
-import { Prisma, User, Role, $Enums } from "@prisma/client";
+import { Prisma, User, Role, $Enums, Card } from "@prisma/client";
 import { IUsersRepository } from "../interface-users-repository";
 import { randomUUID } from "crypto";
+import { ICardRepository } from "../interface-cards-repository";
 
 export class InMemoryUsersRepository implements IUsersRepository{
     public users: User[] = []
     
+    constructor(
+        private cardsRepository: ICardRepository,
+    ){}
+
     async findByIdCostumerPayment(id: string){
         const user = this.users.find(user => user.idCostumerAsaas === id)
 
@@ -105,13 +110,19 @@ export class InMemoryUsersRepository implements IUsersRepository{
     }
 
     async findById(id: string){
+        const card = await this.cardsRepository.findByIdUser(id)
+        let arrayCards = card ? [card] : []
+
         const user = this.users.find(user => user.id === id)
 
         if(!user){
             return null
         }
 
-        return user;
+        return {
+            ...user,
+            cards: arrayCards
+        }
     }
 
     async findByCPF(cpf: string){
