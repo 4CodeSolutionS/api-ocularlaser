@@ -1,7 +1,3 @@
-import { InvalidCustomerError } from '@/usecases/errors/invalid-customer-error'
-import { InvalidPaymentError } from '@/usecases/errors/invalid-payment-error'
-import { PaymentAlreadyExistsError } from '@/usecases/errors/payment-already-exists-error'
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { makeCreatePayment } from '@/usecases/factories/payments/make-create-payments-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -59,18 +55,6 @@ export async function CreatePayment (request: FastifyRequest, reply:FastifyReply
             return reply.status(201).send(payment)
             
           } catch (error) {
-            if(error instanceof PaymentAlreadyExistsError){
-                return reply.status(409).send({ message: error.message })
-            }
-            if(error instanceof ResourceNotFoundError){
-                return reply.status(404).send({ message: error.message })
-            }
-            if(error instanceof InvalidCustomerError){
-                return reply.status(400).send({ message: error.message })
-            }
-            if(error instanceof InvalidPaymentError){
-                return reply.status(400).send({ message: error.message })
-            }
             throw error
           }
 }
