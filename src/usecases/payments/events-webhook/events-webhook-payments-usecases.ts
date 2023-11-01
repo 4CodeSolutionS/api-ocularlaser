@@ -46,12 +46,11 @@ export class EventsWebHookPaymentsUseCases{
     }:IRequestReceiveEvent):Promise<any>{
         //[x] verifica se o evento é de pagamento é "PAYMENT_REPROVED_BY_RISK_ANALYSIS"
         if(event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_REPROVED_BY_RISK_ANALYSIS'){ 
-            throw new EventNotValidError()
+            throw new AppError('Evento nao autorizado')
         }
         //[x] criar variavel installments para receber o valor e o numero de parcela
         let installmentCount = 0
         let installmentValue = 0
-        console.log(payment)
         //[x] verificar se o pagamento é parcelado
         if(payment.installment){
             //[x] buscar installments pelo id recebido no payment recebido
@@ -59,7 +58,7 @@ export class EventsWebHookPaymentsUseCases{
 
             //[x] validar se o installments existe
             if(!findInstallments){
-                throw new ResourceNotFoundError()
+                throw new AppError('Installments não encontrado')
             }
 
             //[x] criar variavel installmentValue para receber o valor da parcela
@@ -73,7 +72,7 @@ export class EventsWebHookPaymentsUseCases{
         const findServiceExecuted = await this.serviceExecutedRepository.findById(String(payment.externalReference)) as unknown as IServiceExecutedFormmated
         //[x] validar se o service executed existe
         if(!findServiceExecuted){
-            throw new ResourceNotFoundError()
+            throw new AppError('Service Executed não encontrado')
         }
         //[x] validar se o billingType é BOLETO se for retorna FETLOCK, senao retorna o billingType
         let method = payment.billingType === 'BOLETO' ? 'FETLOCK' : payment.billingType as PaymentMethod
@@ -81,7 +80,7 @@ export class EventsWebHookPaymentsUseCases{
         //[x] verificar no banco se ja existe um pagamento com o idServiceExecuted
         const findPaymentExist = await this.paymentsRepository.findById(String(payment.externalReference))
         if(findPaymentExist){
-            throw new PaymentAlreadyExistsError()
+            throw new AppError('Pagamento já existe')
         }
         //[x] criar validação para caso o evento seja "REPROVED"
         if(event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS'){
