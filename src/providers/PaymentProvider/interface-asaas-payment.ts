@@ -50,8 +50,6 @@ export interface ICustomerData{
     phone?: string
 }
 
-
-
 export interface IAsaasProvider{
     createPayment(data:IChargeData): Promise<any | undefined>
     createCustomer(data:ICustomerData): Promise<ICustomerData | undefined>

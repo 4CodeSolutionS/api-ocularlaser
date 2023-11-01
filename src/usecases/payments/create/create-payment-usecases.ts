@@ -97,12 +97,21 @@ export class CreatePaymentUseCase{
         }
         //[x] desestruturar user do findServiceExecutedExists
         const { user } = findServiceExecutedExists
+
+        // buscar usuario pelo id
+        const findUser = await this.usersRepository.findById(user.id)
+
+        // validar se existe um usuario
+        if(!findUser){
+            throw new AppError('Usuário não encontrado')
+        }
+
         // variavel para armazenar o id do cliente no asaas
         let newCustomer  = '';
         const newDate = this.dateProvider.dateNow()
         const formatDateToString = this.dateProvider.convertToUTC(newDate)
         // validar se o cliente existe no asaas se não existir criar
-        if(!user.idCostumerAsaas){
+        if(!findUser.idCostumerAsaas){
             // atualizar user com o id do cliente no asaas
             const createCustomer = await this.asaasProvider.createCustomer({
                 name: user.name,
@@ -113,7 +122,7 @@ export class CreatePaymentUseCase{
             if(!createCustomer){
                 throw new InvalidCustomerError()
             }
-           const customer =  await this.usersRepository.updateIdCostumerPayment(user.id, createCustomer.id as string)
+           const customer =  await this.usersRepository.updateIdCostumerPayment(findUser.id, createCustomer.id as string)
            newCustomer = String(customer.idCostumerAsaas)
         }
 
@@ -146,16 +155,17 @@ export class CreatePaymentUseCase{
              // calcular valor da parcela
              const installmentValue = (findServiceExecutedExists.price / Number(installmentCount)).toFixed(2) as unknown as number;
             // verificar se ja existe token do cartão
-            const {cards} = user as any
+            const {cards} = findUser as any
             const cardFormat = cards as Card[]
-
+           
             if(cardFormat.length === 1 ){
+                
                 if(!creditCard){
                     throw new AppError('Credenciais inválidas')
                 }
     
                 // filtrar token do cartão
-                  const cardToken = cardFormat.find(card => card.idUser === user.id) 
+                  const cardToken = cardFormat.find(card => card.idUser === findUser.id) 
 
                   if(!cardToken){
                     throw new AppError('Error ao buscar usuário')
@@ -226,7 +236,7 @@ export class CreatePaymentUseCase{
             
             // salvar dados do cartão no banco de dados
             const card = await this.cardsRepository.create({
-                idUser: user.id,
+                idUser: findUser.id,
                 num: criptData[0] as string,
                 name: criptData[1] as string,
                 expireDate: criptData[2] as string,

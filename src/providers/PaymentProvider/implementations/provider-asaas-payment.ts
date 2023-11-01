@@ -34,9 +34,7 @@ export class AsaasProvider implements IAsaasProvider {
             })
             return responseCreatePayment
         } catch (error) {
-            console.log('Error create Payment in ASAAS')
-
-            return undefined
+           console.log(error)
         }
     }
 
