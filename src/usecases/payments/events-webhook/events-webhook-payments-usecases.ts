@@ -51,6 +51,7 @@ export class EventsWebHookPaymentsUseCases{
         //[x] criar variavel installments para receber o valor e o numero de parcela
         let installmentCount = 0
         let installmentValue = 0
+        console.log(payment)
         //[x] verificar se o pagamento é parcelado
         if(payment.installment){
             //[x] buscar installments pelo id recebido no payment recebido
