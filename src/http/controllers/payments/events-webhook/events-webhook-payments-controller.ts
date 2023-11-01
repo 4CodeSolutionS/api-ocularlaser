@@ -58,18 +58,6 @@ export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, re
             return reply.status(200).send(payment)
             
           } catch (error) {
-            if(error instanceof ResourceNotFoundError){
-                return reply.status(200).send({ message: error.message })
-            }
-            if(error instanceof EventNotValidError){
-                return reply.status(200).send({ message: error.message })
-            }
-            if(error instanceof PaymentAlreadyExistsError){
-                return reply.status(200).send({ message: error.message })
-            }
-            if(error instanceof ZodError){
-                return reply.status(200).send({ message: error.message })
-            }
             return reply.status(200).send({ message: error})
           }
 }
