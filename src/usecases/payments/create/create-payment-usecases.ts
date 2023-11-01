@@ -2,14 +2,10 @@ import 'dotenv/config'
 import { Card, PaymentMethod } from '@prisma/client';
 import { IUsersRepository } from '@/repositories/interface-users-repository';
 import { IAsaasProvider } from '@/providers/PaymentProvider/interface-asaas-payment';
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error';
 import { IDateProvider } from '@/providers/DateProvider/interface-date-provider';
 import { IServiceExecutedRepository } from '@/repositories/interface-services-executeds-repository';
 import { IServiceExecutedFormmated } from '@/usecases/servicesExecuted/mappers/list-service-executed-mapper';
-import { InvalidCustomerError } from '@/usecases/errors/invalid-customer-error';
-import { InvalidPaymentError } from '@/usecases/errors/invalid-payment-error';
 import { IPaymentsRepository } from '@/repositories/interface-payments-repository';
-import { PaymentAlreadyExistsError } from '@/usecases/errors/payment-already-exists-error';
 import { ICardRepository } from '@/repositories/interface-cards-repository';
 import { cryptingData } from '@/utils/crypting-data';
 import { decryptingData } from '@/utils/decrypting-data';
@@ -87,13 +83,13 @@ export class CreatePaymentUseCase{
         const findPaymentExists = await this.paymentRepository.findByIdServiceExecuted(idServiceExecuted)
         // validar se existe um payment
         if(findPaymentExists){
-            throw new PaymentAlreadyExistsError()
+            throw new AppError('Pagamento ja foi realizado')
         }
         // buscar se existe uma service executed pelo id
         const findServiceExecutedExists = await this.serviceExecutedRepository.findById(idServiceExecuted) as unknown as IServiceExecutedFormmated
         // validar se existe uma service excuted
         if(!findServiceExecutedExists){
-            throw new ResourceNotFoundError()
+            throw new AppError('Serviço Executado não encontrado')
         }
         //[x] desestruturar user do findServiceExecutedExists
         const { user } = findServiceExecutedExists
@@ -120,7 +116,7 @@ export class CreatePaymentUseCase{
                 phone: user.phone,
             })
             if(!createCustomer){
-                throw new InvalidCustomerError()
+                throw new AppError('Error ao criar cliente')
             }
            const customer =  await this.usersRepository.updateIdCostumerPayment(findUser.id, createCustomer.id as string)
            newCustomer = String(customer.idCostumerAsaas)
@@ -142,7 +138,7 @@ export class CreatePaymentUseCase{
                 remoteIp: String(remoteIp),
             }) as IAsaasPayment
             if(!payment){
-                throw new InvalidPaymentError()
+                throw new AppError('Error ao criar pagamento')
             }
             return {
                 payment,
@@ -198,7 +194,6 @@ export class CreatePaymentUseCase{
                       payment
                   }
               }
-           
             // criar cobrança do pagamento no asaas
             const payment = await this.asaasProvider.createPayment({
                 customer: idCostumerPayment,
@@ -214,7 +209,7 @@ export class CreatePaymentUseCase{
                 remoteIp: String(remoteIp),
             }) as IAsaasPayment
             if(!payment){
-                throw new InvalidPaymentError()
+                throw new AppError('Error ao criar pagamento')
             }
             let criptData = []
             if(!creditCard){
@@ -259,7 +254,7 @@ export class CreatePaymentUseCase{
         }) as IAsaasPayment
 
         if(!payment){
-            throw new InvalidPaymentError()
+            throw new AppError('Error ao criar pagamento')
         }
         return {
             payment,

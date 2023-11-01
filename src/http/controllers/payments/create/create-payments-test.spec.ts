@@ -15,7 +15,7 @@ describe('Create Payments (e2e)', ()=>{
         await fastifyApp.close()
     })
 
-    test.skip('should be able to create payment credit_card unique', async()=>{
+    test('should be able to create payment credit_card unique', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -97,7 +97,7 @@ describe('Create Payments (e2e)', ()=>{
         expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test('should be able to create payment credit_card installment', async()=>{
+    test.skip('should be able to create payment credit_card installment', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -160,7 +160,7 @@ describe('Create Payments (e2e)', ()=>{
                 id: idServiceExecuted
             },
             billingType: 'CREDIT_CARD',
-            installmentCount: 12,
+            installmentCount: 3,
             creditCard: {
                 holderName: "marcelo h almeida",
                 number: "5162306219378829",

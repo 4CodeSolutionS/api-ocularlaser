@@ -4,9 +4,6 @@ import { ICardRepository } from '@/repositories/interface-cards-repository'
 import { IPaymentsRepository } from '@/repositories/interface-payments-repository'
 import { IServiceExecutedRepository } from '@/repositories/interface-services-executeds-repository'
 import { AppError } from '@/usecases/errors/app-error'
-import { EventNotValidError } from '@/usecases/errors/event-not-valid-error'
-import { PaymentAlreadyExistsError } from '@/usecases/errors/payment-already-exists-error'
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { IServiceExecutedFormmated } from '@/usecases/servicesExecuted/mappers/list-service-executed-mapper'
 import { cryptingData } from '@/utils/crypting-data'
 import { PaymentMethod, Prisma} from '@prisma/client'
@@ -146,6 +143,7 @@ export class EventsWebHookPaymentsUseCases{
         //     null,
         //     templatePathAdmin, 
         //     null)
+        console.log(payment)
         if(!payment.creditCard){
             return {
                 payment: createPaymentApproved

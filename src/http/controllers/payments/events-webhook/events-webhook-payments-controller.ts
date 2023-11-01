@@ -1,9 +1,6 @@
-import { EventNotValidError } from '@/usecases/errors/event-not-valid-error'
-import { PaymentAlreadyExistsError } from '@/usecases/errors/payment-already-exists-error'
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { makeReceiveEventsPaymentsWebHook } from '@/usecases/factories/payments/make-events-payments-webhook-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { ZodError, z } from 'zod'
+import { z } from 'zod'
 
 export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, reply:FastifyReply){
         try {
