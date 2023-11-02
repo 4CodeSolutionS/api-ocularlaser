@@ -25,6 +25,9 @@ export interface IAsaasPayment {
     externalReference: string
     paymentDate: string
     dueDate: string
+    creditCard?: {
+        creditCardBrand: string
+    }
     creditCardToken?: string
 }
 
@@ -236,6 +239,7 @@ export class CreatePaymentUseCase{
                 name: criptData[1] as string,
                 expireDate: criptData[2] as string,
                 ccv: hashCCV,
+                brand: payment.creditCard?.creditCardBrand as string,
             })
             return {
                 payment
