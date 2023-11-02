@@ -10,10 +10,10 @@ export async function CreatePayment (request: FastifyRequest, reply:FastifyReply
                 }),
                 billingType: z.enum(['CREDIT_CARD', 'FETLOCK', 'PIX']),
                 creditCard: z.object({
-                    holderName: z.string().nonempty(),
-                    number: z.string().nonempty(), 
-                    expiryMonth: z.string().nonempty(),
-                    expiryYear: z.string().nonempty(),
+                    holderName: z.string().optional(),
+                    number: z.string().optional(), 
+                    expiryMonth: z.string().optional(),
+                    expiryYear: z.string().optional(),
                     ccv: z.string().nonempty()
                 }).optional(),
                 creditCardHolderInfo: z.object({
