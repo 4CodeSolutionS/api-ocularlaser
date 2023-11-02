@@ -15,7 +15,7 @@ export async function servicesExecutedsRoutes(fastifyApp: FastifyInstance){
     // criar serviço
     fastifyApp.post('/', {
         onRequest: [
-            verifyUserRole('ADMIN', 'PACIENT', 'SUPER'),
+            verifyUserRole('ADMIN', 'SUPER'),
         ]
     }, CreateServiceExecuted)
 
@@ -35,6 +35,6 @@ export async function servicesExecutedsRoutes(fastifyApp: FastifyInstance){
     fastifyApp.get('/payment-status', {onRequest: [verifyUserRole('ADMIN', 'SUPER')]}, ListServiceExecutedByPaymentStatus)
 
     // aprovar serviço
-    fastifyApp.patch('/:id/approve',{onRequest: [verifyUserRole('ADMIN', 'SUPER')]}, AproveServiceExecuted)
+    fastifyApp.patch('/:id/approve',{onRequest: [verifyUserRole('DOCTOR', 'SUPER')]}, AproveServiceExecuted)
 
 }
