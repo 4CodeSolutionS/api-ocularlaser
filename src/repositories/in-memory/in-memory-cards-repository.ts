@@ -29,6 +29,7 @@ export class InMemoryCardRepository implements ICardRepository{
         name,
         num,
         ccv,
+        brand,
         expireDate
     }: Prisma.CardUncheckedCreateInput){
         const card = {
@@ -38,6 +39,7 @@ export class InMemoryCardRepository implements ICardRepository{
             name,
             num,
             ccv,
+            brand,
             expireDate,
         }
 
