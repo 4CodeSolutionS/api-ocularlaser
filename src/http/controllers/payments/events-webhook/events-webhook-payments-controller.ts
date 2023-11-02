@@ -17,6 +17,9 @@ export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, re
                     billingType: z.string().nonempty(),
                     paymentDate: z.string().nonempty(),
                     invoiceUrl: z.string().nonempty(),
+                    creditCard: z.object({
+                        creditCardToken: z.string()
+                    }).optional()
                 }),
             })
             const { 
@@ -31,9 +34,11 @@ export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, re
                     invoiceUrl,
                     externalReference,
                     paymentDate,
-                    description
+                    description,
+                    creditCard
                 }
             } = eventPaymentSchema.parse(request.body)
+
             const EventsWebHookPaymentsUseCase = await makeReceiveEventsPaymentsWebHook()
 
             const payment = await EventsWebHookPaymentsUseCase.execute({
@@ -48,7 +53,8 @@ export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, re
                     externalReference,
                     paymentDate,
                     billingType,
-                    description
+                    description,
+                    creditCard,
                 }
             })
             
