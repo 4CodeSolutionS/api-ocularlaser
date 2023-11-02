@@ -224,7 +224,7 @@ export class CreatePaymentUseCase{
             // formatando numero do cartão
             const formatNum = `****${formatNumber.slice(-4)}`
             // criptografar dados do cartão
-            for(let value of [formatNum, creditCard.holderName, `${creditCard.expiryMonth}/${creditCard.expiryYear}`]){
+            for(let value of [formatNum, creditCard.holderName, `${creditCard.expiryMonth}/${creditCard.expiryYear}`, `${payment.creditCard?.creditCardBrand}`]){
                 const valueCrypt = cryptingData(value as string)
                 criptData.push(valueCrypt)
             }
@@ -239,7 +239,7 @@ export class CreatePaymentUseCase{
                 name: criptData[1] as string,
                 expireDate: criptData[2] as string,
                 ccv: hashCCV,
-                brand: payment.creditCard?.creditCardBrand as string,
+                brand: criptData[3] as string,
             })
             return {
                 payment
