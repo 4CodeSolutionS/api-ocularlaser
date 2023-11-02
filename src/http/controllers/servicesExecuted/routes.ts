@@ -13,11 +13,7 @@ export async function servicesExecutedsRoutes(fastifyApp: FastifyInstance){
     fastifyApp.addHook('onRequest', verifyTokenJWT)
 
     // criar serviço
-    fastifyApp.post('/', {
-        onRequest: [
-            verifyUserRole('ADMIN', 'SUPER'),
-        ]
-    }, CreateServiceExecuted)
+    fastifyApp.post('/', CreateServiceExecuted)
 
     // encontrar serviço
     fastifyApp.get('/:id', {onRequest: [verifyUserRole('ADMIN', 'SUPER')]}, FindServiceExecuted)
