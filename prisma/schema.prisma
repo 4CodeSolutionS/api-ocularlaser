@@ -85,6 +85,7 @@ model Clinic {
   users             User[]
   address           Address?
   servicesExecuteds ServiceExecuted[]
+  DiscountCoupon    DiscountCoupon[]
 
   @@map("clinics")
 }
@@ -173,4 +174,18 @@ model Card {
   ccv            String
 
   @@map("cards")
+}
+
+model DiscountCoupon {
+  id         String   @id @unique @default(uuid())
+  clinic     Clinic   @relation(fields: [idClinic], references: [id])
+  idClinic   String
+  name       String
+  code       String   @unique
+  discount   Decimal
+  startDate  DateTime
+  expireDate DateTime
+  active     Boolean
+
+  @@map("discount_coupons")
 }

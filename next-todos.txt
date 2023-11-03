@@ -18,11 +18,10 @@ ADMIN ou PACIENT.
 * [x] Receber no controller event payment webhook apenas evento PAYMENT_RECEIVED e PAYMENT_REPROVED
 * [x] Criar test e2e para list service executed by payment status
 * [x] Criar test unit e e2e para validar user, clinic e service no service executed
-* [ ] Relacionar user a uma clinica quando??
 * [ ] Receber do frontend valor total a ser pago parcelado com arredondamento e 2 casa depois da virgula
 * [x] Receber token webhook pelo header da api Asaas na de events de patment.
-* [ ] Corrigir processo de logout adicionando token em uma blacklist dentro do redis para impedir o acesso ao backend
-* [ ] Color verificação no case do verify-email para impedir um email ja verificado
-* [ ] Adicionar lib cpf-cnpj-validator para validar o CPF 
-* [ ] Criar Blacklist de tokens usando o Redis com limpeza a cada 7 dias
-* [ ] Adcionar funcionalidade Logout
+* [x] Corrigir processo de logout adicionando token em uma blacklist dentro do redis para impedir o acesso ao backend
+* [x] Colocar verificação no case do verify-email para impedir um email ja verificado
+* [x] Adicionar lib cpf-cnpj-validator para validar o CPF 
+* [x] Criar Blacklist de tokens usando o Redis com limpeza a cada 7 dias
+* [x] Adcionar funcionalidade Logout
