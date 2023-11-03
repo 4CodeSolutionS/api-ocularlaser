@@ -22,6 +22,7 @@ export class PrismaClinicsRepository implements IClinicsRepository{
                 id: true,
                 name: true,
                 address: true,
+                discountCoupons: true,
             }
         }) as unknown as Clinic[]
     }
@@ -33,6 +34,7 @@ export class PrismaClinicsRepository implements IClinicsRepository{
                 id: true,
                 name: true,
                 address: true,
+                discountCoupons: true,
             }
         }) as unknown as Clinic
 

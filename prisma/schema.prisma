@@ -85,7 +85,7 @@ model Clinic {
   users             User[]
   address           Address?
   servicesExecuteds ServiceExecuted[]
-  DiscountCoupon    DiscountCoupon[]
+  discountCoupons   DiscountCoupon[]
 
   @@map("clinics")
 }
