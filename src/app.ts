@@ -14,6 +14,7 @@ import { keysRoutes } from "./http/controllers/keys/route";
 import { paymentsRoutes } from "./http/controllers/payments/routes";
 import { cardsRoutes } from "./http/controllers/cards/routes";
 import { AppError } from "./usecases/errors/app-error";
+import { discountCouponRoutes } from "./http/controllers/discountCoupons/routes";
 
 export const fastifyApp = fastify()
 
@@ -59,6 +60,10 @@ fastifyApp.register(paymentsRoutes,{
 
 fastifyApp.register(cardsRoutes,{
     prefix: 'api/cards'
+})
+
+fastifyApp.register(discountCouponRoutes,{
+    prefix: 'api/discount-coupons'
 })
 
 fastifyApp.setErrorHandler((error:FastifyError, _request:FastifyRequest, reply: FastifyReply)=>{
