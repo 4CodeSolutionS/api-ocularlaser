@@ -178,7 +178,7 @@ export class CreatePaymentUseCase{
                 discount:{
                     value: discountValue ? discountValue : 0,
                     dueDateLimitDays: 0,
-                    type: 'PERCENTAGE'
+                    type: 'FIXED'
                 },
                 remoteIp: String(remoteIp),
             }) as IAsaasPayment
