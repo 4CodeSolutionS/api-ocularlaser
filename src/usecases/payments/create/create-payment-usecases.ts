@@ -144,7 +144,7 @@ export class CreatePaymentUseCase{
 
         // variavel para armazenar o id do cliente no asaas
         let newCustomer  = '';
-        const newDate = new Date('2021-12-10')
+        const newDate = this.dateProvider.dateNow()
         const formatDateToString = this.dateProvider.convertToUTC(newDate)
         // validar se o cliente existe no asaas se não existir criar
         if(!findUser.idCostumerAsaas){
@@ -171,7 +171,7 @@ export class CreatePaymentUseCase{
             const payment = await this.asaasProvider.createPayment({
                 customer: idCostumerPayment,
                 billingType,
-                dueDate: formatDateToString,
+                dueDate: '2023-11-06',
                 value: Number(findServiceExecutedExists.price),
                 description: findServiceExecutedExists.service.name,
                 externalReference: findServiceExecutedExists.id,
