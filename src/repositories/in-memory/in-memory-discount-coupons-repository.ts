@@ -2,8 +2,14 @@ import { DiscountCoupon, Prisma } from "@prisma/client";
 import { IDiscountCouponsRepository } from "../interface-discount-coupons-repository";
 import { randomUUID } from "crypto";
 
-export class InMemoryDiscountCounpons implements IDiscountCouponsRepository{
+export class InMemoryDiscountCounponsRepository implements IDiscountCouponsRepository{
     private discountCoupons: DiscountCoupon[] = [];
+
+    async findByClinic(idClinic: string){
+        const discountCoupons = this.discountCoupons.filter(discountCoupon => discountCoupon.idClinic === idClinic);
+
+        return discountCoupons;
+    }
     
     async findByCode(code: string){
         const discountCoupon = this.discountCoupons.find(discountCoupon => discountCoupon.code === code);

@@ -1,9 +1,14 @@
 import { Clinic, Prisma } from "@prisma/client";
 import { IClinicsRepository } from "../interface-clinics-repository";
 import { randomUUID } from "crypto";
+import { InMemoryDiscountCounponsRepository } from "./in-memory-discount-coupons-repository";
 
 export class InMemoryClinicRepository implements IClinicsRepository{
     private clinics: Clinic[] = []
+
+    constructor(
+        private discountCouponsRepository: InMemoryDiscountCounponsRepository
+    ){}
 
     async create({
         id,
@@ -12,8 +17,9 @@ export class InMemoryClinicRepository implements IClinicsRepository{
     }: Prisma.ClinicUncheckedCreateInput){
         const clinic = {
             id: id ? id : randomUUID(),
-            address,
             name,
+            address,
+            discountCoupons: []
         }
 
         this.clinics.push(clinic)
@@ -26,13 +32,18 @@ export class InMemoryClinicRepository implements IClinicsRepository{
     }
 
     async findById(id: string){
+        const discountCoupon = await this.discountCouponsRepository.findByClinic(id)
+        
         const clinic = this.clinics.find(clinic => clinic.id === id)
 
         if(!clinic){
             return null
         }
 
-        return clinic
+        return {
+            ...clinic,
+            discountCoupons: discountCoupon
+        }
     }
 
     async findByName(name: string){

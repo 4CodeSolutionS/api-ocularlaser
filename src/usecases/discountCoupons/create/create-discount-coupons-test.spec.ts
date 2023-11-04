@@ -1,19 +1,18 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { ServiceAlreadyExistsError } from "@/usecases/errors/service-already-exists-error";
 import { CreateDiscountCounponUseCase } from "./create-discount-coupons-usecase";
-import { InMemoryDiscountCounpons } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import {InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
 import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-clinics-repository";
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
 import { AppError } from "@/usecases/errors/app-error";
 
-let discountCouponRepositoryInMemory: InMemoryDiscountCounpons;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
 let dayjsDateProvider: DayjsDateProvider;
 let stu: CreateDiscountCounponUseCase;
 
 describe("Create discount counpon (unit)", () => {
     beforeEach(async () => {
-        discountCouponRepositoryInMemory = new InMemoryDiscountCounpons();
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository();
         clinicRepositoryInMemory = new InMemoryClinicRepository();
         dayjsDateProvider = new DayjsDateProvider();
         stu = new CreateDiscountCounponUseCase(

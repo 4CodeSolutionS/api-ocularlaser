@@ -3,6 +3,11 @@ import { IDiscountCouponsRepository } from "../interface-discount-coupons-reposi
 import { prisma } from "@/lib/prisma";
 
 export class PrismaDiscountCounpons implements IDiscountCouponsRepository{
+    async findByClinic(idClinic: string){
+        const discountCounpos = await prisma.discountCoupon.findMany({where: {idClinic}})
+
+        return discountCounpos;
+    }
     async findByCode(code: string){
         const discountCounpo = await prisma.discountCoupon.findUnique({where: {code}})
 

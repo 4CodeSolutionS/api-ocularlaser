@@ -36,6 +36,7 @@ export class InMemoryServiceExecutedRepository implements IServiceExecutedReposi
 
         return servicesExecutedFormatted as unknown as ServiceExecuted[]
     }
+
     async getterPriceAsNumber(id: string){
         const serviceExecuted = this.servicesExecuted.find(serviceExecuted => serviceExecuted.id === id)
 
@@ -106,7 +107,6 @@ export class InMemoryServiceExecutedRepository implements IServiceExecutedReposi
         const service = await this.servicesRepository.findById(serviceExecuted.idService)
 
         const clinic = await this.clinicsRepository.findById(serviceExecuted.idClinic)
-
         return {
             ...serviceExecuted,
             user,
