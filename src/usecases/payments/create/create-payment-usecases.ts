@@ -177,7 +177,7 @@ export class CreatePaymentUseCase{
                 externalReference: findServiceExecutedExists.id,
                 discount:{
                     value: discountValue ? discountValue : 0,
-                    dueDateLimitDays: 0,
+                    dueDateLimitDays: 1,
                     type: 'FIXED'
                 },
                 remoteIp: String(remoteIp),
