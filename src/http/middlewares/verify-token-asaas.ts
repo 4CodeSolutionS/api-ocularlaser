@@ -1,3 +1,5 @@
+import { env } from "@/env";
+import { AppError } from "@/usecases/errors/app-error";
 import { FastifyReply, FastifyRequest } from "fastify";
 
 export async function verifyAsaasToken(
@@ -7,14 +9,17 @@ export async function verifyAsaasToken(
     try {
         //[x] destruturar do headers o token da asaas
         const authHeader = request.headers['asaas-access-token'];
-
-        console.log(authHeader)
+        
+        if(authHeader){
+            throw new AppError("Token nao encontrado")
+        }
+        
+        if(env.ASAAS_ACCESS_KEY !== authHeader){
+            throw new AppError("Token invalido")
+        }
 
         //[x] se não existir o token, retorna erro
-        if(!authHeader){
-            throw new Error("Token not valid")
-        }
     } catch (error) {
-        throw new Error("Token not valid")
+        throw new AppError("Token not valid")
     }
 }
