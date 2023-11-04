@@ -198,20 +198,14 @@ export class CreatePaymentUseCase{
             // verificar se ja existe token do cartão
             const {cards} = findUser as any
             const cardFormat = cards as Card[]
-           
-            if(cardFormat.length === 1 ){
-                
+
+            // filtrar token do cartão
+            const cardToken = cardFormat.find(card => card.idUser === findUser.id) 
+            console.log(cardToken)
+            if(cardToken?.tokenCardAsaas){
                 if(!creditCard){
                     throw new AppError('Credenciais inválidas', 400)
                 }
-    
-                // filtrar token do cartão
-                  const cardToken = cardFormat.find(card => card.idUser === findUser.id) 
-
-                  if(!cardToken){
-                    throw new AppError('Error ao buscar usuário', 400)
-                  }
-
                   // descriptografar dados token
                   const decrypTokenCard = decryptingData(cardToken.tokenCardAsaas as string)
 
@@ -271,28 +265,33 @@ export class CreatePaymentUseCase{
                 throw new AppError('Credenciais inválidas', 400)
             }
 
-            const {number} = creditCard
-            const formatNumber = number as string
-            // formatando numero do cartão
-            const formatNum = `****${formatNumber.slice(-4)}`
-            // criptografar dados do cartão
-            for(let value of [formatNum, creditCard.holderName, `${creditCard.expiryMonth}/${creditCard.expiryYear}`, `${payment.creditCard?.creditCardBrand}`]){
-                const valueCrypt = cryptingData(value as string)
-                criptData.push(valueCrypt)
+           if(cardToken?.idUser === findUser.id){
+            return {
+                payment
             }
+           }
+           const {number} = creditCard
+           const formatNumber = number as string
+           // formatando numero do cartão
+           const formatNum = `****${formatNumber.slice(-4)}`
+           // criptografar dados do cartão
+           for(let value of [formatNum, creditCard.holderName, `${creditCard.expiryMonth}/${creditCard.expiryYear}`, `${payment.creditCard?.creditCardBrand}`]){
+               const valueCrypt = cryptingData(value as string)
+               criptData.push(valueCrypt)
+           }
 
-            // criptografar ccv com bcrypt hash
-            const hashCCV = await hash(creditCard.ccv as string, 8)
-            
-            // salvar dados do cartão no banco de dados
-            const card = await this.cardsRepository.create({
-                idUser: findUser.id,
-                num: criptData[0] as string,
-                name: criptData[1] as string,
-                expireDate: criptData[2] as string,
-                ccv: hashCCV,
-                brand: criptData[3] as string,
-            })
+           // criptografar ccv com bcrypt hash
+           const hashCCV = await hash(creditCard.ccv as string, 8)
+           
+           // salvar dados do cartão no banco de dados
+           const card = await this.cardsRepository.create({
+               idUser: findUser.id,
+               num: criptData[0] as string,
+               name: criptData[1] as string,
+               expireDate: criptData[2] as string,
+               ccv: hashCCV,
+               brand: criptData[3] as string,
+           })
             return {
                 payment
             }
