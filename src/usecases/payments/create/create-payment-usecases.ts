@@ -171,7 +171,7 @@ export class CreatePaymentUseCase{
             const payment = await this.asaasProvider.createPayment({
                 customer: idCostumerPayment,
                 billingType,
-                dueDate: formatDateToString,
+                dueDate: new Date('2021-12-31').toLocaleDateString(),
                 value: Number(findServiceExecutedExists.price),
                 description: findServiceExecutedExists.service.name,
                 externalReference: findServiceExecutedExists.id,
