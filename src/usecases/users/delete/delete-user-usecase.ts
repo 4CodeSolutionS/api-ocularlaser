@@ -1,6 +1,6 @@
 import { IUsersRepository } from "@/repositories/interface-users-repository";
+import { AppError } from "@/usecases/errors/app-error";
 import 'dotenv/config'
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 
 interface IRequestDeleteUser {
    id: string
@@ -19,7 +19,7 @@ export class DeleteUserUseCase{
 
         // validar se usuario existe
         if(!findUserExist){
-            throw new ResourceNotFoundError()
+            throw new AppError('Usuário não encontrado', 404)
         }
 
         // delete user

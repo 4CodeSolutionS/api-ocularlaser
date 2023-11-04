@@ -20,6 +20,8 @@ describe("Delete card (unit)", () => {
             name: 'Nome teste cartao',
             num: '1234567891234567',
             expireDate: '2021-10-10',
+            brand: 'Visa',
+            ccv: '123'
         })
     });
 

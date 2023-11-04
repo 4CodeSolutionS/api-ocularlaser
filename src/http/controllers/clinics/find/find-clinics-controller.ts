@@ -1,4 +1,3 @@
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { makeFindClinic } from '@/usecases/factories/clinics/make-find-clinic-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -22,9 +21,7 @@ export async function FindClinic (request: FastifyRequest, reply:FastifyReply){
             return reply.status(200).send(clinic)
             
           } catch (error) {
-            if(error instanceof ResourceNotFoundError){
-                return reply.status(404).send({error: error.message})
-            }
+           
             throw error
           }
 }

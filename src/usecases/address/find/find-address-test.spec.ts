@@ -1,17 +1,20 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryAddressesRepository } from "@/repositories/in-memory/in-memory-addresses-repository";
 import { FindAddressUseCase } from "./find-address-usecase";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-clinics-repository";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let addressInMemoryRepository: InMemoryAddressesRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
 let stu: FindAddressUseCase;
 
 describe("Find address (unit)", () => {
     beforeEach(async () => {
         addressInMemoryRepository = new InMemoryAddressesRepository()
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         stu = new FindAddressUseCase(
             addressInMemoryRepository, 
         )
@@ -47,6 +50,6 @@ describe("Find address (unit)", () => {
         await expect( () => stu.execute({
                 idClinic: '7881f50f-46dc-4b7d-b5d6-84bc924023e3'
             })
-        ).rejects.toBeInstanceOf(ResourceNotFoundError)
+        ).rejects.toEqual(new AppError('Endereço não encontrado', 404))
     })
 })

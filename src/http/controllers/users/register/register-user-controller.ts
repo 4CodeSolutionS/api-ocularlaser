@@ -1,5 +1,3 @@
-import { CPFAlreadyExistsError } from '@/usecases/errors/cpf-already-exists-error'
-import { EmailAlreadyExistsError } from '@/usecases/errors/email-already-exists-error'
 import { makeRegisterUser } from '@/usecases/factories/users/make-register-user-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -45,12 +43,6 @@ export async function RegisterUser (request: FastifyRequest, reply:FastifyReply)
             return reply.status(201).send(user)
             
           } catch (error) {
-            if(error instanceof  EmailAlreadyExistsError){
-              return reply.status(409).send({ message: error.message})
-            }
-            if(error instanceof  CPFAlreadyExistsError){
-                return reply.status(401).send({ message: error.message})
-            }
             throw error
           }
 }

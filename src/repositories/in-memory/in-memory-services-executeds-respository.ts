@@ -1,10 +1,9 @@
-import { Prisma, Service, ServiceExecuted } from "@prisma/client";
+import { Prisma, ServiceExecuted } from "@prisma/client";
 import { IServiceExecutedRepository } from "../interface-services-executeds-repository";
 import { randomUUID } from "crypto";
 import { InMemoryUsersRepository } from "./in-memory-users-repository";
 import { InMemoryServicesRepository } from "./in-memory-services-repository";
 import { InMemoryClinicRepository } from "./in-memory-clinics-repository";
-import { IServiceExecutedFormmated } from "@/usecases/servicesExecuted/mappers/list-service-executed-mapper";
 import { InMemoryPaymentRepository } from "./in-memory-payments-respository";
 
 export class InMemoryServiceExecutedRepository implements IServiceExecutedRepository{

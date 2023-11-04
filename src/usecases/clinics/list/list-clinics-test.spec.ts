@@ -2,15 +2,18 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryAddressesRepository } from "@/repositories/in-memory/in-memory-addresses-repository";
 import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-clinics-repository";
 import { ListClinicsUseCase } from "./list-clinics-usecase";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
 
 let addressInMemoryRepository: InMemoryAddressesRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let stu: ListClinicsUseCase;
 
 describe("List clinic (unit)", () => {
     beforeEach(async () => {
         addressInMemoryRepository = new InMemoryAddressesRepository()
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         stu = new ListClinicsUseCase(
             clinicRepositoryInMemory, 
         )

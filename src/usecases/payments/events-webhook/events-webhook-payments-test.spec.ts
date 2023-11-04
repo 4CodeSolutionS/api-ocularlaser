@@ -9,11 +9,12 @@ import { InMemoryServiceExecutedRepository } from "@/repositories/in-memory/in-m
 import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-clinics-repository";
 import { InMemoryAsaasProvider } from "@/providers/PaymentProvider/in-memory/in-memory-asaas-provider";
 import { randomUUID } from "crypto";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
 import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
 import { cryptingData } from "@/utils/crypting-data";
 import { CreatePaymentUseCase } from "../create/create-payment-usecases";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
 let asaasProviderInMemory: InMemoryAsaasProvider;
@@ -25,6 +26,7 @@ let mailProviderInMemory: MailProvider;
 let dateProviderInMemory: DayjsDateProvider;
 let cardRepositoryInMemory: InMemoryCardRepository;
 let createPaymentUseCase: CreatePaymentUseCase;
+let discountCounposInMemory: InMemoryDiscountCounponsRepository;
 let stu: EventsWebHookPaymentsUseCases;
 
 export interface IDiscount {
@@ -45,7 +47,8 @@ describe("Confirm payment received (unit)", () => {
         cardRepositoryInMemory = new InMemoryCardRepository()
         usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCounposInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCounposInMemory)
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         dateProviderInMemory = new DayjsDateProvider()
         asaasProviderInMemory = new InMemoryAsaasProvider(dateProviderInMemory)
@@ -351,10 +354,11 @@ describe("Confirm payment received (unit)", () => {
             phone: "4738010919",
         },
     })
+    const brand = 'MASTER CARD'
     const {expiryMonth,expiryYear,holderName,number,ccv} = payment.creditCard as ICreditCard
     let criptData = []
     // criptografar dados do cartão
-    for(let value of [number, holderName, `${expiryMonth}/${expiryYear}`, ccv]){
+    for(let value of [number, holderName, `${expiryMonth}/${expiryYear}`, ccv, brand]){
         const valueCrypt = cryptingData(value as string)
         criptData.push(valueCrypt)
     }
@@ -365,6 +369,7 @@ describe("Confirm payment received (unit)", () => {
             num: criptData[1] as string,
             expireDate: criptData[2] as string,
             ccv: criptData[3] as string,
+            brand: criptData[4] as string,
         })
         
     const confirmPayment = await stu.execute({
@@ -425,7 +430,7 @@ describe("Confirm payment received (unit)", () => {
                 description: payment.description,
                 installment: payment.installment,
             }
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
+        })).rejects.toEqual(new AppError('Service Executed não encontrado', 404))
     }, 100000);
 });
 

@@ -17,7 +17,7 @@ describe('Approve Service Executed (e2e)', ()=>{
     test('should be able to approve a service executed', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
-            'ADMIN',
+            'SUPER',
         )
 
         // criar clinica
@@ -78,8 +78,6 @@ describe('Approve Service Executed (e2e)', ()=>{
             service: {
                 id: idService
             },
-            date: '2023-09-16T10:50:00.000Z',
-            datePayment: '2023-09-16T10:50:00.000Z',
         })
         const {id} = responseCreateServiceExecuted.body as ServiceExecuted
         const responseApproveServiceExecuted = await request(fastifyApp.server)

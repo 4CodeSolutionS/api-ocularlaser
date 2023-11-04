@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-services-repository";
 import { CreateServiceUseCase } from "./create-services-usecase";
-import { ServiceAlreadyExistsError } from "@/usecases/errors/service-already-exists-error";
+import { AppError } from "@/usecases/errors/app-error";
 
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let stu: CreateServiceUseCase;
@@ -39,6 +39,6 @@ describe("Create service (unit)", () => {
             name: 'Avaliação dos dentes',
             price: 100,
             category: 'QUERY'
-       })). rejects.toBeInstanceOf(ServiceAlreadyExistsError)
+       })). rejects.toEqual(new AppError('Já existe uma serviço com esse nome', 409))
      });
 })

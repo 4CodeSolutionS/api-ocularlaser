@@ -1,6 +1,6 @@
 import { IMailProvider } from "@/providers/MailProvider/interface-mail-provider";
 import { IServiceExecutedRepository } from "@/repositories/interface-services-executeds-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestAproveServiceExecuted{
     id: string
@@ -18,7 +18,7 @@ export class AproveServiceExecuted{
         const serviceExecuted = await this.serviceExecutedRepository.findById(id);
 
         if(!serviceExecuted){
-            throw new ResourceNotFoundError()
+            throw new AppError('Serviço executado não encontrado', 404);
         }
 
         // alterar o status do serviceExecuted para aprovado

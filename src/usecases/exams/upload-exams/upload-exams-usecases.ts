@@ -1,11 +1,8 @@
 import 'dotenv/config'
 import { IExamsRepository } from "@/repositories/interface-exams-repository";
 import { IServiceExecutedRepository } from "@/repositories/interface-services-executeds-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
-import { FirebaseStorageProvider } from "@/providers/StorageProvider/implementations/firebase-storage.provider";
 import { IStorageProvider } from '@/providers/StorageProvider/storage-provider.interface';
-import { Service } from '@google-cloud/storage/build/src/nodejs-common';
-import { ServiceAlreadyApprovedError } from '@/usecases/errors/service-already-approved-error';
+import { AppError } from '@/usecases/errors/app-error';
 
 interface IRequestUploadExams {
     idServiceExecuted: string
@@ -33,18 +30,18 @@ export class CreateExamsUseCase{
         const lengthExams = fileNameExame.length as number
         // verificar se existe um nome para o arquivo
         if(lengthExams === 0){
-            throw new ResourceNotFoundError()
+            throw new AppError('Nenhum arquivo foi enviado', 400)
         }
         // buscar service executado pelo id
         const serviceExecuted = await this.serviceExecutedRepository.findById(idServiceExecuted);
 
         // verificar se existe um service executado com esse id
         if(!serviceExecuted){
-            throw new ResourceNotFoundError()
+            throw new AppError('Serviço executado não encontrado', 404)
         }
 
         if(serviceExecuted.approved){
-            throw new ServiceAlreadyApprovedError()
+            throw new AppError('Não é possível adicionar exames a um serviço aprovado', 400)
         }
 
         const pathFolder = './src/tmp/exams'

@@ -1,12 +1,11 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-users-repository";
-import { EmailAlreadyExistsError } from "@/usecases/errors/email-already-exists-error";
 import { RegisterUseCase } from "./register-usecase";
-import { CPFAlreadyExistsError } from "@/usecases/errors/cpf-already-exists-error";
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
 import { InMemoryTokensRepository } from "@/repositories/in-memory/in-memory-tokens-repository";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
@@ -71,7 +70,7 @@ describe("Register user (unit)", () => {
             phone: '77-77777-7777',
             password: '123456',
         }),
-        ).rejects.toBeInstanceOf(EmailAlreadyExistsError)
+        ).rejects.toEqual(new AppError('Email já cadastrado', 400))
     });
 
     test("Should not be able to register a new account with CPF already exists", async () => {
@@ -94,7 +93,7 @@ describe("Register user (unit)", () => {
             phone: '77-77777-7777',
             password: '123456',
         }),
-        ).rejects.toBeInstanceOf(CPFAlreadyExistsError)
+        ).rejects.toEqual(new AppError('CPF já cadastrado', 400))
     });
 
 });

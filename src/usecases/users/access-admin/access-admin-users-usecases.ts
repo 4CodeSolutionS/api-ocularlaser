@@ -1,9 +1,8 @@
 import { IUsersRepository } from "@/repositories/interface-users-repository";
 import { User } from "@prisma/client";
 import 'dotenv/config'
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { IKeysRepository } from "@/repositories/interface-keys-repository";
-import { KeyAlreadyActive } from "@/usecases/errors/key-already-active";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestAccessAdmin {
    key: string
@@ -28,19 +27,19 @@ export class AccessAdminUsersUseCase{
 
         // validar se usuario existe
         if(!findUserExist){
-            throw new ResourceNotFoundError()
+            throw new AppError('Usuário não encontrado', 404)
         }
 
         // buscar key pelo id
         const findKeyExist = await this.keysRepository.findByKey(key)
         // validar se key existe
         if(!findKeyExist){
-            throw new ResourceNotFoundError()
+            throw new AppError('Chave não encontrada', 404)
         }
 
         // validar se key esta ativa
         if(findKeyExist.active){
-            throw new KeyAlreadyActive()
+            throw new AppError('Chave já foi utilizada', 400)
         }
 
         // atualizar usuario

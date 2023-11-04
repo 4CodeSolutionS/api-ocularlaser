@@ -1,5 +1,3 @@
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
-import { ServiceAlreadyApprovedError } from '@/usecases/errors/service-already-approved-error'
 import { makeUploadExams } from '@/usecases/factories/exams/make-upload-exams-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -35,12 +33,6 @@ export async function UploadExams (request: FastifyRequest, reply:FastifyReply){
             return reply.status(201).send(exams)
             
           } catch (error) {
-            if(error instanceof ServiceAlreadyApprovedError){
-              return reply.status(401).send({error: error.message})
-            }
-            if(error instanceof ResourceNotFoundError){
-                return reply.status(404).send({error: error.message})
-            }
             throw error
           }
 }

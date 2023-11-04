@@ -25,8 +25,8 @@ ADMIN ou PACIENT.
 * [x] Adicionar lib cpf-cnpj-validator para validar o CPF 
 * [x] Criar Blacklist de tokens usando o Redis com limpeza a cada 7 dias
 * [x] Adcionar funcionalidade Logout
-* [ ] Criar campo discount coupon no controller do payment para receber os descontos
-* [ ] Aplicar desconto no pagamento ao enviar para Asaas caso houver
+* [x] Criar campo discount coupon no controller do payment para receber os descontos
+* [] Aplicar desconto no pagamento ao enviar para Asaas caso houver
 * [ ] Criar campo discount in tabela payment para receber disconto aplicado no pagamento
-* [ ] Alterar todos os errors handlers para classe de erro AppError
-* [ ] Corrigir testes quebrados apos alteração da classe de erro
+* [x] Alterar todos os errors handlers para classe de erro AppError
+* [x] Corrigir testes quebrados apos alteração da classe de erro

@@ -2,10 +2,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-users-repository";
 import { hash } from "bcrypt";
 import { UpdateUserUseCase } from "./update-user-usecase";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
-import { CPFAlreadyExistsError } from "@/usecases/errors/cpf-already-exists-error";
-import { EmailAlreadyExistsError } from "@/usecases/errors/email-already-exists-error";
 import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let cardRepositoryInMemory: InMemoryCardRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
@@ -70,7 +68,7 @@ describe("Update user (unit)", () => {
             gender: 'MASCULINO',
             name: 'Kaio Moreira',
             phone: '77-88888-7777',
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
+        })).rejects.toEqual(new AppError('Usuário não encontrado', 404))
     });
 
     test("Should not be able to update a user account with CPF already exists", async () => {
@@ -82,7 +80,7 @@ describe("Update user (unit)", () => {
             name: 'Kaio Moreira',
             phone: '77-88888-7777',
         }),
-            ).rejects.toBeInstanceOf(CPFAlreadyExistsError)
+            ).rejects.toEqual(new AppError('CPF já cadastrado', 400))
     });
 
     test("Should not be able to update a user account with Email already exists", async () => {
@@ -94,7 +92,7 @@ describe("Update user (unit)", () => {
             name: 'Kaio Moreira',
             phone: '77-88888-7777',
         }),
-            ).rejects.toBeInstanceOf(EmailAlreadyExistsError)
+            ).rejects.toEqual(new AppError('Email já cadastrado', 400))
     });
 
    

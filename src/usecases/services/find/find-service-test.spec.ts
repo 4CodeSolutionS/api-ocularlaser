@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-services-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { FindServiceUseCase } from "./find-services-usecase";
+import { AppError } from "@/usecases/errors/app-error";
 
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let stu: FindServiceUseCase;
@@ -37,6 +37,6 @@ describe("Find service (unit)", () => {
     test("Should not be able to find service with invalid id", async () => {
         await expect(()=>  stu.execute({
            id: 'e5c3ef79-8e8c-422e-af07-2e8fb3bf2411'
-       })). rejects.toBeInstanceOf(ResourceNotFoundError)
+       })). rejects.toEqual(new AppError('Serviço não encontrado', 404))
      });
 })

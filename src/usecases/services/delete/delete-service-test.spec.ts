@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-services-repository";
 import { DeleteServiceUseCase } from "./delete-services-usecase";
 import { Service } from "@prisma/client";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { AppError } from "@/usecases/errors/app-error";
 
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let stu: DeleteServiceUseCase;
@@ -36,6 +36,6 @@ describe("Delete service (unit)", () => {
     test("Should not be able to delete service with invalid id", async () => {
         await expect(()=>  stu.execute({
            id: 'e5c3ef79-8e8c-422e-af07-2e8fb3bf2411'
-       })). rejects.toBeInstanceOf(ResourceNotFoundError)
+       })). rejects.toEqual(new AppError('Serviço não encontrado', 404))    
      });
 })

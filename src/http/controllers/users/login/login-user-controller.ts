@@ -1,4 +1,3 @@
-import { CredentialsInvalidError } from '@/usecases/errors/credentials-invalid-error'
 import { makeLoginUser } from '@/usecases/factories/users/make-login-user-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -24,9 +23,6 @@ export async function LoginUser (request: FastifyRequest, reply:FastifyReply){
         return reply.status(200).send(userInfo)
 
       } catch (error) {
-        if(error instanceof CredentialsInvalidError){
-          return reply.status(401).send({ message: error.message})
-        }
         throw error
       }
 }
