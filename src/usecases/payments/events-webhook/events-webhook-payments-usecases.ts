@@ -22,6 +22,7 @@ export interface IRequestReceiveEvent {
         installment?: string
         value: number
         netValue: number
+        originalValue?: number
         creditCard?: {
             creditCardToken: string
         }
