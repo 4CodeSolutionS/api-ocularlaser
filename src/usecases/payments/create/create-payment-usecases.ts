@@ -232,6 +232,11 @@ export class CreatePaymentUseCase{
                       installmentCount: installmentCount ? Number(installmentCount) : undefined,
                       installmentValue: Number.isNaN(installmentValue) ? undefined : installmentValue,
                       description: findServiceExecutedExists.service.name,
+                      discount:{
+                        value: discountValue ? discountValue : 0,
+                        dueDateLimitDays: 0,
+                        type: 'PERCENTAGE'
+                      },
                       externalReference: findServiceExecutedExists.id,
                       remoteIp: String(remoteIp),
                   }) as IAsaasPayment
@@ -250,6 +255,11 @@ export class CreatePaymentUseCase{
                 installmentCount: installmentCount ? Number(installmentCount) : undefined,
                 installmentValue: Number.isNaN(installmentValue) ? undefined : installmentValue,
                 description: findServiceExecutedExists.service.name,
+                discount:{
+                    value: discountValue ? discountValue : 0,
+                    dueDateLimitDays: 0,
+                    type: 'PERCENTAGE'
+                },
                 externalReference: findServiceExecutedExists.id,
                 remoteIp: String(remoteIp),
             }) as IAsaasPayment
@@ -295,6 +305,11 @@ export class CreatePaymentUseCase{
             dueDate: formatDateToString,
             value: Number(findServiceExecutedExists.price),
             description: findServiceExecutedExists.service.name,
+            discount:{
+                value: discountValue ? discountValue : 0,
+                dueDateLimitDays: 0,
+                type: 'PERCENTAGE'
+            },
             externalReference: findServiceExecutedExists.id,
             remoteIp: String(remoteIp),
         }) as IAsaasPayment
