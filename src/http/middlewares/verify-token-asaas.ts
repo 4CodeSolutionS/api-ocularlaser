@@ -14,7 +14,7 @@ export async function verifyAsaasToken(
             throw new AppError("Token nao encontrado")
         }
         
-        if(env.SENDGRID_ACCESS_KEY !== authHeader){
+        if(env.ASAAS_ACCESS_KEY !== authHeader){
             throw new AppError("Token invalido")
         }
 
