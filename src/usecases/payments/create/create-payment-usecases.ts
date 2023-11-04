@@ -171,14 +171,14 @@ export class CreatePaymentUseCase{
             const payment = await this.asaasProvider.createPayment({
                 customer: idCostumerPayment,
                 billingType,
-                dueDate: '2023-11-06',
+                dueDate: formatDateToString,
                 value: Number(findServiceExecutedExists.price),
                 description: findServiceExecutedExists.service.name,
                 externalReference: findServiceExecutedExists.id,
                 discount:{
                     value: discountValue ? discountValue : 0,
-                    dueDateLimitDays: 1,
-                    type: 'FIXED'
+                    dueDateLimitDays: 0,
+                    type: 'PERCENTAGE'
                 },
                 remoteIp: String(remoteIp),
             }) as IAsaasPayment
