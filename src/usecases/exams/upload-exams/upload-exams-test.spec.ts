@@ -9,10 +9,10 @@ import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-s
 import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-users-repository";
 import { CreateServiceExecutedUseCase } from "@/usecases/servicesExecuted/create/create-services-executeds-usecases";
 import { hash } from "bcrypt";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
-import { ServiceAlreadyApprovedError } from "@/usecases/errors/service-already-approved-error";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
 import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let mailProviderInMemory: InMemoryMailProvider;
 let cardRepositoryInMemory: InMemoryCardRepository;
@@ -24,6 +24,7 @@ let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let storageProviderInMemory: InMemoryStorageProvider;
 let createServiceExecutedUseCase: CreateServiceExecutedUseCase;
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let stu: CreateExamsUseCase;
 
 describe("Create exams (unit)", () => {
@@ -31,7 +32,8 @@ describe("Create exams (unit)", () => {
         cardRepositoryInMemory = new InMemoryCardRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         mailProviderInMemory = new InMemoryMailProvider()
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
         examsRepositoryInMemory = new InMemoryExamsRepository();
@@ -129,7 +131,7 @@ describe("Create exams (unit)", () => {
        await expect(()=>  stu.execute({
         fileNameExame:fileNames,
         idServiceExecuted: idServiceExecutedFake
-    })).rejects.toBeInstanceOf(ResourceNotFoundError)
+    })).rejects.toEqual(new AppError('Serviço executado não encontrado', 404))
     });
 
     test("Should not be able to create exams with invalid invalid name", async () => {
@@ -178,10 +180,10 @@ describe("Create exams (unit)", () => {
         await expect(()=>  stu.execute({
          fileNameExame: fileNames,
          idServiceExecuted: serviceExecuted.id
-     })).rejects.toBeInstanceOf(ResourceNotFoundError)
+     })).rejects.toEqual(new AppError('Nenhum arquivo foi enviado', 400))  
      });
 
-     test("Should not be able to create exams with service executed already approved", async () => {
+    test("Should not be able to create exams with service executed already approved", async () => {
         // criar um service executed
         const clinic = await clinicRepositoryInMemory.create({
             name: "Clinic Test",
@@ -243,7 +245,7 @@ describe("Create exams (unit)", () => {
        await expect(()=> stu.execute({
             fileNameExame: fileNames,
             idServiceExecuted: serviceExecuted.id
-        })).rejects.toBeInstanceOf(ServiceAlreadyApprovedError)
+        })).rejects.toEqual(new AppError('Não é possível adicionar exames a um serviço aprovado', 400))
 
     });
 })

@@ -1,7 +1,5 @@
 import { env } from "@/env";
 import { IUsersRepository } from "@/repositories/interface-users-repository";
-import { CPFAlreadyExistsError } from "@/usecases/errors/cpf-already-exists-error";
-import { EmailAlreadyExistsError } from "@/usecases/errors/email-already-exists-error";
 import { User } from "@prisma/client";
 import { hash } from 'bcrypt'
 import 'dotenv/config'
@@ -9,6 +7,7 @@ import { randomUUID } from "crypto";
 import { IDateProvider } from "@/providers/DateProvider/interface-date-provider";
 import { ITokensRepository } from "@/repositories/interface-tokens-repository";
 import { IMailProvider } from "@/providers/MailProvider/interface-mail-provider";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestRegisterAccount {
     cpf: string
@@ -41,13 +40,13 @@ export class RegisterUseCase{
         const findEmailAlreadyExists = await this.usersRepository.findByEmail(email)
 
         if(findEmailAlreadyExists){
-            throw new EmailAlreadyExistsError()
+            throw new AppError('Email já cadastrado', 400)
         }
 
         const findCPFAlreadyExists = await this.usersRepository.findByCPF(cpf)
 
         if(findCPFAlreadyExists){
-            throw new CPFAlreadyExistsError()
+            throw new AppError('CPF já cadastrado', 400)
         }
        
         const criptingPassword = await hash(password, 8)

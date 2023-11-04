@@ -8,8 +8,9 @@ import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memo
 import { CreateServiceExecutedUseCase } from "./create-services-executeds-usecases";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
 import { randomUUID } from "node:crypto";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let cardRepositoryInMemory: InMemoryCardRepository;
 let mailProviderInMemory: InMemoryMailProvider;
@@ -17,6 +18,7 @@ let clinicRepositoryInMemory: InMemoryClinicRepository;
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let stu: CreateServiceExecutedUseCase;
 
@@ -25,7 +27,8 @@ describe("Create service executed (unit)", () => {
         cardRepositoryInMemory = new InMemoryCardRepository()
         mailProviderInMemory = new InMemoryMailProvider()
         usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
@@ -112,7 +115,7 @@ describe("Create service executed (unit)", () => {
             idUser: user.id,
             idClinic: randomUUID(),
             idService: service.id,
-        })).rejects.toBeInstanceOf(ResourceNotFoundError) 
+        })).rejects.toEqual(new AppError('Clinica não encontrada', 404)) 
 
     });
 
@@ -144,7 +147,7 @@ describe("Create service executed (unit)", () => {
             idUser: randomUUID(),
             idClinic: clinic.id,
             idService: service.id,
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
+        })).rejects.toEqual(new AppError('Usuário não encontrado', 404))
     });
 
     test("Should be able to create a service executed with service invalid", async () => {
@@ -177,6 +180,6 @@ describe("Create service executed (unit)", () => {
             idUser: user.id,
             idClinic: clinic.id,
             idService: randomUUID(),
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
+        })).rejects.toEqual(new AppError('Serviço não encontrado', 404))
     });
 })

@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import { IClinicsRepository } from "@/repositories/interface-clinics-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { AppError } from '@/usecases/errors/app-error';
 
 interface IRequestDeleteClinic {
     id:string
@@ -19,7 +19,7 @@ export class DeleteClinicUseCase{
 
         // validar se existe uma clinica
         if(!findClinicExists){
-            throw new ResourceNotFoundError()
+            throw new AppError('Clinica não encontrada', 404)
         }
 
         //deletar uma clinica  

@@ -7,10 +7,11 @@ import { hash } from "bcrypt";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
 import { AproveServiceExecuted } from "./aprove-services-executeds-usecase";
 import { ServiceExecuted } from "@prisma/client";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { CreateServiceExecutedUseCase } from "../create/create-services-executeds-usecases";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
 import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let mailProviderInMemory: InMemoryMailProvider;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
@@ -19,6 +20,7 @@ let usersRepositoryInMemory: InMemoryUsersRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let createServiceExecuted: CreateServiceExecutedUseCase;
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let cardRepositoryInMemory: InMemoryCardRepository;
 let stu: AproveServiceExecuted;
 
@@ -27,7 +29,8 @@ describe("Aprove service executed (unit)", () => {
         cardRepositoryInMemory = new InMemoryCardRepository()
         mailProviderInMemory = new InMemoryMailProvider()
         usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
@@ -110,7 +113,7 @@ describe("Aprove service executed (unit)", () => {
 
         await expect(()=> stu.execute({
             id: fakeId
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
+        })).rejects.toEqual(new AppError('Serviço executado não encontrado', 404))
  
     });
 

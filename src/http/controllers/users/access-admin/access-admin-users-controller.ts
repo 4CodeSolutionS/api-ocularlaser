@@ -1,5 +1,3 @@
-import { KeyAlreadyActive } from '@/usecases/errors/key-already-active'
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { makeAccessAdminUser } from '@/usecases/factories/users/make-access-admin-user-usecases'
 import { makeFindUser } from '@/usecases/factories/users/make-find-user-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
@@ -28,12 +26,6 @@ export async function AccessAdminUser (request: FastifyRequest, reply:FastifyRep
             return reply.status(200).send(user)
             
           } catch (error) {
-            if(error instanceof  ResourceNotFoundError){
-              return reply.status(404).send({ message: error.message})
-            }
-            if(error instanceof  KeyAlreadyActive){
-              return reply.status(401).send({ message: error.message})
-            }
             throw error
           }
 }

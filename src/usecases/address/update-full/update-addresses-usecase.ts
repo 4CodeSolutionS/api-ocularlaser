@@ -1,7 +1,7 @@
 import { Address } from "@prisma/client";
 import 'dotenv/config'
 import { IAddressesRepository } from "@/repositories/interface-addresses-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestUpdateAddress {
     idClinic: string
@@ -39,7 +39,7 @@ export class UpdateAddressUseCase{
 
         // validar se address existe
         if(!findAddressExist){
-            throw new ResourceNotFoundError()
+            throw new AppError('Endereço não encontrado', 404)
         }
 
         // atualizar address

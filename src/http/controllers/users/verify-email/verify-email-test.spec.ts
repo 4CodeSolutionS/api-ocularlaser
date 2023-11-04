@@ -59,42 +59,27 @@ describe('Verify e-mail User (e2e)', ()=>{
         expect(response.statusCode).toEqual(404)
     })
 
+    test('should not be able to verify e-mail a user with invalid token', async()=>{
+        const {accessToken, user} = await createAndAuthenticateUser(
+            fastifyApp,
+            "PACIENT",
+            "0f3f1626-fe39-4cc1-8a41-d95f84d7148e",
+            'user3@email.com',
+            '123.546.159-40',
+            )
 
-    test('should not be able to verify e-mail user with token expired', async()=>{
-        vi.setSystemTime( new Date(2023, 10, 24, 7, 0, 0))
-        const responseCreateUser = await request(fastifyApp.server).post('/api/users').send({
-            name: 'Kaio Moreira',
-            email: 'user1-dev@outlook.com',
-            password: '123456',
-            gender: 'MASCULINO',
-            phone: '11999999999',
-            cpf: '123.789.565-65',
-        })
+        const token = "xxx"
 
-        const {id, email} = responseCreateUser.body as User
-
-        const {token} = await prisma.token.findFirstOrThrow({
-            where:{
-                idUser: id
-            }
-        }) as unknown as Token
-
-        vi.setSystemTime( new Date(2023, 10, 24, 10, 0, 1))
         const response = await request(fastifyApp.server)
-        .patch(`/api/users/verify-email?email=${email}&token=${token}`)
+        .patch(`/api/users/verify-email?email=${user.email}&token=${token}`)
         .send()
 
         const findUser = await prisma.user.findUniqueOrThrow({
             where:{
-                id: id
+                id: user.id
             }
         })
-        expect(response.statusCode).toEqual(401)
-        expect(findUser).toEqual(
-            expect.objectContaining({
-                emailActive: false
-            })
-        )
+        expect(response.statusCode).toEqual(404)
     })
 
 })

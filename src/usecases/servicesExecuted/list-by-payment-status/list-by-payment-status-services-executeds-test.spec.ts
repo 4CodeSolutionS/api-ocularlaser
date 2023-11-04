@@ -8,6 +8,7 @@ import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memo
 import { ListServiceExecutedByPaymentStatusUseCase } from "./list-by-payment-status-services-executeds-usecase";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
 import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
 
 let mailProviderInMemory: InMemoryMailProvider;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
@@ -16,6 +17,7 @@ let usersRepositoryInMemory: InMemoryUsersRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
 let cardRepositoryInMemory: InMemoryCardRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let stu: ListServiceExecutedByPaymentStatusUseCase;
 
 describe("List service executed by clinic (unit)", () => {
@@ -23,7 +25,8 @@ describe("List service executed by clinic (unit)", () => {
         cardRepositoryInMemory = new InMemoryCardRepository()
         mailProviderInMemory = new InMemoryMailProvider()
         usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryAddressesRepository } from "@/repositories/in-memory/in-memory-addresses-repository";
 import { UpdateAddressUseCase } from "./update-addresses-usecase";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { AppError } from "@/usecases/errors/app-error";
 
 let addressInMemoryRepository: InMemoryAddressesRepository;
 let stu: UpdateAddressUseCase;
@@ -58,6 +58,6 @@ describe("Update address (unit)", () => {
             reference: 'reference-faker',
             state: 'state-faker',
             zip: 'zip-faker'
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
+        })).rejects.toEqual(new AppError('Endereço não encontrado', 404))
     })
 })

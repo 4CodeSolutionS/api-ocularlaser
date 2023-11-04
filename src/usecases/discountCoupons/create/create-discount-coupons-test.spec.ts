@@ -13,7 +13,7 @@ let stu: CreateDiscountCounponUseCase;
 describe("Create discount counpon (unit)", () => {
     beforeEach(async () => {
         discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository();
-        clinicRepositoryInMemory = new InMemoryClinicRepository();
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory);
         dayjsDateProvider = new DayjsDateProvider();
         stu = new CreateDiscountCounponUseCase(
             discountCouponRepositoryInMemory,

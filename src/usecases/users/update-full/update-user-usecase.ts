@@ -1,9 +1,7 @@
 import { IUsersRepository } from "@/repositories/interface-users-repository";
+import { AppError } from "@/usecases/errors/app-error";
 import { User } from "@prisma/client";
 import 'dotenv/config'
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
-import { CPFAlreadyExistsError } from "@/usecases/errors/cpf-already-exists-error";
-import { EmailAlreadyExistsError } from "@/usecases/errors/email-already-exists-error";
 
 interface IRequestUpdateUser {
     id: string,
@@ -33,19 +31,19 @@ export class UpdateUserUseCase{
         const findUserExists = await this.usersRepository.getUserSecurity(id)
 
         if(!findUserExists){
-            throw new ResourceNotFoundError()
+            throw new AppError('Usuário não encontrado', 404)
         }
 
         const findCPFAlreadyExists = await this.usersRepository.findByCPF(cpf)
 
         if(findCPFAlreadyExists && findUserExists.cpf !== cpf){
-            throw new CPFAlreadyExistsError()
+            throw new AppError('CPF já cadastrado', 400)
         }
 
         const findEmailAlreadyExists = await this.usersRepository.findByEmail(email)
 
         if(findEmailAlreadyExists && findUserExists.email !== email){
-            throw new EmailAlreadyExistsError()
+            throw new AppError('Email já cadastrado', 409)
         }
 
 

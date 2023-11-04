@@ -8,6 +8,8 @@ export async function verifyAsaasToken(
         //[x] destruturar do headers o token da asaas
         const authHeader = request.headers['asaas-access-token'];
 
+        console.log(authHeader)
+
         //[x] se não existir o token, retorna erro
         if(!authHeader){
             throw new Error("Token not valid")

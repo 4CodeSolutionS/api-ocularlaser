@@ -1,7 +1,7 @@
 import { Address, Clinic } from "@prisma/client";
 import 'dotenv/config'
 import { IClinicsRepository } from "@/repositories/interface-clinics-repository";
-import { ClinicAlreadyExistsError } from "@/usecases/errors/clinic-already-exists-error";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestCreateClinic {
     address: Address
@@ -35,7 +35,7 @@ export class CreateClinicUseCase{
 
         // validar se existe uma clinica com o mesmo nome
         if(clinicAlreadyExists){
-            throw new ClinicAlreadyExistsError()
+            throw new AppError('Já existe uma clinica com esse nome', 409)
         }
 
         //criar a clinica

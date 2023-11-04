@@ -34,7 +34,8 @@ describe("Find card by User (unit)", () => {
             name: 'Nome teste cartao',
             num: '1234567891234567',
             expireDate: '2021-10-10',
-            ccv: '123'
+            ccv: '123',
+            brand: 'Visa'
         })
     });
 

@@ -3,16 +3,19 @@ import { InMemoryAddressesRepository } from "@/repositories/in-memory/in-memory-
 import { CreateClinicUseCase } from "./create-clinics-usecase";
 import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-clinics-repository";
 import { Prisma } from "@prisma/client";
-import { ClinicAlreadyExistsError } from "@/usecases/errors/clinic-already-exists-error";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let addressInMemoryRepository: InMemoryAddressesRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let stu: CreateClinicUseCase;
 
 describe("Create clinic (unit)", () => {
     beforeEach(async () => {
         addressInMemoryRepository = new InMemoryAddressesRepository()
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         stu = new CreateClinicUseCase(
             clinicRepositoryInMemory, 
         )
@@ -74,7 +77,7 @@ describe("Create clinic (unit)", () => {
                 city: 'São Paulo'
             },
             name: 'Clinica Kaiser'
-       })).rejects.toBeInstanceOf(ClinicAlreadyExistsError)
+       })).rejects.toEqual(new AppError('Já existe uma clinica com esse nome', 409))
      });
 
 

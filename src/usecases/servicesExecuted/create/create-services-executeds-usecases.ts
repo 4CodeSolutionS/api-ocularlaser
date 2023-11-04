@@ -1,11 +1,9 @@
 import { IMailProvider } from "@/providers/MailProvider/interface-mail-provider";
-import { IStorageProvider } from "@/providers/StorageProvider/storage-provider.interface";
 import { IClinicsRepository } from "@/repositories/interface-clinics-repository";
 import { IServiceExecutedRepository } from "@/repositories/interface-services-executeds-repository";
 import { IServiceRepository } from "@/repositories/interface-services-respository";
 import { IUsersRepository } from "@/repositories/interface-users-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
-import { Payment, ServiceExecuted } from "@prisma/client";
+import { AppError } from "@/usecases/errors/app-error";
 
 export interface IServiceExecuted{
     name: string;
@@ -51,19 +49,19 @@ export class CreateServiceExecutedUseCase{
         const findUserExist = await this.usersRepository.getUserSecurity(idUser)
         // validar se usuario existe pelo id
         if(!findUserExist){
-            throw new ResourceNotFoundError()
+            throw new AppError('Usuário não encontrado', 404)
         }
         // buscar servico pelo id
         const findServiceExists = await this.servicesRepository.findById(idService)
         // validar se servico existe pelo id
         if(!findServiceExists){
-            throw new ResourceNotFoundError()
+            throw new AppError('Serviço não encontrado', 404)
         }
         // buscar clinica pelo id
         const findClinicExists = await this.clinicsRepository.findById(idClinic)
         // validar se clinica existe pelo id
         if(!findClinicExists){
-            throw new ResourceNotFoundError()
+            throw new AppError('Clinica não encontrada', 404)
         }
         // salvar service executed no banco de dados
         const serviceExecuted = await this.serviceExecutedRepository.create({

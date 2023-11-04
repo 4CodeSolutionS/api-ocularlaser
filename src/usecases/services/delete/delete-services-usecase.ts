@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import { IServiceRepository } from "@/repositories/interface-services-respository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { AppError } from '@/usecases/errors/app-error';
 
 interface IRequestDeleteService {
     id: string
@@ -19,7 +19,7 @@ export class DeleteServiceUseCase{
 
         // validar se existe uma service
         if(!findServiceExists){
-            throw new ResourceNotFoundError()
+            throw new AppError('Serviço não encontrado', 404)
         }
 
         // deletar um serviço

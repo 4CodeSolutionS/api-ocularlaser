@@ -1,7 +1,7 @@
 import { IUsersRepository } from "@/repositories/interface-users-repository";
+import { AppError } from "@/usecases/errors/app-error";
 import { User } from "@prisma/client";
 import 'dotenv/config'
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 
 interface IRequestFindUser {
    id: string
@@ -23,7 +23,7 @@ export class FindUserUseCase{
 
         // validar se usuario existe
         if(!findUserExist){
-            throw new ResourceNotFoundError()
+            throw new AppError('Usuário não encontrado', 404)
         }
 
         // retornar usuario

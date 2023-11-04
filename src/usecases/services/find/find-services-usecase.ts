@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { IServiceRepository } from "@/repositories/interface-services-respository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { Service } from '@prisma/client';
+import { AppError } from '@/usecases/errors/app-error';
 
 interface IRequestFindService {
     id: string
@@ -24,7 +24,7 @@ export class FindServiceUseCase{
 
         // validar se existe uma service
         if(!findServiceExists){
-            throw new ResourceNotFoundError()
+            throw new AppError('Serviço não encontrado', 404)
         }
 
         // retornar service

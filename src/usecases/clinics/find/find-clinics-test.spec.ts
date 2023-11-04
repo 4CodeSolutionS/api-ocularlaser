@@ -1,18 +1,20 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryAddressesRepository } from "@/repositories/in-memory/in-memory-addresses-repository";
 import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-clinics-repository";
-import { Clinic } from "@prisma/client";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { FindClinicUseCase } from "./find-clinics-usecase";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let addressInMemoryRepository: InMemoryAddressesRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let stu: FindClinicUseCase;
 
 describe("Find clinic (unit)", () => {
     beforeEach(async () => {
         addressInMemoryRepository = new InMemoryAddressesRepository()
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         stu = new FindClinicUseCase(
             clinicRepositoryInMemory, 
         )
@@ -52,6 +54,6 @@ describe("Find clinic (unit)", () => {
         
         await expect(()=> stu.execute({
             id: fakeId
-        })). rejects.toBeInstanceOf(ResourceNotFoundError)
+        })). rejects.toEqual(new AppError('Clinica não encontrada', 404))
      });
 })

@@ -1,4 +1,3 @@
-import { ServiceAlreadyExistsError } from '@/usecases/errors/service-already-exists-error'
 import { makeCreateService } from '@/usecases/factories/services/make-create-services-usecases'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -28,9 +27,6 @@ export async function CreateService (request: FastifyRequest, reply:FastifyReply
             return reply.status(201).send(service)
             
           } catch (error) {
-            if(error instanceof ServiceAlreadyExistsError){
-                return reply.status(409).send({error: error.message})
-            }
             throw error
           }
 }

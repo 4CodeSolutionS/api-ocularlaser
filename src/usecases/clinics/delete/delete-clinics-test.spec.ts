@@ -3,16 +3,19 @@ import { InMemoryAddressesRepository } from "@/repositories/in-memory/in-memory-
 import { InMemoryClinicRepository } from "@/repositories/in-memory/in-memory-clinics-repository";
 import { DeleteClinicUseCase } from "./delete-clinics-usecase";
 import { Clinic } from "@prisma/client";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let addressInMemoryRepository: InMemoryAddressesRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let stu: DeleteClinicUseCase;
 
 describe("Delete clinic (unit)", () => {
     beforeEach(async () => {
         addressInMemoryRepository = new InMemoryAddressesRepository()
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         stu = new DeleteClinicUseCase(
             clinicRepositoryInMemory, 
         )
@@ -50,6 +53,6 @@ describe("Delete clinic (unit)", () => {
         
         await expect(()=> stu.execute({
             id: fakeId
-        })). rejects.toBeInstanceOf(ResourceNotFoundError)
+        })). rejects.toEqual(new AppError('Clinica não encontrada',404))
      });
 })

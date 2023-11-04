@@ -4,10 +4,11 @@ import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-user
 import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-services-repository";
 import { InMemoryServiceExecutedRepository } from "@/repositories/in-memory/in-memory-services-executeds-respository";
 import { hash } from "bcrypt";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { ListServicesExecutedByUserUseCases } from "./list-by-user-services-executeds-usecases";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
 import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let cardRepositoryInMemory: InMemoryCardRepository;
 let clinicRepositoryInMemory: InMemoryClinicRepository;
@@ -15,13 +16,15 @@ let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let stu: ListServicesExecutedByUserUseCases;
 
 describe("List service executed by user (unit)", () => {
     beforeEach(async () => {
         cardRepositoryInMemory = new InMemoryCardRepository()
         usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
@@ -103,6 +106,6 @@ describe("List service executed by user (unit)", () => {
         await expect(()=> stu.execute({
             page: 2,
             idUser: fakeId
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
+        })).rejects.toEqual(new AppError('Usuário não encontrado', 404))
     });
 })

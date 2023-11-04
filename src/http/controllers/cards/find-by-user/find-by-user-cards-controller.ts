@@ -1,5 +1,3 @@
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
-import { makeDeleteCard } from '@/usecases/factories/cards/make-delete-cards-usecase'
 import { makeFindCardByUser } from '@/usecases/factories/cards/make-find-by-user-cards-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'

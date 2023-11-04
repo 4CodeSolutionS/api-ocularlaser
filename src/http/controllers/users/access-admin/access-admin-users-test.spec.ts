@@ -148,7 +148,6 @@ describe('Acess Admin User (e2e)', ()=>{
             idUser: user.id,
             key
         })
-
-        expect(responseAccessAdmin.statusCode).toEqual(401)
+        expect(responseAccessAdmin.statusCode).toEqual(400)
     })
 })

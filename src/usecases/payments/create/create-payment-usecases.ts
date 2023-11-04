@@ -201,7 +201,6 @@ export class CreatePaymentUseCase{
 
             // filtrar token do cartão
             const cardToken = cardFormat.find(card => card.idUser === findUser.id) 
-            console.log(cardToken)
             if(cardToken?.tokenCardAsaas){
                 if(!creditCard){
                     throw new AppError('Credenciais inválidas', 400)

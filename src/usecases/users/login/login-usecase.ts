@@ -2,8 +2,7 @@ import { env } from "@/env";
 import { IDateProvider } from "@/providers/DateProvider/interface-date-provider";
 import { ITokensRepository } from "@/repositories/interface-tokens-repository";
 import { IUsersRepository } from "@/repositories/interface-users-repository";
-import { CredentialsInvalidError } from "@/usecases/errors/credentials-invalid-error";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
+import { AppError } from "@/usecases/errors/app-error";
 import { Role, User } from "@prisma/client";
 import { compare } from "bcrypt";
 import 'dotenv/config'
@@ -32,13 +31,13 @@ export class LoginUseCase{
     }:IRequestLoginAccount):Promise<IResponseLoginAccount>{
         const findUserExists = await this.usersRepository.findByEmail(email)
         if(!findUserExists){
-            throw new CredentialsInvalidError()
+            throw new AppError('Credenciais inválidas', 401)
         }
         // comparar senha
         const passwordMatch = await compare(password, findUserExists.password)
 
         if(!passwordMatch){
-            throw new CredentialsInvalidError()
+            throw new AppError('Credenciais inválidas', 401)
         }
         // Criar access token
         const accessToken = jwt.sign({role: findUserExists.role as Role}, env.JWT_SECRET_ACCESS_TOKEN, {
@@ -65,7 +64,7 @@ export class LoginUseCase{
         const user = await this.usersRepository.getUserSecurity(findUserExists.id)
         
         if(!user){
-            throw new ResourceNotFoundError()
+            throw new AppError('Usuário não encontrado', 404)
         }
 
         return {

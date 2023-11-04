@@ -97,7 +97,7 @@ describe('Create Payments (e2e)', ()=>{
         expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test.skip('should be able to create payment credit_card installment', async()=>{
+    test('should be able to create payment credit_card installment', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -181,7 +181,7 @@ describe('Create Payments (e2e)', ()=>{
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test.skip('should be able to create payment pix', async()=>{
+    test('should be able to create payment pix', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -248,7 +248,7 @@ describe('Create Payments (e2e)', ()=>{
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test.skip('should be able to create payment boleto', async()=>{
+    test('should be able to create payment boleto', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -315,7 +315,7 @@ describe('Create Payments (e2e)', ()=>{
          expect(responseCreateService.statusCode).toEqual(201)
     }, 100000)
 
-    test.skip('should not be able to create payment with customer invalid', async()=>{
+    test('should not be able to create payment with customer invalid', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -382,7 +382,7 @@ describe('Create Payments (e2e)', ()=>{
          expect(responseCreatePayment.statusCode).toEqual(400)
     }, 100000)
 
-    test.skip('should not be able to create payment with credit_card invalid', async()=>{
+    test('should not be able to create payment with credit_card invalid', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',
@@ -466,7 +466,7 @@ describe('Create Payments (e2e)', ()=>{
          expect(responseCreatePayment.statusCode).toEqual(400)
     }, 100000)
 
-    test.skip('should not be able to payout payment already exists to same service executed', async()=>{
+    test('should not be able to payout payment already exists to same service executed', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
             'ADMIN',

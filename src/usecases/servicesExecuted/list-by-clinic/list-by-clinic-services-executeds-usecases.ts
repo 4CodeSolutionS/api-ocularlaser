@@ -1,7 +1,7 @@
 import { IClinicsRepository } from "@/repositories/interface-clinics-repository";
 import { IServiceExecutedRepository } from "@/repositories/interface-services-executeds-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { IServiceExecutedFormmated, ListServiceExecutedMapper } from "../mappers/list-service-executed-mapper";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestListServicesExecutedUseCases{
     idClinic: string;
@@ -23,7 +23,7 @@ export class ListServicesExecutedByClinicUseCases {
 
     // validar se clinica existe pelo id
     if(!findClinicExists){
-        throw new ResourceNotFoundError()
+        throw new AppError('Clinica não encontrada', 404)
     }
 
     const servicesExecuteds = await this.servicesExecutedRepository.listByClinicId(idClinic, page);

@@ -1,8 +1,8 @@
 import { IServiceExecutedRepository } from "@/repositories/interface-services-executeds-repository";
 import { IUsersRepository } from "@/repositories/interface-users-repository";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { ServiceExecuted } from "@prisma/client";
 import { IServiceExecutedFormmated, ListServiceExecutedMapper } from "../mappers/list-service-executed-mapper";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestListServicesExecutedUseCases{
     idUser: string;
@@ -29,7 +29,7 @@ export class ListServicesExecutedByUserUseCases {
 
     // validar se usuario existe pelo id
     if(!findUserExist){
-        throw new ResourceNotFoundError()
+        throw new AppError('Usuário não encontrado', 404)
 }
     const servicesExecuteds = await this.servicesExecutedRepository.listByUserId(idUser, page);
 

@@ -89,7 +89,7 @@ describe('Update User (e2e)', ()=>{
             cpf: '102.222.333-77',
         })
             
-        expect(response.statusCode).toEqual(401)
+        expect(response.statusCode).toEqual(400)
     })
 
     test('should not be able to update a user with Email alredy exists', async()=>{
@@ -120,7 +120,7 @@ describe('Update User (e2e)', ()=>{
             phone: '11999999999',
             cpf: '102.222.333-99',
         })
-            
+
         expect(response.statusCode).toEqual(409)
     })
   

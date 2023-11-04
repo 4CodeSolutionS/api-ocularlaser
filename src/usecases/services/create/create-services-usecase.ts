@@ -1,7 +1,7 @@
 import { Category, Service } from "@prisma/client";
 import 'dotenv/config'
 import { IServiceRepository } from "@/repositories/interface-services-respository";
-import { ServiceAlreadyExistsError } from "@/usecases/errors/service-already-exists-error";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IRequestCreateService {
     name: string
@@ -28,7 +28,7 @@ export class CreateServiceUseCase{
 
         // validar se existe uma service com o mesmo nome
         if(serviceAlreadyExists){
-            throw new ServiceAlreadyExistsError()
+            throw new AppError('Já existe uma serviço com esse nome', 409)
         }
 
         //criar a service

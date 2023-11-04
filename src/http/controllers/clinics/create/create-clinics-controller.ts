@@ -1,4 +1,3 @@
-import { ClinicAlreadyExistsError } from '@/usecases/errors/clinic-already-exists-error'
 import { makeCreateClinic } from '@/usecases/factories/clinics/make-create-clinic-usecase'
 import { Prisma } from '@prisma/client'
 import { FastifyReply, FastifyRequest } from 'fastify'
@@ -56,9 +55,6 @@ export async function CreateClinic (request: FastifyRequest, reply:FastifyReply)
             return reply.status(201).send(clinic)
             
           } catch (error) {
-            if(error instanceof ClinicAlreadyExistsError){
-                return reply.status(409).send({error: error.message})
-            }
             throw error
           }
 }

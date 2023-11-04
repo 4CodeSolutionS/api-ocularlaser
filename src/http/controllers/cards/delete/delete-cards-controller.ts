@@ -1,6 +1,4 @@
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { makeDeleteCard } from '@/usecases/factories/cards/make-delete-cards-usecase'
-import { makeDeleteService } from '@/usecases/factories/services/make-delete-services-usecases'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

@@ -5,10 +5,11 @@ import { InMemoryServicesRepository } from "@/repositories/in-memory/in-memory-s
 import { InMemoryServiceExecutedRepository } from "@/repositories/in-memory/in-memory-services-executeds-respository";
 import { hash } from "bcrypt";
 import { InMemoryMailProvider } from "@/providers/MailProvider/in-memory/in-memory-mail-provider";
-import { ResourceNotFoundError } from "@/usecases/errors/resource-not-found-error";
 import { ListServicesExecutedByClinicUseCases } from "./list-by-clinic-services-executeds-usecases";
 import { InMemoryPaymentRepository } from "@/repositories/in-memory/in-memory-payments-respository";
 import { InMemoryCardRepository } from "@/repositories/in-memory/in-memory-cards-repository";
+import { InMemoryDiscountCounponsRepository } from "@/repositories/in-memory/in-memory-discount-coupons-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 let cardRepositoryInMemory: InMemoryCardRepository;
 let mailProviderInMemory: InMemoryMailProvider;
@@ -16,6 +17,7 @@ let clinicRepositoryInMemory: InMemoryClinicRepository;
 let serviceRepositoryInMemory: InMemoryServicesRepository;
 let usersRepositoryInMemory: InMemoryUsersRepository;
 let serviceExecutedRepositoryInMemory: InMemoryServiceExecutedRepository;
+let discountCouponRepositoryInMemory: InMemoryDiscountCounponsRepository;
 let paymentRepositoryInMemory: InMemoryPaymentRepository;
 let stu: ListServicesExecutedByClinicUseCases;
 
@@ -24,7 +26,8 @@ describe("List service executed by clinic (unit)", () => {
         cardRepositoryInMemory = new InMemoryCardRepository()
         mailProviderInMemory = new InMemoryMailProvider()
         usersRepositoryInMemory = new InMemoryUsersRepository(cardRepositoryInMemory)
-        clinicRepositoryInMemory = new InMemoryClinicRepository()
+        discountCouponRepositoryInMemory = new InMemoryDiscountCounponsRepository()
+        clinicRepositoryInMemory = new InMemoryClinicRepository(discountCouponRepositoryInMemory)
         serviceRepositoryInMemory = new InMemoryServicesRepository()
         paymentRepositoryInMemory = new InMemoryPaymentRepository()
         serviceExecutedRepositoryInMemory = new InMemoryServiceExecutedRepository(
@@ -107,6 +110,6 @@ describe("List service executed by clinic (unit)", () => {
         await expect(()=> stu.execute({
             page: 2,
             idClinic: fakeId
-        })).rejects.toBeInstanceOf(ResourceNotFoundError)
+        })).rejects.toEqual(new AppError('Clinica não encontrada', 404))
     });
 })

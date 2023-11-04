@@ -1,4 +1,3 @@
-import { ResourceNotFoundError } from '@/usecases/errors/resource-not-found-error'
 import { makeFindService } from '@/usecases/factories/services/make-find-services-usecases'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -22,9 +21,6 @@ export async function FindService (request: FastifyRequest, reply:FastifyReply){
             return reply.status(200).send(service)
             
           } catch (error) {
-            if(error instanceof ResourceNotFoundError){
-                return reply.status(404).send({error: error.message})
-            }
             throw error
           }
 }
