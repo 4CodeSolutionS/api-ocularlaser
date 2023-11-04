@@ -41,6 +41,7 @@ export class EventsWebHookPaymentsUseCases{
         event,
         payment
     }:IRequestReceiveEvent):Promise<any>{
+        console.log(payment)
         //[x] verifica se o evento é de pagamento é "PAYMENT_REPROVED_BY_RISK_ANALYSIS"
         if(event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_REPROVED_BY_RISK_ANALYSIS'){ 
             throw new AppError('Evento nao autorizado')
