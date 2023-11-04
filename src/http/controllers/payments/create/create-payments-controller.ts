@@ -25,6 +25,7 @@ export async function CreatePayment (request: FastifyRequest, reply:FastifyReply
                     addressComplement: z.string().nonempty(),
                     phone: z.string().nonempty()
                 }).optional(),
+                coupon: z.string().optional(),
                 installmentCount: z.number().int().nonnegative().optional(),
                 installmentValue: z.number().int().nonnegative().optional(),
             })
@@ -33,6 +34,7 @@ export async function CreatePayment (request: FastifyRequest, reply:FastifyReply
             const { 
                 billingType,
                 creditCard,
+                coupon,
                 creditCardHolderInfo,
                 installmentCount,
                 installmentValue,
@@ -46,6 +48,7 @@ export async function CreatePayment (request: FastifyRequest, reply:FastifyReply
             const {payment} = await createPaymentUseCase.execute({
                 creditCard,
                 creditCardHolderInfo,
+                coupon,
                 installmentCount,
                 installmentValue,
                 remoteIp: remoteIpParsed,

@@ -143,7 +143,6 @@ export class EventsWebHookPaymentsUseCases{
         //     null,
         //     templatePathAdmin, 
         //     null)
-        console.log(payment)
         if(!payment.creditCard){
             return {
                 payment: createPaymentApproved

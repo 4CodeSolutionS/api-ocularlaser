@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { Card, PaymentMethod } from '@prisma/client';
+import { Card, Clinic, DiscountCoupon, PaymentMethod } from '@prisma/client';
 import { IUsersRepository } from '@/repositories/interface-users-repository';
 import { IAsaasProvider } from '@/providers/PaymentProvider/interface-asaas-payment';
 import { IDateProvider } from '@/providers/DateProvider/interface-date-provider';
@@ -12,6 +12,10 @@ import { decryptingData } from '@/utils/decrypting-data';
 import { compare, hash } from 'bcrypt';
 import { AppError } from '@/usecases/errors/app-error';
 
+export interface IClinic{
+    id: string
+    discountCoupons: string[]
+}
 export interface IAsaasPayment {
     id: string
     status: string
@@ -25,6 +29,11 @@ export interface IAsaasPayment {
     externalReference: string
     paymentDate: string
     dueDate: string
+    discount?: {
+        value: number
+        dueDateLimitDays: number
+        type: string
+    }
     creditCard?: {
         creditCardBrand: string
     }
@@ -55,6 +64,7 @@ interface IRequestCreatePayment {
         addressComplement: string
         phone: string
     },
+    coupon?: string
     remoteIp: string
 
 }
@@ -76,6 +86,7 @@ export class CreatePaymentUseCase{
     async execute({
         idServiceExecuted,
         billingType,
+        coupon,
         creditCard,
         creditCardHolderInfo,
         installmentCount,
@@ -86,23 +97,49 @@ export class CreatePaymentUseCase{
         const findPaymentExists = await this.paymentRepository.findByIdServiceExecuted(idServiceExecuted)
         // validar se existe um payment
         if(findPaymentExists){
-            throw new AppError('Pagamento ja foi realizado')
+            throw new AppError('Pagamento ja foi realizado', 400)
         }
         // buscar se existe uma service executed pelo id
         const findServiceExecutedExists = await this.serviceExecutedRepository.findById(idServiceExecuted) as unknown as IServiceExecutedFormmated
         // validar se existe uma service excuted
         if(!findServiceExecutedExists){
-            throw new AppError('Serviço Executado não encontrado')
+            throw new AppError('Serviço Executado não encontrado', 404)
         }
         //[x] desestruturar user do findServiceExecutedExists
-        const { user } = findServiceExecutedExists
+        const { user, clinic } = findServiceExecutedExists
+        const formatClinic = clinic as unknown as IClinic
+
+        // variavel para armazenar o valor do desconto
+        let discountValue = 0
+
+        // validar se o cupom é valido caso existir
+        if(coupon){
+            for(let couponObject of formatClinic.discountCoupons){
+                const formatCoupon = couponObject as unknown as DiscountCoupon
+    
+    
+                if(formatCoupon.code !== coupon){
+                    throw new AppError('Cupom inválido', 400)
+                }
+    
+                let currentDate = new Date()
+    
+                const isValidCoupon = this.dateProvider.compareIfBefore(currentDate, formatCoupon.expireDate)   
+    
+                if(!isValidCoupon){
+                    throw new AppError('Cupom inválido', 400)
+                }
+    
+                discountValue = Number(formatCoupon.discount)
+            }
+        }
 
         // buscar usuario pelo id
         const findUser = await this.usersRepository.findById(user.id)
 
         // validar se existe um usuario
         if(!findUser){
-            throw new AppError('Usuário não encontrado')
+            throw new AppError('Usuário não encontrado', 404)
         }
 
         // variavel para armazenar o id do cliente no asaas
@@ -119,7 +156,7 @@ export class CreatePaymentUseCase{
                 phone: user.phone,
             })
             if(!createCustomer){
-                throw new AppError('Error ao criar cliente')
+                throw new AppError('Error ao criar cliente', 400)
             }
            const customer =  await this.usersRepository.updateIdCostumerPayment(findUser.id, createCustomer.id as string)
            newCustomer = String(customer.idCostumerAsaas)
@@ -138,10 +175,15 @@ export class CreatePaymentUseCase{
                 value: Number(findServiceExecutedExists.price),
                 description: findServiceExecutedExists.service.name,
                 externalReference: findServiceExecutedExists.id,
+                discount:{
+                    value: discountValue ? discountValue : 0,
+                    dueDateLimitDays: 0,
+                    type: 'PERCENTAGE'
+                },
                 remoteIp: String(remoteIp),
             }) as IAsaasPayment
             if(!payment){
-                throw new AppError('Error ao criar pagamento')
+                throw new AppError('Error ao criar pagamento', 400)
             }
             return {
                 payment,
@@ -160,14 +202,14 @@ export class CreatePaymentUseCase{
             if(cardFormat.length === 1 ){
                 
                 if(!creditCard){
-                    throw new AppError('Credenciais inválidas')
+                    throw new AppError('Credenciais inválidas', 400)
                 }
     
                 // filtrar token do cartão
                   const cardToken = cardFormat.find(card => card.idUser === findUser.id) 
 
                   if(!cardToken){
-                    throw new AppError('Error ao buscar usuário')
+                    throw new AppError('Error ao buscar usuário', 400)
                   }
 
                   // descriptografar dados token
@@ -178,7 +220,7 @@ export class CreatePaymentUseCase{
   
                   // validar se ccv é valido
                   if(!isValidCCV){
-                      throw new AppError('Credenciais inválidas')
+                      throw new AppError('Credenciais inválidas', 400)
                   }
   
                   const payment = await this.asaasProvider.createPayment({
@@ -212,11 +254,11 @@ export class CreatePaymentUseCase{
                 remoteIp: String(remoteIp),
             }) as IAsaasPayment
             if(!payment){
-                throw new AppError('Error ao criar pagamento')
+                throw new AppError('Error ao criar pagamento', 400)
             }
             let criptData = []
             if(!creditCard){
-                throw new AppError('Credenciais inválidas')
+                throw new AppError('Credenciais inválidas', 400)
             }
 
             const {number} = creditCard
@@ -258,7 +300,7 @@ export class CreatePaymentUseCase{
         }) as IAsaasPayment
 
         if(!payment){
-            throw new AppError('Error ao criar pagamento')
+            throw new AppError('Error ao criar pagamento', 400)
         }
         return {
             payment,

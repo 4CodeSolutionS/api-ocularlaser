@@ -44,6 +44,7 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
 
         return servicesExecuted
     }
+
     async getterPriceAsNumber(id: string){
         const serviceExecuted = await prisma.serviceExecuted.findUnique({
             where: {
@@ -256,7 +257,13 @@ export class PrismaServicesExecutedsRepository implements IServiceExecutedReposi
                         gender: true,
                     }
                 },
-                clinic: true,
+                clinic: {
+                    select:{
+                        name: true,
+                        discountCoupons: true,
+                        address: true,
+                    }
+                },
                 payment: true,
                 exams: {
                     select:{
