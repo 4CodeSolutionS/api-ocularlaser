@@ -12,7 +12,7 @@ export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, re
                     installment: z.string().optional(),
                     value: z.number().nonnegative(),
                     netValue: z.number().nonnegative(),
-                    originalValue: z.coerce.number().optional(),
+                    originalValue: z.number().nullable().optional(),
                     description: z.string().optional(),
                     externalReference: z.string().nonempty(),
                     billingType: z.string().nonempty(),
