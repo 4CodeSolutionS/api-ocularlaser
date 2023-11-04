@@ -51,7 +51,7 @@ export async function EventsWebHookPaymentsUseCases (request: FastifyRequest, re
                     customer,
                     value,
                     netValue,
-                    originalValue,
+                    originalValue: originalValue ? originalValue : undefined,
                     invoiceUrl,
                     externalReference,
                     paymentDate,
