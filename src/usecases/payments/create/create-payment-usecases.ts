@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { Card, Clinic, DiscountCoupon, PaymentMethod } from '@prisma/client';
+import { Card, DiscountCoupon, PaymentMethod } from '@prisma/client';
 import { IUsersRepository } from '@/repositories/interface-users-repository';
 import { IAsaasProvider } from '@/providers/PaymentProvider/interface-asaas-payment';
 import { IDateProvider } from '@/providers/DateProvider/interface-date-provider';
@@ -229,7 +229,7 @@ export class CreatePaymentUseCase{
                         value: discountValue ? discountValue : 0,
                         dueDateLimitDays: 0,
                         type: 'PERCENTAGE'
-                      },
+                    },
                       externalReference: findServiceExecutedExists.id,
                       remoteIp: String(remoteIp),
                   }) as IAsaasPayment
