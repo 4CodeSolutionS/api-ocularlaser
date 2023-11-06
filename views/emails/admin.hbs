@@ -2,44 +2,35 @@
 <html lang="en">
 <head>
     <style>
+       body{
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+        }
         .container{
-        font-family: Arial, Helvetica, sans-serif; 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
-    .content{
-        width: 400px
-    }
-    img{
-        display: block;
-    }
-    span{
-        margin: 10px 0px;
-        display: block;
-    }
-    p{
-        text-align: justify;
-        line-height: 1.6;
-    }
+            font-family: Arial, Helvetica, sans-serif; 
+        }
+        #content{
+            width: 25rem;
+            color: black;
+        }
+        img{
+            display: block;
+        }
+        span{
+            margin: 1rem 0px;
+            display: block;
+        }
+        p{
+            text-align: justify;
+            line-height: 1.6;
+        }
 
-    a{
-        background-color: #1978b9;
-        padding: 13px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: #ffff;
-        font-weight: bold;
-        margin: 1rem 0px;
-        display: block;
-        width: 7rem;
-        text-align: center;
-
-    }
-    a:hover{
-        background-color: #1e88e5;
-    }
+        @media (max-width: 576px) {
+            #content{
+            width: 20rem;
+            }
+        }
 
     </style>
 </head>
@@ -49,21 +40,16 @@
             <img src="https://i.imgur.com/4UOQkue.jpeg" alt="logo ocular-laser">
         </span>
 
-        <div class="content">
-            <span>Olá Equipe Admnistrativa,</span>
+        <div id="content">
+            <span>
+                <p>
+                    Prezado(a) {{name}}, Gostaria de informar que recebemos o pagamento do cliente {{serviceExecuted.name}} referente à cirurgia agendada. Abaixo estão os detalhes:
+                </p>
+            </span>
 
-            <span>Gostaríamos de informar {{serviceExecuted.serviceMessage}} abaixo foi executado com sucesso na clínica. Abaixo estão os detalhes:</span>
-
-            <span>Nome do Paciente: {{serviceExecuted.name}}</span>
-            <span>E-mail: {{serviceExecuted.email}}</span>
-            <span>Serviço: {{serviceExecuted.service}}</span>
-            <span>Clínica: {{serviceExecuted.clinic}}</span>
-            <span>Data: {{serviceExecuted.date}}</span>
-            <span>Data de Pagamento: {{serviceExecuted.dataPayment}}</span>
-            <span>Preço: {{serviceExecuted.price}}</span>
-
-            <span>Atenciosamente,</span>
-            <span>{{serviceExecuted.clinic}}</span>
+            <span>- Valor Pago: {{serviceExecuted.price}}</span>
+            {{!-- <span>- Data da Cirurgia: {{serviceExecuted.datePayment}}</span>
+            <span>- Horário da Cirurgia: {{serviceExecuted.hours}}</span> --}}
         </div>
     </div>
 </body>
