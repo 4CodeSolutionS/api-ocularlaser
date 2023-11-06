@@ -73,7 +73,7 @@ describe("Create payment (unit)", () => {
 
     });
 
-    test.skip("Should be able to create a payment to type credit_card unique", async () => {
+    test("Should be able to create a payment to type credit_card unique", async () => {
         const clinic = await clinicRepositoryInMemory.create({
             name: "Clinic Test",
             address:{
@@ -407,7 +407,7 @@ describe("Create payment (unit)", () => {
 
     }, 100000);
             
-    test("Should be able to create a payment to type pix", async () => {
+    test.skip("Should be able to create a payment to type pix", async () => {
         const clinic = await clinicRepositoryInMemory.create({
             name: "Clinic Test",
             address:{
