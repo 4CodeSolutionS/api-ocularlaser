@@ -48,7 +48,8 @@ export class InMemoryPaymentRepository implements IPaymentsRepository{
         paymentStatus,
         invoiceUrl,
         value,
-        netValue        
+        netValue,
+        discount       
     }: Prisma.PaymentUncheckedCreateInput){
         const payment = {
             id: id ? id : randomUUID(),
@@ -58,6 +59,7 @@ export class InMemoryPaymentRepository implements IPaymentsRepository{
             datePayment: datePayment ? new Date(datePayment as string) : null,
             value: new Prisma.Decimal(value as number),
             netValue: new Prisma.Decimal(netValue as number),
+            discount: discount ? new Prisma.Decimal(discount as number) : null,
             installmentValue: installmentValue ? new Prisma.Decimal(installmentValue as number) : null,
             installmentCount: installmentCount ? new Prisma.Decimal(installmentCount as number) : null,
             paymentStatus: paymentStatus as Status,

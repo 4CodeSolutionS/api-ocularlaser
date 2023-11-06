@@ -156,6 +156,7 @@ model Payment {
   paymentStatus     Status
   value             Decimal
   netValue          Decimal
+  discount          Decimal?
 
   datePayment DateTime?
 

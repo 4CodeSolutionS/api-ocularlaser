@@ -94,6 +94,7 @@ export class EventsWebHookPaymentsUseCases{
                 invoiceUrl: payment.invoiceUrl,
                 value: findServiceExecuted.price,
                 netValue: new Prisma.Decimal(payment.netValue),
+                discount: payment.originalValue ? new Prisma.Decimal(payment.originalValue - payment.netValue) : null, 
                 datePayment: payment.paymentDate ? new Date(payment.paymentDate) : undefined
             })
             //[x] criar variavel com caminho do templeate de email de pagamento reprovado
@@ -121,6 +122,7 @@ export class EventsWebHookPaymentsUseCases{
             invoiceUrl: payment.invoiceUrl,
             value: findServiceExecuted.price,
             netValue: new Prisma.Decimal(payment.netValue),
+            discount: payment.originalValue ? new Prisma.Decimal(payment.originalValue - payment.netValue) : null,
             datePayment: payment.paymentDate ? new Date(payment.paymentDate) : undefined
         })
         
