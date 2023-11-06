@@ -24,7 +24,6 @@ export class AsaasProvider implements IAsaasProvider {
    
     async createPayment(data: IChargeData){
         try {
-            console.log(data)
             const responseCreatePayment = await axios.post(`${process.env.ASAAS_API_URL}/payments`, data, {
                 headers: {
                     'Content-Type': 'application/json',
