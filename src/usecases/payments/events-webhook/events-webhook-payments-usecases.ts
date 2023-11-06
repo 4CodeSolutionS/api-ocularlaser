@@ -97,15 +97,16 @@ export class EventsWebHookPaymentsUseCases{
                 datePayment: payment.paymentDate ? new Date(payment.paymentDate) : undefined
             })
             //[x] criar variavel com caminho do templeate de email de pagamento reprovado
-            // const templatePathPacient = './views/emails/payment-reproved.hbs'
-            //  //[x] enviar email para o usuario informando que o pagamento foi reprovado
-            // await this.mailProvider.sendEmail(
-            //     'kaio-dev@outlook.com', 
-            //     'Kaio Moreira', 
-            //     'Pagamento Reprovado', 
-            //     null,
-            //     templatePathPacient, 
-            //     null)
+            const templatePathPacient = './views/emails/payment-reproved.hbs'
+             
+            //[x] enviar email para o usuario informando que o pagamento foi reprovado
+            await this.mailProvider.sendEmail(
+                findServiceExecuted.user.email, 
+                findServiceExecuted.user.name, 
+                'Reprovação de Pagamento', 
+                null,
+                templatePathPacient, 
+                null)
             return createPaymentReproved;
         }
         //[x] criar pagamento APPROVED no banco de dados com os dados recebidos
@@ -124,26 +125,33 @@ export class EventsWebHookPaymentsUseCases{
         })
         
         //[x] criar variavel com caminho do template de email
-        const templatePathPacient = './views/emails/payment-confirmed.hbs'
+        const templatePathPacient = './views/emails/payment-approved.hbs'
         const templatePathAdmin = './views/emails/admin.hbs'
        
         //[x]* disparar envio de email de pagamento recebido do usuário com nota fiscal(invoice)
-        // const sendInvoiceToUser = await this.mailProvider.sendEmail(
-        //     'kaio-dev@outlook.com', 
-        //     'Kaio Moreira', 
-        //     'Pagamento Confirmado', 
-        //     payment.invoiceUrl,
-        //     templatePathPacient, 
-        //     null)
+        const sendInvoiceToCustomer = await this.mailProvider.sendEmail(
+            findServiceExecuted.user.email, 
+            findServiceExecuted.user.name, 
+            'Aprovação de Pagamento', 
+            null,
+            templatePathPacient, 
+            null)
 
         //[]* disparar envio de email de pagamento recebido para o admin com comprovante(payment - banco de dados API)
         // const sendInvoiceToUser = await this.mailProvider.sendEmail(
-        //     'kaio-dev@outlook.com', 
-        //     findUserByCostumer.name, 
-        //     'Pagamento Confirmado', 
+        //     'email admin', 
+        //     'name admin', 
+        //     'Mensagem para administradores', 
         //     null,
         //     templatePathAdmin, 
-        //     null)
+        //     {
+        //         name: findServiceExecuted.user.name,
+        //         price: findServiceExecuted.price,
+        //         date: payment.paymentDate,
+        //         hours,
+
+        //     }
+        // )
         if(!payment.creditCard){
             return {
                 payment: createPaymentApproved

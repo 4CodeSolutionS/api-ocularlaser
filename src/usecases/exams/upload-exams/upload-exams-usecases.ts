@@ -59,6 +59,8 @@ export class CreateExamsUseCase{
         // retornar lista de urls relacionadas ao service executado 
         const exams = await this.examRepository.listByServiceExecutedId(idServiceExecuted) as string[]
 
+        // disparar email para o doctor com exames
+
         // console.log(exams)
         // retornar lista de urls de exames
         return {

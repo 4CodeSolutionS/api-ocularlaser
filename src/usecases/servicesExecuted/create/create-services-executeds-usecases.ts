@@ -6,13 +6,11 @@ import { IUsersRepository } from "@/repositories/interface-users-repository";
 import { AppError } from "@/usecases/errors/app-error";
 
 export interface IServiceExecuted{
-    name: string;
-    email: string
-    service: string;
-    clinic: string;
-    price: number;
-    exams?: string[];
-    serviceMessage: string;
+    name?: string;
+    email?: string
+    price?: number;
+    date?: string;
+    hours?: string;
 }
 
 interface IRequestServiceExecuted{
