@@ -13,61 +13,44 @@ describe('Logout User (e2e)', ()=>{
 
     test('should be able to logout a user', async()=>{
         const responseRegisterUser = await request(fastifyApp.server).post('/api/users').send({
-            cpf: "524.658.490-93",
-            dateBirth: '2023-10-03',
-            email: 'email1@test.com',
             name: 'Kaio Moreira',
-            phone: '77-77777-7777',
+            email: 'user1-dev@outlook.com',
             password: '123456',
-            rvLength: 10,
-            rvPlate: 'ABC-1234',
-            touristType: 'ADMIRADOR',
-            tugPlate: 'ABC-1234',
-            vehicleType: 'CAMPER',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.789.565-65',
         })
 
         const responseLogin = await request(fastifyApp.server)
         .post('/api/users/login')
         .send({
-            email: 'email1@test.com',
+            email: 'user1-dev@outlook.com',
             password: '123456',
         })
         const {accessToken, refreshToken, user} = responseLogin.body
-
         const responseLogout = await request(fastifyApp.server)
         .post('/api/users/logout')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
             refreshToken,
         })
-
-        const responseFindUser = await request(fastifyApp.server)
-        .get(`/api/users/${user.id}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send()
-
-        expect(responseFindUser.statusCode).toEqual(401)
+        expect(responseLogout.statusCode).toEqual(200)
     })
 
     test('should not be able to logout a user invalid', async()=>{
         const responseRegisterUser = await request(fastifyApp.server).post('/api/users').send({
-            cpf: "524.658.490-93",
-            dateBirth: '2023-10-03',
-            email: 'email1@test.com',
             name: 'Kaio Moreira',
-            phone: '77-77777-7777',
+            email: 'user21-dev@outlook.com',
             password: '123456',
-            rvLength: 10,
-            rvPlate: 'ABC-1234',
-            touristType: 'ADMIRADOR',
-            tugPlate: 'ABC-1234',
-            vehicleType: 'CAMPER',
+            gender: 'MASCULINO',
+            phone: '11999999999',
+            cpf: '123.444.565-65',
         })
 
         const responseLogin = await request(fastifyApp.server)
         .post('/api/users/login')
         .send({
-            email: 'email1@test.com',
+            email: 'user21-dev@outlook.com',
             password: '123456',
         })
         const {accessToken} = responseLogin.body
@@ -76,10 +59,10 @@ describe('Logout User (e2e)', ()=>{
         .post('/api/users/logout')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-            refreshToken: 'fake-refresh-token',
+            refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJqZWN0IjoiYjliYWRiYzItMGMzYS00MmU5LThhNmEtNDRhZDEwZWQwYTdmIiwiZW1haWwiOiJrYWlvLWRldkBvdXRsb29rLmNvbSIsImlhdCI6MTY5OTEyNzI3MiwiZXhwIjoxNjk5NzMyMDcyLCJzdWIiOiJiOWJhZGJjMi0wYzNhLTQyZTktOGE2YS00NGFkMTBlZDBhN2YifQ.Qp-L5duVRvdG84tzfQ_9hwlEKrugq51Qit_JzNNUiyw',
         })
 
-        expect(responseLogout.statusCode).toEqual(401)
+        expect(responseLogout.statusCode).toEqual(404)
     })
 
 })

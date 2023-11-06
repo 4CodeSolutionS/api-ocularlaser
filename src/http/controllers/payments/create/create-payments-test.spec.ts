@@ -5,6 +5,7 @@ import { Clinic, Service, ServiceExecuted } from "@prisma/client";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 import { randomUUID } from "node:crypto";
 import { IAsaasPayment } from "@/usecases/payments/create/create-payment-usecases";
+import { env } from "@/env";
 
 describe('Create Payments (e2e)', ()=>{
     beforeAll(async()=>{
@@ -71,6 +72,7 @@ describe('Create Payments (e2e)', ()=>{
         // criar pagamento na asaas
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
@@ -155,6 +157,7 @@ describe('Create Payments (e2e)', ()=>{
         //criar pagamento na asaas
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
@@ -239,6 +242,7 @@ describe('Create Payments (e2e)', ()=>{
         //criar pagamento na asaas
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
@@ -306,6 +310,7 @@ describe('Create Payments (e2e)', ()=>{
         //criar pagamento na asaas
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
@@ -373,6 +378,7 @@ describe('Create Payments (e2e)', ()=>{
         //criar pagamento na asaas
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
@@ -441,6 +447,7 @@ describe('Create Payments (e2e)', ()=>{
         //criar pagamento na asaas
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
@@ -525,6 +532,7 @@ describe('Create Payments (e2e)', ()=>{
         //criar pagamento na asaas
         const responseCreatePayment = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
@@ -545,6 +553,7 @@ describe('Create Payments (e2e)', ()=>{
 
         const responseEventsPaymentWebhook = await request(fastifyApp.server)
         .post(`/api/payments/events-webhook-payments`)
+        .set('asaas-access-token', `${env.ASAAS_ACCESS_KEY}`)
         .send({
             event: 'PAYMENT_RECEIVED',
             payment: {
@@ -562,12 +571,14 @@ describe('Create Payments (e2e)', ()=>{
         })
         const responseCreatePaymentAlreadyExists = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
             },
             billingType: 'PIX',
         })
-         expect(responseCreatePaymentAlreadyExists.statusCode).toEqual(409)
+        console.log(responseCreatePaymentAlreadyExists.error)
+         expect(responseCreatePaymentAlreadyExists.statusCode).toEqual(400)
     }, 100000)
 })

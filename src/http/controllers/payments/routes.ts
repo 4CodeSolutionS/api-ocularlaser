@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { EventsWebHookPaymentsUseCases } from "./events-webhook/events-webhook-payments-controller";
 import { CreatePayment } from "./create/create-payments-controller";
 import { verifyAsaasToken } from "@/http/middlewares/verify-token-asaas";
+import { verifyTokenJWT } from "@/http/middlewares/verify-token-jwt";
 
 export async function paymentsRoutes(fastifyApp: FastifyInstance){
     // receive events payments
@@ -10,5 +11,7 @@ export async function paymentsRoutes(fastifyApp: FastifyInstance){
     }, EventsWebHookPaymentsUseCases)   
 
     // create payments
-    fastifyApp.post('/', CreatePayment)
+    fastifyApp.post('/', {
+        onRequest:[verifyTokenJWT]
+    }, CreatePayment)
 }

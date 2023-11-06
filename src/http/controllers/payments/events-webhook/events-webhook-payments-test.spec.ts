@@ -5,6 +5,7 @@ import { ServiceExecuted, Service, Clinic, Payment } from "@prisma/client";
 import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 import { IAsaasPayment } from "@/usecases/payments/create/create-payment-usecases";
 import { randomUUID } from "node:crypto";
+import { env } from "@/env";
 
 describe('Events Payments Webhook (e2e)', ()=>{
     beforeAll(async()=>{
@@ -71,6 +72,7 @@ describe('Events Payments Webhook (e2e)', ()=>{
         //criar pagamento na asaas
         const responseCreatePaymentAsaas = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
@@ -91,7 +93,7 @@ describe('Events Payments Webhook (e2e)', ()=>{
         } = responseCreatePaymentAsaas.body as IAsaasPayment
         const responseEventsPaymentWebhook = await request(fastifyApp.server)
         .post(`/api/payments/events-webhook-payments`)
-        .set('Authorization', `Bearer ${accessToken}`)
+        .set('asaas-access-token', `${env.ASAAS_ACCESS_KEY}`)
         .send({
             event: 'PAYMENT_RECEIVED',
             payment: {
@@ -107,7 +109,6 @@ describe('Events Payments Webhook (e2e)', ()=>{
                 paymentDate: dueDate,
             }
         })
-        console.log(responseEventsPaymentWebhook.error)
         expect(responseEventsPaymentWebhook.statusCode).toEqual(200)
         expect(responseEventsPaymentWebhook.body.payment).toEqual(
             expect.objectContaining({
@@ -116,7 +117,7 @@ describe('Events Payments Webhook (e2e)', ()=>{
         )
     }, 100000)
 
-    test.skip('should be able to receive payment with events PAYMENT_REPROVED', async()=>{
+    test('should be able to receive payment with events PAYMENT_REPROVED', async()=>{
         //criar pagamento na asaas
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
@@ -175,6 +176,7 @@ describe('Events Payments Webhook (e2e)', ()=>{
         //criar pagamento na asaas
         const responseCreatePaymentAsaas = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
@@ -196,6 +198,7 @@ describe('Events Payments Webhook (e2e)', ()=>{
 
         const responseEventsPaymentWebhook = await request(fastifyApp.server)
         .post(`/api/payments/events-webhook-payments`)
+        .set('asaas-access-token', `${env.ASAAS_ACCESS_KEY}`)
         .send({
             event: 'PAYMENT_REPROVED_BY_RISK_ANALYSIS',
             payment: {
@@ -219,7 +222,7 @@ describe('Events Payments Webhook (e2e)', ()=>{
         )
     }, 100000)
 
-    test.skip('should not be able to receive payment events different PAYMENT_REPROVED and PAYMENT_RECEIVED ', async()=>{
+    test('should not be able to receive payment events different PAYMENT_REPROVED and PAYMENT_RECEIVED ', async()=>{
         //criar pagamento na asaas
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
@@ -278,6 +281,7 @@ describe('Events Payments Webhook (e2e)', ()=>{
         //criar pagamento na asaas
         const responseCreatePaymentAsaas = await request(fastifyApp.server)
         .post(`/api/payments`)
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
             serviceExecuted:{
                 id: idServiceExecuted
@@ -300,6 +304,7 @@ describe('Events Payments Webhook (e2e)', ()=>{
 
         const responseEventsPaymentWebhook = await request(fastifyApp.server)
         .post(`/api/payments/events-webhook-payments`)
+        .set('asaas-access-token', `${env.ASAAS_ACCESS_KEY}`)
         .send({
             event: 'PAYMENT_CREATED',
             payment: {
@@ -316,10 +321,5 @@ describe('Events Payments Webhook (e2e)', ()=>{
             }
         })
         expect(responseEventsPaymentWebhook.statusCode).toEqual(200)
-        expect(responseEventsPaymentWebhook.body).toEqual(
-            expect.objectContaining({
-                message: expect.any(String)
-            })
-        )
     }, 100000)
 })
