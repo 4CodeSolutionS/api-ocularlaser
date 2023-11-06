@@ -13,12 +13,10 @@ export async function verifyAsaasToken(
         if(!authHeader){
             throw new AppError("Token nao encontrado")
         }
-        console.log(authHeader)
-        console.log(env.ASAAS_ACCESS_KEY)
         
-        // if(env.ASAAS_ACCESS_KEY !== authHeader){
-        //     throw new AppError("Token invalido")
-        // }
+        if(!authHeader.includes(env.ASAAS_ACCESS_KEY)){
+            throw new AppError("Token invalido")
+        }
 
         //[x] se não existir o token, retorna erro
     } catch (error) {
