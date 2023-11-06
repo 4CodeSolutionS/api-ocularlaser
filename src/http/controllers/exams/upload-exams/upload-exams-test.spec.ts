@@ -99,7 +99,7 @@ describe('Upload exams (e2e)', ()=>{
         .set('Authorization', `Bearer ${accessToken}`)
         .set('Content-Type', 'multipart/form-data')
         .attach('exams', './src/tmp/exams/ocular.png')
-        .attach('exams', './src/tmp/exams/icon-javascript.png')
+        .attach('exams', './src/tmp/exams/ocular1.png')
 
         expect(responseCreateExam.statusCode).toEqual(201)
         expect(responseCreateExam.body).toHaveLength(2)
@@ -129,7 +129,7 @@ describe('Upload exams (e2e)', ()=>{
         .set('Authorization', `Bearer ${accessToken}`)
         .set('Content-Type', 'multipart/form-data')
         .attach('exams', './src/tmp/exams/ocular.png')
-        .attach('exams', './src/tmp/exams/icon-javascript.png')
+        .attach('exams', './src/tmp/exams/ocular1.png')
 
         expect(responseCreateExam.statusCode).toEqual(404)
     })
@@ -232,7 +232,7 @@ describe('Upload exams (e2e)', ()=>{
         //criar service executed
         const {accessToken: accessTokenAdmin, user: userAdmin} = await createAndAuthenticateUser(
             fastifyApp,
-            'ADMIN',
+            'SUPER',
             randomUUID(),
             'jaine@gmail.com',
             '975.614.080-13'
@@ -300,7 +300,7 @@ describe('Upload exams (e2e)', ()=>{
         .set('Authorization', `Bearer ${accessToken}`)
         .set('Content-Type', 'multipart/form-data')
         .attach('exams', './src/tmp/exams/ocular.png')
-        .attach('exams', './src/tmp/exams/icon-javascript.png')
+        .attach('exams', './src/tmp/exams/ocular1.png')
 
 
         const responseApprovedServiceExecuted = await request(fastifyApp.server)
@@ -313,9 +313,9 @@ describe('Upload exams (e2e)', ()=>{
         .set('Authorization', `Bearer ${accessToken}`)
         .set('Content-Type', 'multipart/form-data')
         .attach('exams', './src/tmp/exams/ocular.png')
-        .attach('exams', './src/tmp/exams/icon-javascript.png')
+        .attach('exams', './src/tmp/exams/ocular1.png')
 
-        expect(responseCreateExam.statusCode).toEqual(401)
+        expect(responseCreateExam.statusCode).toEqual(400)
     })
 
 })

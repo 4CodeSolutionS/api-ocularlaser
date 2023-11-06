@@ -40,13 +40,13 @@ export class RegisterUseCase{
         const findEmailAlreadyExists = await this.usersRepository.findByEmail(email)
 
         if(findEmailAlreadyExists){
-            throw new AppError('Email já cadastrado', 400)
+            throw new AppError('Email já cadastrado', 409)
         }
 
         const findCPFAlreadyExists = await this.usersRepository.findByCPF(cpf)
 
         if(findCPFAlreadyExists){
-            throw new AppError('CPF já cadastrado', 400)
+            throw new AppError('CPF já cadastrado', 409)
         }
        
         const criptingPassword = await hash(password, 8)

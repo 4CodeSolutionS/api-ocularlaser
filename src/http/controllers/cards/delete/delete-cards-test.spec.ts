@@ -33,6 +33,7 @@ describe('Delete Card (e2e)', ()=>{
                 expireDate: '12/2022',
                 name: 'User Test',
                 num: '123456789',
+                brand: 'VISA'
             }
         })
         const {accessToken, user} = await createAndAuthenticateUser(

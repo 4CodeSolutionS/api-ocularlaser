@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { Clinic, Service, ServiceExecuted } from "@prisma/client";
 import { IAsaasPayment } from "@/usecases/payments/create/create-payment-usecases";
 import { randomUUID } from "node:crypto";
+import { env } from "@/env";
 
 describe('List Service Executed by PaymentStatus (e2e)', ()=>{
     beforeAll(async()=>{
@@ -76,6 +77,7 @@ describe('List Service Executed by PaymentStatus (e2e)', ()=>{
             // criar pagamento com id do service executed
             const responseCreatePayment = await request(fastifyApp.server)
             .post(`/api/payments`)
+            .set('Authorization', `Bearer ${accessToken}`)
             .send({
                 serviceExecuted:{
                     id: idServiceExecuted
@@ -96,6 +98,7 @@ describe('List Service Executed by PaymentStatus (e2e)', ()=>{
 
         const responseEventsPaymentWebhook = await request(fastifyApp.server)
         .post(`/api/payments/events-webhook-payments`)
+        .set('asaas-access-token', `${env.ASAAS_ACCESS_KEY}`)
         .send({
             event: 'PAYMENT_RECEIVED',
             payment: {
@@ -123,6 +126,7 @@ describe('List Service Executed by PaymentStatus (e2e)', ()=>{
         expect(responseListServiceExecutedByPaymentStatus.statusCode).toEqual(200)
         expect(responseListServiceExecutedByPaymentStatus.body).toHaveLength(5)
     },10000)
+
     test('should be able to list a service executed by paymentStatus REPROVED', async()=>{
         const {accessToken, user} = await createAndAuthenticateUser(
             fastifyApp,
@@ -186,6 +190,7 @@ describe('List Service Executed by PaymentStatus (e2e)', ()=>{
             // criar pagamento com id do service executed
             const responseCreatePayment = await request(fastifyApp.server)
             .post(`/api/payments`)
+            .set('Authorization', `Bearer ${accessToken}`)
             .send({
                 serviceExecuted:{
                     id: idServiceExecuted
@@ -206,6 +211,7 @@ describe('List Service Executed by PaymentStatus (e2e)', ()=>{
 
         const responseEventsPaymentWebhook = await request(fastifyApp.server)
         .post(`/api/payments/events-webhook-payments`)
+        .set('asaas-access-token', `${env.ASAAS_ACCESS_KEY}`)
         .send({
             event: 'PAYMENT_REPROVED_BY_RISK_ANALYSIS',
             payment: {

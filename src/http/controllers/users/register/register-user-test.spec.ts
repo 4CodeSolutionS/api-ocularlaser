@@ -42,7 +42,7 @@ describe('Register User (e2e)', ()=>{
             phone: '11999999999',
             cpf: '123.789.565-65',
         })
-            
+
         expect(response.statusCode).toEqual(409)
     })
 
