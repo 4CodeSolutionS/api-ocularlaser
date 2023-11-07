@@ -3,6 +3,7 @@ import { IExamsRepository } from "@/repositories/interface-exams-repository";
 import { IServiceExecutedRepository } from "@/repositories/interface-services-executeds-repository";
 import { IStorageProvider } from '@/providers/StorageProvider/storage-provider.interface';
 import { AppError } from '@/usecases/errors/app-error';
+import { env } from '@/env';
 
 interface IRequestUploadExams {
     idServiceExecuted: string
@@ -44,7 +45,7 @@ export class CreateExamsUseCase{
             throw new AppError('Não é possível adicionar exames a um serviço aprovado', 400)
         }
 
-        const pathFolder = './src/tmp/exams'
+        const pathFolder = `${env.FOLDER_TMP_DEVELOPMENT}/exams`
         // for para percorrer o array de nomes de arquivos
         for(let listFile of fileNameExame){
             // fazer upload do exame dentro firebase através do nome do arquivo
