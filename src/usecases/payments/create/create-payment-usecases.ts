@@ -248,7 +248,7 @@ export class CreatePaymentUseCase{
                 dueDate: formatDateToString,
                 creditCard,
                 creditCardHolderInfo,
-                installmentCount: installmentCount ? Number(installmentCount) : undefined,
+                installmentCount: installmentCount ? Number(installmentCount) : null,
                 installmentValue:isValidInstallment,
                 description: findServiceExecutedExists.service.name,
                 discount:{
