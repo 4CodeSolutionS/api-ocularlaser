@@ -222,7 +222,7 @@ export class CreatePaymentUseCase{
                       customer: idCostumerPayment,
                       billingType,
                       value: Number(findServiceExecutedExists.price),
-                      dueDate: formatDateToString,
+                      dueDate: '2023-11-07',
                       creditCardToken: decrypTokenCard,
                     //   installmentCount: installmentCount ? Number(installmentCount) : 0,
                     //   installmentValue: isValidInstallment,
