@@ -15,15 +15,22 @@ import { paymentsRoutes } from "./http/controllers/payments/routes";
 import { cardsRoutes } from "./http/controllers/cards/routes";
 import { AppError } from "./usecases/errors/app-error";
 import { discountCouponRoutes } from "./http/controllers/discountCoupons/routes";
+import rateLimiter from '@fastify/rate-limit'
 
 export const fastifyApp = fastify()
 
 fastifyApp.register(fastifyCors, {
     origin: true,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 })
+
+if(env.NODE_ENV === 'production'){
+    fastifyApp.register(rateLimiter, {
+      max: 10,
+      timeWindow: '10 second'
+    })
+  }
 
 fastifyApp.register(multer.contentParser)
 
@@ -77,6 +84,10 @@ fastifyApp.setErrorHandler((error:FastifyError, _request:FastifyRequest, reply: 
 
   if(error instanceof AppError){
     return reply.status(error.statusCode).send({message: error.message})
+  }
+
+  if(error.statusCode === 429){
+    return reply.status(429).send({message: 'Muitas requisições para o mesmo IP'})
   }
 
   if(env.NODE_ENV !== 'production'){

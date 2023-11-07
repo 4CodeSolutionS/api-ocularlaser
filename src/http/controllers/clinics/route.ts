@@ -3,7 +3,6 @@ import { CreateClinic } from "./create/create-clinics-controller"
 import { FastifyInstance } from "fastify"
 import { FindClinic } from "./find/find-clinics-controller"
 import { DeleteClinic } from "./delete/delete-clinics-controller"
-import { ListClinic } from "./list/list-clinics-controller"
 import { verifyUserRole } from "@/http/middlewares/verify-user-role"
 
 export async function clinicsRoutes(fastifyApp: FastifyInstance) {
@@ -15,9 +14,6 @@ export async function clinicsRoutes(fastifyApp: FastifyInstance) {
     
     // find clinic
     fastifyApp.get('/:id', FindClinic)
-
-    // list clinics
-    fastifyApp.get('/', ListClinic)
 
     // delete clinic
     fastifyApp.delete('/:id', DeleteClinic)

@@ -49,6 +49,7 @@
     "vitest-tsconfig-paths": "3.4.1"
   },
   "dependencies": {
+    "@fastify/rate-limit": "8.0.3",
     "@google-cloud/storage": "7.1.0",
     "@sendgrid/mail": "7.7.0",
     "@types/multer": "1.4.7",
