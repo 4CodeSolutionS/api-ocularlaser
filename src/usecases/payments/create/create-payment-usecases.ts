@@ -249,7 +249,7 @@ export class CreatePaymentUseCase{
                 creditCard,
                 creditCardHolderInfo,
                 installmentCount: installmentCount ? Number(installmentCount) : undefined,
-                installmentValue: Number.isNaN(installmentValue) ? undefined : installmentValue,
+                installmentValue:isValidInstallment,
                 description: findServiceExecutedExists.service.name,
                 discount:{
                     value: discountValue ? discountValue : 0,
