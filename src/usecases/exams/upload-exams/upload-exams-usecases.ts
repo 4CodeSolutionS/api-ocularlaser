@@ -48,14 +48,13 @@ export class CreateExamsUseCase{
         // for para percorrer o array de nomes de arquivos
         for(let listFile of fileNameExame){
             // fazer upload do exame dentro firebase através do nome do arquivo
-            let urlExam = await this.storageProvider.uploadFile(listFile.filename, pathFolder, 'assets' ) as string
+            let urlExam = await this.storageProvider.uploadFile(listFile.filename, pathFolder, 'exams' ) as string
             // criar no banco de dados as urls dos exames
             await this.examRepository.createExams({
                 idServiceExecuted,
                 urlExam
             })
 
-            console.log(urlExam)
         }
 
         // retornar lista de urls relacionadas ao service executado 
