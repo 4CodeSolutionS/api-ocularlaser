@@ -146,6 +146,7 @@ export class CreatePaymentUseCase{
         let newCustomer  = '';
         const newDate = this.dateProvider.dateNow()
         const formatDateToString = this.dateProvider.convertToUTC(newDate)
+        console.log(newDate)
         // validar se o cliente existe no asaas se não existir criar
         if(!findUser.idCostumerAsaas){
             // atualizar user com o id do cliente no asaas
@@ -223,8 +224,8 @@ export class CreatePaymentUseCase{
                       value: Number(findServiceExecutedExists.price),
                       dueDate: formatDateToString,
                       creditCardToken: decrypTokenCard,
-                      installmentCount: installmentCount ? Number(installmentCount) : 0,
-                      installmentValue: isValidInstallment,
+                    //   installmentCount: installmentCount ? Number(installmentCount) : 0,
+                    //   installmentValue: isValidInstallment,
                       description: findServiceExecutedExists.service.name,
                       discount:{
                         value: discountValue ? discountValue : 0,
@@ -243,12 +244,12 @@ export class CreatePaymentUseCase{
                 customer: idCostumerPayment,
                 billingType,
                 value: Number(findServiceExecutedExists.price),
-                dueDate: formatDateToString,
+                dueDate: '2023-11-07',
                 creditCard,
                 creditCardHolderInfo,
-                installmentCount: installmentCount ? Number(installmentCount) : 0,
-                installmentValue:isValidInstallment,
-                description: findServiceExecutedExists.service.name,
+                // installmentCount: installmentCount ? Number(installmentCount) : 0,
+                // installmentValue:isValidInstallment,
+                // description: findServiceExecutedExists.service.name,
                 discount:{
                     value: discountValue ? discountValue : 0,
                     dueDateLimitDays: 0,
