@@ -195,6 +195,9 @@ export class CreatePaymentUseCase{
         if(billingType === 'CREDIT_CARD'){
              // calcular valor da parcela
              const installmentValue = (findServiceExecutedExists.price / Number(installmentCount)).toFixed(2) as unknown as number;
+            
+             const isValidInstallment = installmentValue ? installmentValue : null
+
             // verificar se ja existe token do cartão
             const {cards} = findUser as any
             const cardFormat = cards as Card[]
@@ -223,7 +226,7 @@ export class CreatePaymentUseCase{
                       dueDate: formatDateToString,
                       creditCardToken: decrypTokenCard,
                       installmentCount: installmentCount ? Number(installmentCount) : null,
-                      installmentValue: Number.isNaN(installmentValue) ? null : installmentValue,
+                      installmentValue: isValidInstallment,
                       description: findServiceExecutedExists.service.name,
                       discount:{
                         value: discountValue ? discountValue : 0,
